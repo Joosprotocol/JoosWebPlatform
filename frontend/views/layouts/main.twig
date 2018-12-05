@@ -1,0 +1,104 @@
+{% set page = this.params['page'] is not empty ? this.params['page'] : null %}
+{% set seo = this.params['seo'] is not empty ? this.params['seo'] : null %}
+
+{% spaceless %}
+    {{ register_asset_bundle('frontend/assets/AppAsset') }}
+    {{ void(this.beginPage()) }}
+    <!DOCTYPE html>
+    <html lang="{{ app.language }}">
+    <head>
+        <meta charset="{{ app.charset }}">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>
+            {{ Html.encode(this.title) }}
+        </title>
+        {{ Html.csrfMetaTags | raw }}
+        {{ void(this.head) }}
+        {% include('_counters.twig') %}
+    </head>
+    <body>
+    {{ void(this.beginBody()) }}
+    <div class="wrap">
+
+        {% set location = constant('itmaster\\core\\modules\\snippet\\models\\frontend\\Snippet::LOCATION_FOOTER') %}
+
+        <section id="header">
+            {# header content #}
+            {{ nav_bar_begin({
+                'brandLabel': app.name,
+                'brandUrl' : app.homeUrl,
+                'options' : {
+                    'class' : 'navbar navbar-default navbar-fixed-top main-menu',
+                }
+            }) }}
+
+            {% set menuItems = [] %}
+
+            {# Language choice widget #}
+            {{ use ('itmaster/core/widgets/LanguageChoice') }}
+            {{ language_choice_widget({
+                'languages': Language.getList(),
+                'currentLanguage': app.session.get("language", "en")
+            }) }}
+
+            {# NavBar menu widget #}
+            {{ use ('itmaster/core/widgets/Navigator') }}
+            {{ navigator_widget({
+                'options': {
+                    'class': 'navbar-nav navbar-right'
+                },
+                'isDropdown': true,
+                'menuCode': 'main',
+            }) }}
+
+            {# Bootstrap Nav menu widget #}
+            {{ use ('yii/bootstrap/Nav') }}
+            {{ nav_widget({
+                'options': {
+                    'class': 'navbar-nav navbar-right',
+                },
+                'items': menuItems
+            }) }}
+            {{ nav_bar_end() }}
+        </section>
+
+        <div class="container">
+            {% if this.params['breadcrumbs'] %}
+                {% set breadcrumbs = this.params['breadcrumbs'] %}
+            {% else %}
+                {% set breadcrumbs = [] %}
+            {% endif %}
+
+            {{ Breadcrumbs.widget({
+                'links' : breadcrumbs,
+            })|raw(html) }}
+
+            {{ use('itmaster/core/widgets/Alert') }}
+            {{ Alert.widget() }}
+
+            {#page content #}
+            {% if page %}
+                <h1> {{ seo['h1'] }} </h1>
+                {% include('_content.twig') %}
+            {% endif %}
+                {{ content|raw(html) }}
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            {#footer content #}
+            <p class="pull-left">&copy; IT-Master {{ 'now'|date('Y') }}</p>
+            <p class="pull-right">{{ t('app', 'Created by') | raw }}</p>
+        </div>
+    </footer>
+
+    {{ void(this.endBody()) }}
+
+    {% include('_counters.twig') %}
+
+    </body>
+    </html>
+    {{ void(this.endPage()) }}
+{% endspaceless %}

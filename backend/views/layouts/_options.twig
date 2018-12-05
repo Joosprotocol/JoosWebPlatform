@@ -1,0 +1,7 @@
+<span class="nowrap">
+    {% for templateName, option in options %}
+        {% if app.user.can(option) %}
+            {{ '{' ~ templateName ~ '}' }}
+        {% endif %}
+    {% endfor %}
+</span>

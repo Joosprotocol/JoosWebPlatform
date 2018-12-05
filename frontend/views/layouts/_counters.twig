@@ -1,0 +1,5 @@
+{% set snippets = SnippetFrontend.getPageSnippets(location, page ? page.id: false) %}
+
+{% for  snippet in snippets%}
+    {{ snippet.content }}
+{% endfor %}

@@ -1,0 +1,26 @@
+RewriteEngine on
+
+##
+# The lines below should only be toched if you are cool to be able to configure separate enter points to your application.
+# Whilst it mostly possible on dedicated servers, we assume that you will never ever in need to uncomment this lines
+#
+# The next line should fix custom header issue presented in apache mod_cgi/mod_fcgi
+# when authorization headers do not passed to PHP backend that lead to broken REST API's.
+# NOTE: there still can be an issue on some cPanel servers, but I cannot trace the reason of such behaviour,
+# but in most cases it can be fixed by enabling PHP-FPM.
+#
+#SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$0
+
+# Uncomment next lines to enable http to https redirection. Note for next conditions usage
+# If condition below do not work than try: RewriteCond %{HTTP:X-Forwarded-Proto} !https
+# If you would like to exclude redirection for some IPS than add lines: RewriteCond %{SERVER_ADDR} !127.0.0.1
+#
+#RewriteCond %{HTTPS} off
+#RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,NE,R=301]
+
+# If a directory or a file exists, use it directly
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+# Otherwise forward it to index.php
+RewriteRule . index.php
+

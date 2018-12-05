@@ -1,0 +1,45 @@
+{
+    "name": "itmaster/platform",
+    "description": "It Master CMS base project template",
+    "keywords": ["it-master", "platform", "yii2"],
+    "type": "project",
+    "license": "BSD-3-Clause",
+    "minimum-stability": "stable",
+    "require": {
+        "itmaster/core": "^1.0",
+        "itmaster/storage": "~3@dev",
+        "wbraganca/yii2-dynamicform": "dev-master",
+        "kartik-v/yii2-grid": "@dev",
+        "kartik-v/yii2-widget-fileinput": "@dev",
+        "kartik-v/yii2-widget-depdrop": "@dev",
+        "kartik-v/yii2-widget-select2": "@dev"
+    },
+    "require-dev": {
+        "yiisoft/yii2-debug": "~2.0.0",
+        "yiisoft/yii2-gii": "~2.0.0",
+        "yiisoft/yii2-faker": "~2.0.0"
+    },
+    "config": {
+        "process-timeout": 1800
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        },
+        {
+            "type": "composer",
+            "url": "https://repository.webphpdev.site"
+        }
+    ],
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.1.x-dev"
+        }
+    },
+    "scripts": {
+      "post-create-project-cmd": [
+        "php init --env=Development --overwrite=All"
+      ]
+    }
+}

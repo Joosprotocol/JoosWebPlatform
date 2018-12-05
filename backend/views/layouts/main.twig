@@ -1,0 +1,198 @@
+{% spaceless %}
+    {{ register_asset_bundle('backend/assets/AppAsset') }}
+    {{ void(this.beginPage()) }}
+    <!DOCTYPE html>
+    <html lang="{{ app.language }}">
+    <head>
+        <meta charset="{{ app.charset }}">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>
+            {{ Html.encode(this.title) }}
+        </title>
+        {{ Html.csrfMetaTags | raw }}
+        {{ void(this.head) }}
+    </head>
+    <body>
+    <div id="body-wrapper">
+        {{ void(this.beginBody()) }}
+
+        {{ use ('itmaster/core/widgets/StatusSideMenu') }}
+        {% set statusSideMenu = status_side_menu_widget() %}
+
+        {{ nav_bar_begin({
+            'options' : {
+                'class' : "navbar bg-info navbar-fixed-top" ~ ((statusSideMenu == "min") ? " minimised" : ""),
+            },
+            'brandLabel': t('app', 'Admin Panel'),
+            'brandUrl' : app.homeUrl,
+            'brandOptions': {
+                'class' : 'navbar-brand text-uppercase',
+            },
+            'renderInnerContainer' : false
+        }) }}
+
+        {{ use ('yii/bootstrap/Nav') }}
+        {{ nav_widget({
+            'options': {
+                'class': 'navbar-nav navbar-left',
+            },
+            'items': {
+                'label': '',
+                'items': '<span id="toggle_sidemenu_l" class="glyphicon glyphicon-menu-hamburger"></span>'
+            }
+        }) }}
+
+        {{ nav_widget({
+            'options': {
+                'class': 'navbar-nav navbar-right',
+            },
+            'encodeLabels': false,
+            'items': [
+                {
+                    'label': '<span class="glyphicon glyphicon-log-out" title="' ~ t('app', 'Logout') ~ '"></span>',
+                    'url': ['/auth/logout'],
+                    'linkOptions': {
+                        'data-method': 'post'
+                    }
+                }],
+        }) }}
+
+        {# Language choice widget #}
+        {{ use ('itmaster/core/widgets/LanguageChoice') }}
+        {{ language_choice_widget({
+            'languages': Language.getList(),
+            'currentLanguage': app.session.get("language", "en")
+        }) }}
+
+        {% if app.user.isGuest == false %}
+
+            {% set user = app.user.identity %}
+
+            {{ nav_widget({
+                'options': {
+                    'class': 'navbar-nav navbar-right',
+                },
+                'encodeLabels': false,
+                'items': [
+                    {
+                        'url': path('/user/update/', {'id': app.user.id}),
+                        'label': '<img class="img-thumbnail avatar" src="' ~ user.avatarUrl ~ '">'
+                    }],
+            }) }}
+        {% endif %}
+
+        {{ nav_bar_end() }}
+
+        <div class="sidebar-wrapper {{ ((statusSideMenu == "min") ? " minimised" : "") }}">
+            {{ nav_bar_begin({
+                'options': {
+                    'class' : 'sidebar-default has-scrollbar',
+                    'id' : 'sidebar_left',
+                },
+                'renderInnerContainer' : false,
+            }) }}
+
+            <div class="sidebar-left-content nano-content">
+                {% if app.user.isGuest == false %}
+
+                    {# Additional menu items from active modules #}
+
+                    {% set modules = Module.getAvailableModules() %}
+                    {% set modulesMenuItems = {} %}
+
+                    {% for module in modules %}
+                        {% set systemModule = app.getModule(module.slug) %}
+                        {% set modulesMenuItems = modulesMenuItems|merge([{
+                            'slug': module.slug,
+                            'name': module.name,
+                            'items': systemModule.params.admin_modules ?? {}
+                        }]) %}
+                    {% endfor %}
+
+                    {% set finalyMenuItems = {} %}
+
+                    {# Core menu items from common/config/params.php #}
+
+                    {% set coreMenuItems = app.params.adminMenuItems %}
+
+                    {% for menuItem in coreMenuItems|merge(modulesMenuItems) %}
+                        {% set menuItemItems = menuItem.items ?? {} %}
+
+                        {% for menuItemItem in menuItemItems %}
+                            {% if menuItemItem.url[0] == Url.toRoute('') %}
+                                {% set menuItemItem = menuItemItem|merge({
+                                    'options': {
+                                        'class': 'active',
+                                    }
+                                } ) %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if not menuItem.url %}
+                            {% set menuItem = menuItem|merge({'url': (menuItem.items) ? ['/'] : ['/' ~ menuItem.slug ~ '/default/index']}) %}
+                        {% endif %}
+
+                        {% if app.controller.module.id == menuItem.slug and Url.toRoute('') != '/buildingprocess/deal/index' %}
+                            {% set active = true %}
+                        {% elseif menuItem.slug == 'config' and app.controller.module.id == 'holiday'
+                            or app.controller.module.id == 'holidayconfig' or app.controller.module.id == 'registration'
+                            or (Url.toRoute('') == '/role'
+                            and app.controller.module.id == 'backend')%}
+                            {% set active = true %}
+                        {% else %}
+                            {% set active = false %}
+                        {% endif %}
+
+                        {% set finalyMenuItems = finalyMenuItems|merge([{
+                            'label': '<span class="glyphicon glyphicon-ok icon-' ~ menuItem.slug ~ '"></span><span
+                                        class="sidebar-title"> ' ~ menuItem.name ~ '</span>',
+                            'items': menuItem.items,
+                            'options': {
+                                'class': active and statusSideMenu != 'min' ? 'active' : '',
+                            },
+                            'url': menuItem.url
+                        }]) %}
+                    {% endfor %}
+
+                    {{ nav_widget({
+                        'options': {
+                            'class': 'nav sidebar-menu',
+                        },
+                        'dropDownCaret': '<span class="caret"></span>',
+                        'items': finalyMenuItems,
+                        'encodeLabels': false,
+                    }) }}
+
+                {% endif %}
+                {{ nav_bar_end() }}
+                <div class="sidebar-scroll">
+                    <div class="scroll-body">
+                    </div>
+                </div>
+            </div>
+
+            <div id="content_wrapper" class="{{ (statusSideMenu == 'min') ? 'minimised' : '' }} ">
+                {{ use('itmaster/core/widgets/Alert') }}
+                {{ Alert.widget() }}
+                {{ content|raw(html) }}
+            </div>
+            <div class="pust" style="display: block;width: 100%;height: 40px;"></div>
+
+            <footer class="footer {{ (statusSideMenu == 'min') ? 'minimised' : '' }}">
+                <div class="container">
+                    {#footer content #}
+                    <p class="pull-left">&copy; IT-Master {{ 'now'|date('Y') }}</p>
+                    <p class="pull-right">{{ t('app', 'Created by') | raw }}
+                        <a href="https://hire.itmaster-soft.com/"
+                           rel="external" target="_blank">IT-Master</a>
+                    </p>
+                </div>
+            </footer>
+
+            {{ void(this.endBody()) }}
+        </div>
+    </div>
+    </body>
+    </html>
+    {{ void(this.endPage()) }}
+{% endspaceless %}
