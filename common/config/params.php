@@ -41,6 +41,19 @@ return [
             'name' => \Yii::t('app', 'Settings'),
             'slug' => 'setting',
             'items' => []
+        ],
+        [
+            'name' => \Yii::t('app', 'Loan'),
+            'slug' => 'loan',
+            'items' => [
+                ['label' => Yii::t('app', 'Loans'), 'url' => ['/loan']],
+                ['label' => Yii::t('app', 'Status Histories'), 'url' => ['/loan-status-history']],
+            ]
+        ],
+        [
+            'name' => \Yii::t('app', 'Payments'),
+            'slug' => 'loan',
+            'items' => []
         ]
     ]
 ];

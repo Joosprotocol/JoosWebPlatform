@@ -22,7 +22,7 @@ class M181210080327UserPersonal extends Migration
         /* Personal User table*/
         $this->createTable('{{%user_personal}}', [
             'id' => $this->primaryKey(),
-            'user_id' => $this->integer()->notNull(),
+            'user_id' => $this->integer()->unique()->notNull(),
             'facebook_id' => $this->string(255)->notNull(),
             'social_id' => $this->string(255)->notNull(),
             'mobile_number' => $this->string(15)->notNull(),
