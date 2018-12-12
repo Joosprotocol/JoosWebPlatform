@@ -13,12 +13,6 @@ use yii\web\Response;
  */
 class LoanStatusHistoryController extends BackendController
 {
-
-    public function getViewPath()
-    {
-        return Yii::getAlias('@backend/views' . DIRECTORY_SEPARATOR . $this->id);
-    }
-
     /**
      * Lists all LoanStatusHistory models.
      * @return mixed

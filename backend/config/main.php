@@ -12,7 +12,7 @@ return [
     'controllerNamespace' => 'backend\controllers',
     'homeUrl' => '/admin',
     'bootstrap' => ['log'],
-    'defaultRoute' => 'core/backend/dashboard/index',
+    'defaultRoute' => 'core/dashboard/index',
     'layout' => 'main.twig',
     'components' => [
         'request' => [
@@ -33,14 +33,9 @@ return [
                 ],
             ],
         ],
-        'errorHandler' => [
-            'errorAction' => YII_DEBUG ? 'core/error/error' : 'core/error/index',
-        ],
         'urlManager' => [
-            'enablePrettyUrl' => true,
-            'showScriptName' => false,
-            'enableStrictParsing' => false,
-            'rules' => [],
+            'rules' => [
+            ],
         ],
         /*'i18n' => [
             'translations' => [

@@ -1,6 +1,7 @@
 <?php
 
 use kartik\datecontrol\Module;
+use yii\web\UrlNormalizer;
 
 $config = [
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
@@ -18,8 +19,21 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'enableStrictParsing' => false,
-            'rules' => [],
+            'enableStrictParsing' => true,
+            'normalizer' => [
+                'class' => UrlNormalizer::class,
+                'action' => UrlNormalizer::ACTION_REDIRECT_PERMANENT,
+            ],
+            'rules' => [
+                '<controller:[\w-]+>/<action:[\w-]+>' => '<controller>/<action>',
+                '<controller:[\w-]+>/<action:[\w-]+>/<id:\d+>' => '<controller>/<action>',
+                '<module:[\w-]+>/<controller:[\w-]+>/<action:[\w-]+>' => '<module>/<controller>/<action>',
+                '<module:[\w-]+>/<controller:[\w-]+>/<action:[\w-]+>/<id:\d+>' => '<module>/<controller>/<action>',
+                '/' => '',
+            ],
+        ],
+        'errorHandler' => [
+            'errorAction' => YII_DEBUG ? 'core/error/error' : 'core/error/index',
         ],
         'i18n' => [
             'translations' => [

@@ -15,9 +15,11 @@ Yii::setAlias('frontend', dirname(dirname(__DIR__)) . '/frontend');
 Yii::setAlias('backend', dirname(dirname(__DIR__)) . '/backend');
 Yii::setAlias('console', dirname(dirname(__DIR__)) . '/console');
 Yii::setAlias('generators', dirname(dirname(__DIR__)) . '/generators');
+Yii::setAlias('modules', dirname(dirname(__DIR__)) . '/modules');
+Yii::setAlias('widgets', dirname(dirname(__DIR__)) . '/common/widgets');
 Yii::setAlias('itmaster.core', dirname(dirname(__DIR__)) . '/vendor/itmaster/core/src/');
-Yii::setAlias('modules', '@itmaster.core/modules');
-Yii::setAlias('widgets', '@itmaster.core/widgets');
+Yii::setAlias('itmaster.modules', '@itmaster.core/modules');
+Yii::setAlias('itmaster.widgets', '@itmaster.core/widgets');
 Yii::setAlias('image.default', '/images/default.png');
 Yii::setAlias('image.url', '/storage');
 Yii::setAlias('image.theme', '/themes/images');
@@ -26,7 +28,7 @@ Yii::setAlias('image.theme', '/themes/images');
 Yii::$container->set(
     'configManager',
     new ModuleManager(
-        new ModuleIterator(Yii::getAlias('@modules')),
+        new ModuleIterator(Yii::getAlias('@itmaster.modules')),
         Yii::getAlias(ModuleIteratorInterface::MODULE_CONFIG_PATH),
         ConfigInterface::ALLOW_CREATE | ConfigInterface::ALLOW_EMPTY
     )

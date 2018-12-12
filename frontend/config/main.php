@@ -14,6 +14,7 @@ return [
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
     'homeUrl' => '/',
+    'defaultRoute' => 'site/default/index',
     'layout' => 'main.twig',
     'components' => [
         'request' => [
@@ -24,9 +25,6 @@ return [
             'identityClass' => 'itmaster\core\models\User',
             'enableAutoLogin' => true,
             'loginUrl' => ['/auth/login']
-        ],
-        'errorHandler' => [
-            'errorAction' => YII_DEBUG ? 'core/error/error' : 'core/error/index',
         ],
         'urlManager' => [
             'rules' => [],

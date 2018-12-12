@@ -8,7 +8,7 @@ foreach ($manager->allActive() as $module) {
     $modules[$module] = [
         'class' => 'itmaster\core\modules\\' . $module . '\Module',
         'controllerNamespace' => 'itmaster\core\modules\\' . $module . '\controllers\frontend',
-        'viewPath' => '@modules/' . $module . '/views/frontend',
+        'viewPath' => '@itmaster.modules/' . $module . '/views/frontend',
     ];
 }
 

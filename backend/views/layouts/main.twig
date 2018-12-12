@@ -129,7 +129,7 @@
                         {% endfor %}
 
                         {% if not menuItem.url %}
-                            {% set menuItem = menuItem|merge({'url': (menuItem.items) ? ['/'] : ['/' ~ menuItem.slug ~ '/default/index']}) %}
+                            {% set menuItem = menuItem|merge({'url': (menuItem.items) ? ['/'] : ['/' ~ menuItem.slug ~ '/index']}) %}
                         {% endif %}
 
                         {% if app.controller.module.id == menuItem.slug and Url.toRoute('') != '/buildingprocess/deal/index' %}

@@ -46,13 +46,13 @@ return [
             'name' => \Yii::t('app', 'Loan'),
             'slug' => 'loan',
             'items' => [
-                ['label' => Yii::t('app', 'Loans'), 'url' => ['/loan']],
-                ['label' => Yii::t('app', 'Status Histories'), 'url' => ['/loan-status-history']],
+                ['label' => Yii::t('app', 'Loans'), 'url' => ['/loan/index']],
+                ['label' => Yii::t('app', 'Status Histories'), 'url' => ['/loan-status-history/index']],
             ]
         ],
         [
             'name' => \Yii::t('app', 'Payments'),
-            'slug' => 'loan',
+            'slug' => 'payment',
             'items' => []
         ]
     ]
