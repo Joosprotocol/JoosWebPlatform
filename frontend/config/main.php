@@ -46,6 +46,9 @@ return [
                 ],
             ],
         ],
+        'errorHandler' => [
+            'errorAction' => YII_DEBUG ? 'core/error/error' : 'core/error/index',
+        ],
         'assetManager' => [
             'forceCopy' => YII_DEBUG,
         ]

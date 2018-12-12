@@ -16,7 +16,7 @@ class LoanSearch extends Loan
     public function rules()
     {
         return [
-            [['id', 'lender_id', 'borrower_id', 'status', 'period', 'type', 'created_at', 'updated_at'], 'integer'],
+            [['id', 'lender_id', 'borrower_id', 'status', 'period', 'currency_type', 'init_type', 'created_at', 'updated_at'], 'integer'],
             [['amount'], 'number'],
             [['secret_key', 'ref_slug'], 'safe'],
         ];
@@ -59,7 +59,8 @@ class LoanSearch extends Loan
             'status' => $this->status,
             'amount' => $this->amount,
             'period' => $this->period,
-            'type' => $this->type,
+            'currency_type' => $this->currency_type,
+            'init_type' => $this->init_type,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);

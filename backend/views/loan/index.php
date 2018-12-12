@@ -43,7 +43,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'status',
             'amount',
             'period',
-            'type',
+            'currency_type',
+            'init_type',
             'created',
 
             [

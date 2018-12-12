@@ -22,13 +22,16 @@ use yii\widgets\ActiveForm;
 
             <?= $form->field($model, 'borrower_id')->textInput() ?>
 
-            <?= $form->field($model, 'status')->textInput() ?>
+            <?= $form->field($model, 'status')->dropdownList($model->statusList()) ?>
 
             <?= $form->field($model, 'amount')->textInput(['maxlength' => true]) ?>
 
             <?= $form->field($model, 'period')->textInput() ?>
 
-            <?= $form->field($model, 'type')->textInput() ?>
+            <?= $form->field($model, 'currency_type')->dropdownList($model->currencyTypeList()) ?>
+
+            <?= $form->field($model, 'init_type')->dropdownList($model->initTypeList()) ?>
+
 
         </div>
 

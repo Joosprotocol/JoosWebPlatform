@@ -17,7 +17,8 @@ use yii\db\ActiveRecord;
  * @property integer $status
  * @property string $amount
  * @property integer $period
- * @property integer $type
+ * @property integer $init_type
+ * @property integer $currency_type
  * @property string $secret_key
  * @property string $ref_slug
  * @property integer $created_at
@@ -29,6 +30,19 @@ use yii\db\ActiveRecord;
  */
 class Loan extends ActiveRecord
 {
+
+    const INIT_TYPE_OFFER = 0;
+    const INIT_TYPE_REQUEST = 1;
+
+    const CURRENCY_TYPE_MANUAL = 0;
+    const CURRENCY_TYPE_JOOS = 1;
+
+    const STATUS_STARTED = 0; // after creation
+    const STATUS_SIGNED = 1; // signed by two person
+    const STATUS_PAID = 2; // loan paid
+    const STATUS_PAUSED = 3; // loan paid
+    const STATUS_OVERDUE = 4; // loan paid
+
     /**
      * @inheritdoc
      */
@@ -54,13 +68,52 @@ class Loan extends ActiveRecord
     public function rules()
     {
         return [
-            [['lender_id', 'borrower_id', 'status', 'period', 'type', 'created_at', 'updated_at'], 'integer'],
-            [['status', 'type'], 'required'],
+            [['lender_id', 'borrower_id', 'status', 'period', 'currency_type', 'init_type', 'created_at', 'updated_at'], 'integer'],
+            [['status', 'currency_type', 'init_type'], 'required'],
             [['amount'], 'number'],
             [['secret_key'], 'string', 'max' => 255],
             [['ref_slug'], 'string', 'max' => 10],
+            [['currency_type'], 'in', 'range' => array_keys(self::currencyTypeList())],
+            [['init_type'], 'in', 'range' => array_keys(self::initTypeList())],
+            [['status'], 'in', 'range' => array_keys(self::statusList())],
             [['borrower_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['borrower_id' => 'id']],
             [['lender_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['lender_id' => 'id']],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function currencyTypeList()
+    {
+        return [
+            self::CURRENCY_TYPE_MANUAL => Yii::t('app', 'Manual'),
+            self::CURRENCY_TYPE_JOOS => Yii::t('app', 'JOOS'),
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function initTypeList()
+    {
+        return [
+            self::INIT_TYPE_OFFER => Yii::t('app', 'Offer'),
+            self::INIT_TYPE_REQUEST => Yii::t('app', 'Request'),
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function statusList()
+    {
+        return [
+            self::STATUS_STARTED => Yii::t('app', 'Started'),
+            self::STATUS_SIGNED => Yii::t('app', 'Signed'),
+            self::STATUS_PAID => Yii::t('app', 'Paid'),
+            self::STATUS_PAUSED => Yii::t('app', 'Paused'),
+            self::STATUS_OVERDUE => Yii::t('app', 'Overdue'),
         ];
     }
 
@@ -76,7 +129,8 @@ class Loan extends ActiveRecord
             'status' => Yii::t('app', 'Status'),
             'amount' => Yii::t('app', 'Amount'),
             'period' => Yii::t('app', 'Period'),
-            'type' => Yii::t('app', 'Type'),
+            'init_type' => Yii::t('app', 'Init Type'),
+            'currency_type' => Yii::t('app', 'Currency'),
             'secret_key' => Yii::t('app', 'Secret Key'),
             'ref_slug' => Yii::t('app', 'Ref Slug'),
             'created_at' => Yii::t('app', 'Created At'),
@@ -131,13 +185,46 @@ class Loan extends ActiveRecord
         return false;
     }
 
+    /**
+     * @param bool $insert
+     * @param array $changedAttributes
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+        if ($insert === true
+            || (int) $changedAttributes['status'] !== (int) $this->status) {
+            $this->createStatusHistory();
+        }
+    }
+
+    /**
+     * @return void
+     */
     private function generateSecretKey()
     {
         $this->secret_key = Yii::$app->getSecurity()->generateRandomString(32);
     }
 
+    /**
+     * @return void
+     */
     private function generateRefSlug()
     {
         $this->ref_slug = Yii::$app->getSecurity()->generateRandomString(10);
     }
+
+    /**
+     * @return void
+     */
+    private function createStatusHistory()
+    {
+        $statusHistory = new LoanStatusHistory();
+        $statusHistory->status = $this->status;
+        $statusHistory->link('loan', $this);
+        $statusHistory->save(false);
+    }
+
+
 }

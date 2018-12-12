@@ -27,7 +27,9 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'period') ?>
 
-    <?= $form->field($model, 'type') ?>
+    <?= $form->field($model, 'currency_type') ?>
+
+    <?= $form->field($model, 'init_type') ?>
 
 
     <div class="form-group">

@@ -32,9 +32,6 @@ $config = [
                 '/' => '',
             ],
         ],
-        'errorHandler' => [
-            'errorAction' => YII_DEBUG ? 'core/error/error' : 'core/error/index',
-        ],
         'i18n' => [
             'translations' => [
                 'app*' => [
