@@ -64,8 +64,7 @@ class LoanSearch extends Loan
             'updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere(['like', 'secret_key', $this->secret_key])
-            ->andFilterWhere(['like', 'ref_slug', $this->ref_slug]);
+        $query->andFilterWhere(['like', 'ref_slug', $this->ref_slug]);
 
         return $dataProvider;
     }

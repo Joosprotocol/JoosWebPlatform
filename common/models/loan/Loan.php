@@ -55,11 +55,10 @@ class Loan extends ActiveRecord
     {
         return [
             [['lender_id', 'borrower_id', 'status', 'period', 'type', 'created_at', 'updated_at'], 'integer'],
-            [['status', 'type', 'secret_key', 'ref_slug'], 'required'],
+            [['status', 'type'], 'required'],
             [['amount'], 'number'],
             [['secret_key'], 'string', 'max' => 255],
             [['ref_slug'], 'string', 'max' => 10],
-            [['ref_slug'], 'unique'],
             [['borrower_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['borrower_id' => 'id']],
             [['lender_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['lender_id' => 'id']],
         ];
@@ -120,9 +119,9 @@ class Loan extends ActiveRecord
     /**
      * @return bool
      */
-    public function beforeValidate()
+    public function beforeSave($insert)
     {
-        if (parent::beforeValidate()) {
+        if (parent::beforeSave($insert)) {
             if ($this->isNewRecord) {
                 $this->generateSecretKey();
                 $this->generateRefSlug();
