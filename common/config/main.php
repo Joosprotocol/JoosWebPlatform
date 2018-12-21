@@ -86,6 +86,10 @@ $config = [
             'clientId' => 'AWPb8IKXmaW5j9e8j4SpT5cyTeAjFFRS6wWtK3eF8sdibVGiWoQXG5svT-ugbnL0iwP_u6JZ2sexxsrC',
             'clientSecret' => 'EMnk9X8m_X4g9JzyhyfCgGjaS-0Qf8zwJb5d4yIJL7hLOx8P-Ne6JcQ1ANua5jNk2F8YMM9J05W3G5ZM',
         ],
+        'ethereumAPI' => [
+            'class' => 'common\library\ethereum\EthereumAPI',
+            'url' => 'http://localhost:3000/',
+        ],
         'view' => [
             'class' => 'yii\web\View',
             'renderers' => [
