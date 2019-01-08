@@ -11,6 +11,8 @@ class LoanManagerBlockChainAdapter
 {
     const CONTRACT_NAME = 'JoosLoanManager';
 
+    const FIELD_PERSONAL = 'personal';
+
     private $blockchain;
 
     public function __construct(BlockchainAPIInterface $blockchain)
@@ -100,6 +102,7 @@ class LoanManagerBlockChainAdapter
     }
 
     /**
+     * @param integer $loanId
      * @return bool
      * @throws APICallException
      * @throws NotFoundHttpException
@@ -116,6 +119,7 @@ class LoanManagerBlockChainAdapter
     }
 
     /**
+     * @param integer $loanId
      * @return bool
      * @throws APICallException
      * @throws NotFoundHttpException
@@ -132,6 +136,7 @@ class LoanManagerBlockChainAdapter
     }
 
     /**
+     * @param integer $loanId
      * @return bool
      * @throws APICallException
      * @throws NotFoundHttpException
@@ -149,9 +154,29 @@ class LoanManagerBlockChainAdapter
 
     /**
      * @param integer $loanId
-     * @return false|mixed
+     * @throws APICallException
+     * @throws NotFoundHttpException
+     * @throws ParseException
+     * @return integer
      */
     public function getStatus($loanId)
+    {
+        return $this->blockchain->execute(
+            self::CONTRACT_NAME,
+            $this->blockchain->getRequestTypeCall(),
+            __FUNCTION__,
+            func_get_args()
+        );
+    }
+
+    /**
+     * @param integer $loanId
+     * @throws APICallException
+     * @throws NotFoundHttpException
+     * @throws ParseException
+     * @return object
+     */
+    public function getLoanParticipants($loanId)
     {
         return $this->blockchain->execute(
             self::CONTRACT_NAME,

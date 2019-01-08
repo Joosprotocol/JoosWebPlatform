@@ -2,11 +2,13 @@
 
 namespace common\models\loan;
 
+use common\library\date\DateIntervalEnhanced;
 use common\models\payment\Payment;
 use common\models\user\User;
 use itmaster\core\behaviors\TimestampBehavior;
 use Yii;
 use yii\db\ActiveRecord;
+use yii\helpers\Url;
 
 /**
  * This is the model class for table "{{%loan}}".
@@ -84,7 +86,7 @@ class Loan extends ActiveRecord
     /**
      * @return array
      */
-    public function currencyTypeList()
+    public static function currencyTypeList()
     {
         return [
             self::CURRENCY_TYPE_MANUAL => Yii::t('app', 'Manual'),
@@ -95,7 +97,7 @@ class Loan extends ActiveRecord
     /**
      * @return array
      */
-    public function initTypeList()
+    public static function initTypeList()
     {
         return [
             self::INIT_TYPE_OFFER => Yii::t('app', 'Offer'),
@@ -106,7 +108,7 @@ class Loan extends ActiveRecord
     /**
      * @return array
      */
-    public function statusList()
+    public static function statusList()
     {
         return [
             self::STATUS_STARTED => Yii::t('app', 'Started'),
@@ -171,6 +173,49 @@ class Loan extends ActiveRecord
     }
 
     /**
+     * @return string|null
+     */
+    public function getCurrencyTypeName()
+    {
+        if (array_key_exists($this->currency_type, self::currencyTypeList())) {
+            return self::currencyTypeList()[$this->currency_type];
+        }
+        return null;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getStatusName()
+    {
+        if (array_key_exists($this->status, self::statusList())) {
+            return self::statusList()[$this->status];
+        }
+        return null;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getInitTypeName()
+    {
+        if (array_key_exists($this->init_type, self::initTypeList())) {
+            return self::initTypeList()[$this->init_type];
+        }
+        return null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormattedPeriod()
+    {
+        $interval = new DateIntervalEnhanced('PT' . $this->period . 'S');
+        $interval->recalculate();
+        return $interval->getFormatted();
+    }
+
+    /**
      * @return bool
      */
     public function beforeSave($insert)
@@ -193,8 +238,7 @@ class Loan extends ActiveRecord
     {
         parent::afterSave($insert, $changedAttributes);
 
-        if ($insert === true
-            || (int) $changedAttributes['status'] !== (int) $this->status) {
+        if ($insert === true || array_key_exists('status', $changedAttributes) && ((int) $changedAttributes['status'] !== (int) $this->status)) {
             $this->createStatusHistory();
         }
     }
@@ -226,5 +270,10 @@ class Loan extends ActiveRecord
         $statusHistory->save(false);
     }
 
+
+    public function getReferralLink()
+    {
+        return Url::to(['payment/referral', 'slug' => $this->ref_slug]);
+    }
 
 }

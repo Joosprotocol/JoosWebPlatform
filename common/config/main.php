@@ -90,6 +90,11 @@ $config = [
             'class' => 'common\library\ethereum\EthereumAPI',
             'url' => 'http://localhost:3000/',
         ],
+        'basicCryptor' => [
+            'class' => 'common\library\crypt\BasicCryptor',
+            'cipherMode' => 'AES-256-CBC',
+            'algorithm' => 'SHA256'
+        ],
         'view' => [
             'class' => 'yii\web\View',
             'renderers' => [

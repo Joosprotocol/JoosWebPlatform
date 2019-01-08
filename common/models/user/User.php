@@ -6,7 +6,7 @@ use common\models\loan\Loan;
 use common\models\notification\Notification;
 use itmaster\core\behaviors\TimestampBehavior;
 use itmaster\core\models\User as CoreUser;
-use itmaster\storage\behaviors\MixedUploadBehavior;
+use itmaster\storage\behaviors\StorageUploadBehavior;
 
 
 /**
@@ -14,10 +14,17 @@ use itmaster\storage\behaviors\MixedUploadBehavior;
  *
  * @property Loan[] $loans
  * @property Loan[] $notifications
+ * @property UserPersonal $personal
+ * @property string $avatarUrl
+ * @property array $personalArray
+ * @property string $fullName
  */
 
 class User extends CoreUser
 {
+    const ROLE_LENDER = 'lender';
+    const ROLE_BORROWER = 'borrower';
+    const ROLE_DIGITAL_COLLECTOR = 'digital-collector';
 
     /**
      * Method for defining behaviors
@@ -28,9 +35,9 @@ class User extends CoreUser
         return [
             TimestampBehavior::class,
             [
-                'class' => MixedUploadBehavior::class,
+                'class' => StorageUploadBehavior::class,
                 'rules' => [
-                    [['avatar'], 'skipOnEmpty' => true, 'maxSize' => 2048 * 2048],
+                    [['avatar'], 'extensions' => 'png, jpg, jpeg, gif', 'skipOnEmpty' => true, 'maxSize' => 2048 * 2048],
                 ],
             ],
         ];
@@ -57,6 +64,24 @@ class User extends CoreUser
      */
     public function getPersonal()
     {
-        return $this->hasMany(User::class, ['user_id' => 'id']);
+        return $this->hasOne(UserPersonal::class, ['user_id' => 'id']);
+    }
+
+    /**
+     * @return array
+     */
+    public function getPersonalArray()
+    {
+        return [
+            'avatarUrl' => $this->avatarUrl,
+            'email' => $this->email,
+            'issuedIdUrl' => $this->personal->issuedIdUrl,
+            'facebook_url' => $this->personal->facebook_url,
+            'social_url' => $this->personal->social_url,
+            'mobile_number' => $this->personal->mobile_number,
+            'facebook_friend_first_url' => $this->personal->facebook_friend_first_url,
+            'facebook_friend_second_url' => $this->personal->facebook_friend_second_url,
+            'facebook_friend_third_url' => $this->personal->facebook_friend_third_url,
+        ];
     }
 }
