@@ -576,17 +576,17 @@
         },
         {
             "name": "itmaster/core",
-            "version": "1.0.5",
+            "version": "1.0.7",
             "source": {
                 "type": "git",
                 "url": "repository@bitbucket.org:itmaster/itm-core.git",
-                "reference": "dfee08e9d9b3c1c30b10865daa0b5accab80121a"
+                "reference": "991059551038fe1fd8cd4b3747f681bf3e993c2f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://repository.webphpdev.site/dist/itmaster/core/itmaster-core-1.0.5-fdf86e.zip",
-                "reference": "dfee08e9d9b3c1c30b10865daa0b5accab80121a",
-                "shasum": "e1ef041d2fd224ecd90effcc12e338970317341a"
+                "url": "https://repository.webphpdev.site/dist/itmaster/core/itmaster-core-1.0.7-9f6e49.zip",
+                "reference": "991059551038fe1fd8cd4b3747f681bf3e993c2f",
+                "shasum": "af6e5d14149f2d9e075def4f6ac91393c9f86e9a"
             },
             "require": {
                 "2amigos/yii2-gallery-widget": "~1.0",
@@ -647,7 +647,7 @@
                 }
             ],
             "description": "This is core framework of ITM Platform",
-            "time": "2018-12-11T13:13:54+00:00"
+            "time": "2019-01-08T12:00:47+00:00"
         },
         {
             "name": "itmaster/entities",

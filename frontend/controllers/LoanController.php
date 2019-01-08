@@ -3,8 +3,10 @@
 namespace frontend\controllers;
 
 
+use common\library\loan\LoanReferralFollowingService;
 use common\library\loan\LoanService;
 use common\models\loan\Loan;
+use common\models\loan\LoanReferral;
 use frontend\models\loan\LoanSearch;
 use frontend\forms\loan\LoanCreateForm;
 use itmaster\core\controllers\frontend\FrontController;
@@ -57,7 +59,8 @@ class LoanController extends FrontController
 
         return $this->render('view-overdue', [
             'model' => $loan,
-            'blockchainPersonal' => $loanService->getBlockchainPersonal()
+            'blockchainPersonal' => $loanService->getBlockchainPersonal(),
+            'loanReferral' => LoanReferral::findByLoanIdAndCollectorId($id, Yii::$app->user->id),
         ]);
     }
 
@@ -80,6 +83,36 @@ class LoanController extends FrontController
         $loanService->setStatus();
 
         return $this->redirect(['view', 'id' => $id]);
+    }
+
+    /**
+     * Action only for digital-collector
+     * @param $id
+     * @return \yii\web\Response
+     */
+    public function actionJoinAsCollector($id)
+    {
+        if (LoanReferral::findByLoanIdAndCollectorId($id, Yii::$app->user->id) === null) {
+            $loanReferral = new LoanReferral();
+            $loanReferral->loan_id = $id;
+            $loanReferral->digital_collector_id = Yii::$app->user->id;
+            $loanReferral->save();
+        }
+
+        return $this->redirect(['view-overdue', 'id' => $id]);
+    }
+
+    /**
+     * Action only for borrower
+     * @param $slug
+     * @return \yii\web\Response
+     */
+    public function actionFollow($slug)
+    {
+        $loanReferralFollowingService = new LoanReferralFollowingService($slug, Yii::$app->user->id);
+        $loanReferralFollowingService->register();
+
+        return $this->redirect(['view', 'id' => $loanReferralFollowingService->getLoanReferral()->loan_id]);
     }
 
     public function actionOffers()

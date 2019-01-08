@@ -8,7 +8,6 @@ use common\models\user\User;
 use itmaster\core\behaviors\TimestampBehavior;
 use Yii;
 use yii\db\ActiveRecord;
-use yii\helpers\Url;
 
 /**
  * This is the model class for table "{{%loan}}".
@@ -223,7 +222,6 @@ class Loan extends ActiveRecord
         if (parent::beforeSave($insert)) {
             if ($this->isNewRecord) {
                 $this->generateSecretKey();
-                $this->generateRefSlug();
             }
             return true;
         }
@@ -254,26 +252,12 @@ class Loan extends ActiveRecord
     /**
      * @return void
      */
-    private function generateRefSlug()
-    {
-        $this->ref_slug = Yii::$app->getSecurity()->generateRandomString(10);
-    }
-
-    /**
-     * @return void
-     */
     private function createStatusHistory()
     {
         $statusHistory = new LoanStatusHistory();
         $statusHistory->status = $this->status;
         $statusHistory->link('loan', $this);
         $statusHistory->save(false);
-    }
-
-
-    public function getReferralLink()
-    {
-        return Url::to(['payment/referral', 'slug' => $this->ref_slug]);
     }
 
 }
