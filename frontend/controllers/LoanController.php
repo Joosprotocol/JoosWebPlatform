@@ -5,6 +5,7 @@ namespace frontend\controllers;
 
 use common\library\loan\LoanReferralFollowingService;
 use common\library\loan\LoanService;
+use common\library\utilitytoken\fee\DigitalCollectorFeeService;
 use common\models\loan\Loan;
 use common\models\loan\LoanReferral;
 use frontend\models\loan\LoanSearch;
@@ -78,6 +79,9 @@ class LoanController extends FrontController
     public function actionSetAsPaid($id)
     {
         $model = $this->findModel($id);
+        $DigitalCollectorFeeService = new DigitalCollectorFeeService($model);
+        $DigitalCollectorFeeService->withdrawBatch();
+
         $model->status = Loan::STATUS_PAID;
         $loanService = new LoanService($model);
         $loanService->setStatus();

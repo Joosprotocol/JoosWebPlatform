@@ -7,6 +7,7 @@ use common\models\notification\Notification;
 use itmaster\core\behaviors\TimestampBehavior;
 use itmaster\core\models\User as CoreUser;
 use itmaster\storage\behaviors\StorageUploadBehavior;
+use Yii;
 
 
 /**
@@ -15,6 +16,7 @@ use itmaster\storage\behaviors\StorageUploadBehavior;
  * @property Loan[] $loans
  * @property Loan[] $notifications
  * @property UserPersonal $personal
+ * @property BlockchainProfile $blockchainProfile
  * @property string $avatarUrl
  * @property array $personalArray
  * @property string $fullName
@@ -44,6 +46,20 @@ class User extends CoreUser
     }
 
     /**
+     * Returns key-value array of accessible rules for sign up
+     *
+     * @return array
+     */
+    public static function accessibleSignUpRoleList()
+    {
+        return [
+            self::ROLE_LENDER => Yii::t('app', 'Lender'),
+            self::ROLE_BORROWER => Yii::t('app', 'Borrower'),
+            self::ROLE_DIGITAL_COLLECTOR => Yii::t('app', 'Digital Collector'),
+        ];
+    }
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getLoans()
@@ -65,6 +81,14 @@ class User extends CoreUser
     public function getPersonal()
     {
         return $this->hasOne(UserPersonal::class, ['user_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getBlockchainProfile()
+    {
+        return $this->hasOne(BlockchainProfile::class, ['user_id' => 'id']);
     }
 
     /**

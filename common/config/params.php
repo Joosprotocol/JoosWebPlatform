@@ -6,6 +6,8 @@ return [
     'image' => ['width' => 160, 'height' => 160],
     'paginationOptions' => [10 => 10, 20 => 20, 30 => 30, 40 => 40, 50 => 50],
     'readOnlyMode' => false,
+    'loan.feeManualPercent' => 15,
+    'loan.feeJoosPercent' => 10,
     'adminMenuItems' => [
         [
             'name' => \Yii::t('app', 'Users'),
@@ -55,5 +57,8 @@ return [
             'slug' => 'payment',
             'items' => []
         ]
+    ],
+    'customRoutes' => [
+        '<controller:(auth)>/signup' => "<controller>/signup",
     ]
 ];

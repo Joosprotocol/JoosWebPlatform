@@ -11,8 +11,9 @@ use yii\web\NotFoundHttpException;
 class EthereumAPI extends Component implements BlockchainAPIInterface
 {
 
-    const REQUEST_TYPE_SEND = 'send';
-    const REQUEST_TYPE_CALL = 'call';
+    const REQUEST_TYPE_SEND_CONTRACT = 'send-contract';
+    const REQUEST_TYPE_CALL_CONTRACT = 'call-contract';
+    const REQUEST_TYPE_CALL_WEB3_CUSTOM = 'call-web3-custom';
 
     const RESPONSE_ERROR_PROPERTY = 'error';
     const RESPONSE_RESULT_PROPERTY = 'result';
@@ -33,7 +34,7 @@ class EthereumAPI extends Component implements BlockchainAPIInterface
      * @throws NotFoundHttpException
      * @throws ParseException
      */
-    public function execute($contractName, $requestType, $method, array $params)
+    public function executeContract($contractName, $requestType, $method, array $params)
     {
         $data = [
             "contract_name" => $contractName,
@@ -42,6 +43,38 @@ class EthereumAPI extends Component implements BlockchainAPIInterface
             "params" => $params
         ];
 
+        return $this->execute($data);
+    }
+
+    /**
+     * @param string $requestType
+     * @param string $method
+     * @param array $params
+     * @return object|string
+     * @throws APICallException
+     * @throws NotFoundHttpException
+     * @throws ParseException
+     */
+    public function executeWeb3($requestType, $method, array $params)
+    {
+        $data = [
+            "type" => $requestType,
+            "method" => $method,
+            "params" => $params
+        ];
+
+        return $this->execute($data);
+    }
+
+    /**
+     * @param array $data
+     * @return object|string
+     * @throws APICallException
+     * @throws NotFoundHttpException
+     * @throws ParseException
+     */
+    private function execute(array $data)
+    {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->_url);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -99,17 +132,25 @@ class EthereumAPI extends Component implements BlockchainAPIInterface
     /**
      * @return string
      */
-    public function getRequestTypeCall()
+    public function getRequestTypeContractCall()
     {
-        return self::REQUEST_TYPE_CALL;
+        return self::REQUEST_TYPE_CALL_CONTRACT;
     }
 
     /**
      * @return string
      */
-    public function getRequestTypeSend()
+    public function getRequestTypeContractSend()
     {
-        return self::REQUEST_TYPE_SEND;
+        return self::REQUEST_TYPE_SEND_CONTRACT;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRequestTypeWeb3Custom()
+    {
+        return self::REQUEST_TYPE_CALL_WEB3_CUSTOM;
     }
 
     /**

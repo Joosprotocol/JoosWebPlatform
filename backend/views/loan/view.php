@@ -37,7 +37,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'currency_type',
             'init_type',
             'secret_key',
-            'ref_slug',
             'created',
         ],
     ]) ?>

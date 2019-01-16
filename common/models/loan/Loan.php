@@ -21,7 +21,6 @@ use yii\db\ActiveRecord;
  * @property integer $init_type
  * @property integer $currency_type
  * @property string $secret_key
- * @property string $ref_slug
  * @property integer $created_at
  * @property integer $updated_at
  *
@@ -73,7 +72,6 @@ class Loan extends ActiveRecord
             [['status', 'currency_type', 'init_type'], 'required'],
             [['amount'], 'number'],
             [['secret_key'], 'string', 'max' => 255],
-            [['ref_slug'], 'string', 'max' => 10],
             [['currency_type'], 'in', 'range' => array_keys(self::currencyTypeList())],
             [['init_type'], 'in', 'range' => array_keys(self::initTypeList())],
             [['status'], 'in', 'range' => array_keys(self::statusList())],
@@ -133,7 +131,6 @@ class Loan extends ActiveRecord
             'init_type' => Yii::t('app', 'Init Type'),
             'currency_type' => Yii::t('app', 'Currency'),
             'secret_key' => Yii::t('app', 'Secret Key'),
-            'ref_slug' => Yii::t('app', 'Ref Slug'),
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
         ];

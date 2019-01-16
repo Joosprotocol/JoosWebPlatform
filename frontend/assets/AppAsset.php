@@ -13,7 +13,9 @@ class AppAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [];
-    public $js = [];
+    public $js = [
+        'js/SignUpHelper.js',
+    ];
     public $depends = [
         'itmaster\core\assets\FrontendAsset\FrontendAsset',
     ];

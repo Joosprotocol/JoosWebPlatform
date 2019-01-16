@@ -13,15 +13,28 @@ interface BlockchainAPIInterface
      * @param array $params
      * @return object|string
      */
-    public function execute($contractName, $requestType, $method, array $params);
+    public function executeContract($contractName, $requestType, $method, array $params);
+
+    /**
+     * @param string $requestType
+     * @param string $method
+     * @param array $params
+     * @return object|string
+     */
+    public function executeWeb3($requestType, $method, array $params);
 
     /**
      * @return string
      */
-    public function getRequestTypeCall();
+    public function getRequestTypeContractCall();
 
     /**
      * @return string
      */
-    public function getRequestTypeSend();
+    public function getRequestTypeContractSend();
+
+    /**
+     * @return string
+     */
+    public function getRequestTypeWeb3Custom();
 }

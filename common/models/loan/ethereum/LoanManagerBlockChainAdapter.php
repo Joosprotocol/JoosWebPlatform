@@ -34,9 +34,9 @@ class LoanManagerBlockChainAdapter
      */
     public function initLoan($loanId, $amount, $currencyType, $period, $percent, $initType)
     {
-        return $this->blockchain->execute(
+        return $this->blockchain->executeContract(
             self::CONTRACT_NAME,
-            $this->blockchain->getRequestTypeSend(),
+            $this->blockchain->getRequestTypeContractSend(),
             __FUNCTION__,
             func_get_args()
         );
@@ -57,9 +57,9 @@ class LoanManagerBlockChainAdapter
     public function setLoanParticipants($loanId, $lenderId, $lenderFullName, $borrowerId, $borrowerFullName, $personal)
     {
 
-        return $this->blockchain->execute(
+        return $this->blockchain->executeContract(
             self::CONTRACT_NAME,
-            $this->blockchain->getRequestTypeSend(),
+            $this->blockchain->getRequestTypeContractSend(),
             __FUNCTION__,
             func_get_args()
         );
@@ -76,9 +76,9 @@ class LoanManagerBlockChainAdapter
     public function setStatus($loanId, $status)
     {
 
-        return $this->blockchain->execute(
+        return $this->blockchain->executeContract(
             self::CONTRACT_NAME,
-            $this->blockchain->getRequestTypeSend(),
+            $this->blockchain->getRequestTypeContractSend(),
             __FUNCTION__,
             func_get_args()
         );
@@ -93,9 +93,9 @@ class LoanManagerBlockChainAdapter
     public function isOwner()
     {
 
-        return $this->blockchain->execute(
+        return $this->blockchain->executeContract(
             self::CONTRACT_NAME,
-            $this->blockchain->getRequestTypeCall(),
+            $this->blockchain->getRequestTypeContractCall(),
             __FUNCTION__,
             func_get_args()
         );
@@ -110,9 +110,9 @@ class LoanManagerBlockChainAdapter
      */
     public function isDeclared($loanId)
     {
-        return $this->blockchain->execute(
+        return $this->blockchain->executeContract(
             self::CONTRACT_NAME,
-            $this->blockchain->getRequestTypeCall(),
+            $this->blockchain->getRequestTypeContractCall(),
             __FUNCTION__,
             func_get_args()
         );
@@ -127,9 +127,9 @@ class LoanManagerBlockChainAdapter
      */
     public function isFull($loanId)
     {
-        return $this->blockchain->execute(
+        return $this->blockchain->executeContract(
             self::CONTRACT_NAME,
-            $this->blockchain->getRequestTypeCall(),
+            $this->blockchain->getRequestTypeContractCall(),
             __FUNCTION__,
             func_get_args()
         );
@@ -144,9 +144,9 @@ class LoanManagerBlockChainAdapter
      */
     public function isOverdue($loanId)
     {
-        return $this->blockchain->execute(
+        return $this->blockchain->executeContract(
             self::CONTRACT_NAME,
-            $this->blockchain->getRequestTypeCall(),
+            $this->blockchain->getRequestTypeContractCall(),
             __FUNCTION__,
             func_get_args()
         );
@@ -161,9 +161,9 @@ class LoanManagerBlockChainAdapter
      */
     public function getStatus($loanId)
     {
-        return $this->blockchain->execute(
+        return $this->blockchain->executeContract(
             self::CONTRACT_NAME,
-            $this->blockchain->getRequestTypeCall(),
+            $this->blockchain->getRequestTypeContractCall(),
             __FUNCTION__,
             func_get_args()
         );
@@ -178,9 +178,9 @@ class LoanManagerBlockChainAdapter
      */
     public function getLoanParticipants($loanId)
     {
-        return $this->blockchain->execute(
+        return $this->blockchain->executeContract(
             self::CONTRACT_NAME,
-            $this->blockchain->getRequestTypeCall(),
+            $this->blockchain->getRequestTypeContractCall(),
             __FUNCTION__,
             func_get_args()
         );
