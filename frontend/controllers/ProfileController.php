@@ -6,14 +6,36 @@ use common\models\user\User;
 use common\models\user\UserPersonal;
 use itmaster\core\controllers\frontend\FrontController;
 use Yii;
+use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 
 /**
  * AccountController implements the CRUD actions for Page model.
  * @package itmaster\core\controllers\frontend
  */
-class AccountController extends FrontController
+class ProfileController extends FrontController
 {
+
+    /**
+     * @return array
+     */
+    public function behaviors()
+    {
+        $behaviors = parent::behaviors();
+        $behaviors['access'] = [
+            'class' => AccessControl::className(),
+            'rules' => [
+                [
+                    'allow' => true,
+                    'actions' => ['view', 'update'],
+                    'roles' => ['@'],
+                ],
+
+            ],
+        ];
+        return $behaviors;
+    }
+
     /**
      * @param $action
      * @return mixed

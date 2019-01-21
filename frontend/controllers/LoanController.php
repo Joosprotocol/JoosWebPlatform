@@ -8,11 +8,14 @@ use common\library\loan\LoanService;
 use common\library\utilitytoken\fee\DigitalCollectorFeeService;
 use common\models\loan\Loan;
 use common\models\loan\LoanReferral;
+use common\models\user\User;
 use frontend\models\loan\LoanSearch;
 use frontend\forms\loan\LoanCreateForm;
+use itmaster\core\access\AccessManager;
 use itmaster\core\controllers\frontend\FrontController;
 use Yii;
 
+use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -20,6 +23,49 @@ use yii\web\NotFoundHttpException;
  */
 class LoanController extends FrontController
 {
+
+    /**
+     * @return array
+     */
+    public function behaviors()
+    {
+        $behaviors = parent::behaviors();
+        $behaviors['access'] = [
+            'class' => AccessControl::className(),
+            'rules' => [
+                [
+                    'allow' => true,
+                    'actions' => ['permission'],
+                    'roles' => ['@'],
+                ],
+                [
+                    'allow' => true,
+                    'actions' => ['view-overdue', 'loans-overdue', 'join-as-collector'],
+                    'roles' => ['custom.permission.digital-collector:' . AccessManager::VIEW],
+                ],
+                [
+                    'allow' => true,
+                    'actions' => ['set-as-paid', 'requests'],
+                    'roles' => ['custom.permission.lender:' . AccessManager::VIEW],
+                ],
+                [
+                    'allow' => true,
+                    'actions' => ['offers', 'follow'],
+                    'roles' => ['custom.permission.borrower:' . AccessManager::VIEW],
+                ],
+                [
+                    'allow' => true,
+                    'actions' => ['view', 'create', 'sign'],
+                    'roles' => [
+                        'custom.permission.lender:' . AccessManager::VIEW,
+                        'custom.permission.borrower:' . AccessManager::VIEW
+                    ],
+                ],
+
+              ],
+        ];
+        return $behaviors;
+    }
 
     /**
      * @param $action
@@ -68,10 +114,10 @@ class LoanController extends FrontController
     public function actionSign($id)
     {
         $model = $this->findModel($id);
-        $model->borrower_id = Yii::$app->user->id;
-        $model->status = Loan::STATUS_SIGNED;
+        /** @var  $user */
+        $user = User::findOne(Yii::$app->user->id);
         $loanService = new LoanService($model);
-        $loanService->sign();
+        $loanService->sign($user);
 
         return $this->redirect(['view', 'id' => $id]);
     }
@@ -82,9 +128,8 @@ class LoanController extends FrontController
         $DigitalCollectorFeeService = new DigitalCollectorFeeService($model);
         $DigitalCollectorFeeService->withdrawBatch();
 
-        $model->status = Loan::STATUS_PAID;
         $loanService = new LoanService($model);
-        $loanService->setStatus();
+        $loanService->setStatus(Loan::STATUS_PAID);
 
         return $this->redirect(['view', 'id' => $id]);
     }

@@ -61,6 +61,7 @@ return [
         ]
     ],
     'customRoutes' => [
-        '<controller:(auth)>/signup' => "<controller>/signup",
+        '<controller:(auth)>/<action:(signup)>' => "<controller>/<action>",
+        '<controller:(profile)>/<action:(view|update)>' => "<controller>/<action>",
     ]
 ];

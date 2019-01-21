@@ -47,25 +47,25 @@ $config = [
                 'google' => [
                     //https://console.developers.google.com/apis/credentials?project=yii2-cms
                     'class' => 'yii\authclient\clients\Google',
-                    'clientId' => '882986957416-kjngefqsqq937pmldbuk4ec20b943ius.apps.googleusercontent.com',
-                    'clientSecret' => 'vsHz7lkEqOQq5WEFvRyh2ksh',
+                    'clientId' => '',
+                    'clientSecret' => '',
                 ],
                 'facebook' => [
                     //https://developers.facebook.com/apps/1677872889155104/dashboard/
                     'class' => 'yii\authclient\clients\Facebook',
-                    'clientId' => '1677872889155104',
-                    'clientSecret' => '79b3e34fe33a78d7b3d6f18c3c08cde9',
+                    'clientId' => '',
+                    'clientSecret' => '',
                 ],
                 'twitter' => [
                     'class' => 'yii\authclient\clients\Twitter',
-                    'consumerKey' => 'YFY3D4L6C2xNI0WpNtZYVIwPt',
-                    'consumerSecret' => 'RbQgeHVU2AP1cGnTsWHK9sh0cjwGc2cTnyhtlE8d3EOjbxk3vL',
+                    'consumerKey' => '',
+                    'consumerSecret' => '',
                 ],
                 'vkontakte' => [
                     //http://vk.com/editapp?id=5225211&section=info
                     'class' => 'yii\authclient\clients\VKontakte',
-                    'clientId' => '5225211',
-                    'clientSecret' => 'wzefF2RwBDU5TnJpL1Yq',
+                    'clientId' => '',
+                    'clientSecret' => '',
                 ],
             ],
         ],

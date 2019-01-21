@@ -3,8 +3,10 @@
 namespace common\library\loan;
 
 use common\library\crypt\CryptorInterface;
+use common\library\ethereum\EthereumAPI;
 use common\models\loan\ethereum\LoanManagerBlockChainAdapter;
 use common\models\loan\Loan;
+use common\models\user\User;
 use Yii;
 use yii\base\Exception;
 
@@ -15,7 +17,10 @@ class LoanService
 
     /** @var Loan  */
     private $loan;
+    /** @var EthereumAPI */
     private $ethereumApi;
+    /** @var User */
+    private $user;
 
     public function __construct(Loan $loan)
     {
@@ -26,10 +31,13 @@ class LoanService
     /**
      * Create record in blockchain with two signers and
      * save the loan
+     * @param User $user
      * @return bool
      */
-    public function sign(): bool
+    public function sign(User $user) : bool
     {
+        $this->user = $user;
+        $this->loadSignerData();
         $transaction = Yii::$app->db->beginTransaction();
         $valid = $this->loan->save();
         $loanManagerAdapter = new LoanManagerBlockChainAdapter($this->ethereumApi);
@@ -69,10 +77,12 @@ class LoanService
     }
 
     /**
+     * @param integer $status
      * @return bool
      */
-    public function setStatus() : bool
+    public function setStatus($status) : bool
     {
+        $this->loan->status = $status;
         $transaction = Yii::$app->db->beginTransaction();
 
         $valid = $this->loan->save();
@@ -118,6 +128,31 @@ class LoanService
         $personal = $this->loan->borrower->personalArray;
         $personalJson = json_encode($personal);
         return $basicCryptor->encode($personalJson, $this->loan->secret_key);
+    }
+
+    /**
+     * @return void
+     */
+    private function loadSignerData() : void
+    {
+        if ($this->loan->init_type === Loan::INIT_TYPE_OFFER) {
+            if ($this->user->roleName !== User::ROLE_BORROWER) {
+                throw new \LogicException('Only borrower can sign offer.');
+            }
+            $this->loan->borrower_id = $this->user->id;
+        }
+
+        if ($this->loan->init_type === Loan::INIT_TYPE_REQUEST) {
+            if ($this->user->roleName !== User::ROLE_LENDER) {
+                throw new \LogicException('Only lender can sign request.');
+            }
+            $this->loan->lender_id = $this->user->id;
+        }
+
+        if ($this->loan->lender_id === null || $this->loan->borrower_id  === null ) {
+            throw new \LogicException('Invalid data for a signed loan.');
+        }
+        $this->loan->status = Loan::STATUS_SIGNED;
     }
 
 }

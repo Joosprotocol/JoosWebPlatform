@@ -2,12 +2,11 @@
 
 namespace frontend\controllers;
 
-use common\models\user\User;
 use frontend\forms\user\UserSignUpForm;
 use itmaster\core\controllers\AuthController as BaseAuthController;
 use Yii;
 use yii\bootstrap\ActiveForm;
-use yii\web\Request;
+use yii\filters\AccessControl;
 use yii\web\Response;
 
 
@@ -17,6 +16,27 @@ use yii\web\Response;
  */
 class AuthController extends BaseAuthController
 {
+
+    /**
+     * @return array
+     */
+    public function behaviors()
+    {
+        $behaviors = parent::behaviors();
+        $behaviors['access'] = [
+            'class' => AccessControl::className(),
+            'rules' => [
+                [
+                    'allow' => true,
+                    'actions' => ['signup'],
+                    'roles' => ['?'],
+                ],
+
+            ],
+        ];
+        return $behaviors;
+    }
+
     /**
      * @param $options
      * @return array
