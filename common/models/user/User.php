@@ -88,7 +88,9 @@ class User extends CoreUser
      */
     public function getBlockchainProfile()
     {
-        return $this->hasOne(BlockchainProfile::class, ['user_id' => 'id']);
+        return $this->hasOne(BlockchainProfile::class, ['user_id' => 'id'])
+            ->where(['active' => BlockchainProfile::AC])
+            ->orderBy(['created_ad' => SORT_DESC]);
     }
 
     /**

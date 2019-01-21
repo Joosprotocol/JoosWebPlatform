@@ -12,7 +12,9 @@ return [
         [
             'name' => \Yii::t('app', 'Users'),
             'slug' => 'user',
-            'items' => []
+            'items' => [
+                ['label' => Yii::t('app', 'Personal'), 'url' => ['/user-personal/index']],
+            ]
         ],
         [
             'name' => \Yii::t('app', 'Roles'),

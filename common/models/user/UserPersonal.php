@@ -2,6 +2,7 @@
 
 namespace common\models\user;
 
+use itmaster\core\behaviors\TimestampBehavior;
 use itmaster\storage\behaviors\ThumbnailUploadBehavior;
 use Yii;
 use yii\db\ActiveRecord;
@@ -17,12 +18,20 @@ use yii\db\ActiveRecord;
  * @property string $facebook_friend_first_url
  * @property string $facebook_friend_second_url
  * @property string $facebook_friend_third_url
+ * @property integer active
+ * @property integer $created_at
+ * @property integer $updated_at
  *
+ * @property string $created
+ * @property string $updated
  * @property User $user
  * @property string issuedIdUrl
  */
 class UserPersonal extends ActiveRecord
 {
+    const ACTIVE_NO = 0;
+    const ACTIVE_YES = 1;
+
     /**
      * @inheritdoc
      */
@@ -38,6 +47,7 @@ class UserPersonal extends ActiveRecord
     public function behaviors()
     {
         return [
+            TimestampBehavior::class,
             [
                 'class' => ThumbnailUploadBehavior::class,
                 'rules' => [
@@ -54,7 +64,7 @@ class UserPersonal extends ActiveRecord
     {
         return [
             [['user_id', 'facebook_url', 'social_url', 'mobile_number', 'facebook_friend_first_url', 'facebook_friend_second_url', 'facebook_friend_third_url'], 'required'],
-            [['user_id'], 'integer'],
+            [['user_id', 'active'], 'integer'],
             [['facebook_url', 'social_url', 'facebook_friend_first_url', 'facebook_friend_second_url', 'facebook_friend_third_url'], 'string', 'max' => 255],
             [['mobile_number'], 'string', 'max' => 15],
             [['user_id'], 'unique'],
