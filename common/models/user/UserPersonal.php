@@ -3,7 +3,8 @@
 namespace common\models\user;
 
 use itmaster\core\behaviors\TimestampBehavior;
-use itmaster\storage\behaviors\ThumbnailUploadBehavior;
+use itmaster\entity\Unique;
+use itmaster\storage\behaviors\StorageUploadBehavior;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -27,7 +28,7 @@ use yii\db\ActiveRecord;
  * @property User $user
  * @property string issuedIdUrl
  */
-class UserPersonal extends ActiveRecord
+class UserPersonal extends ActiveRecord implements Unique
 {
     const ACTIVE_NO = 0;
     const ACTIVE_YES = 1;
@@ -49,9 +50,9 @@ class UserPersonal extends ActiveRecord
         return [
             TimestampBehavior::class,
             [
-                'class' => ThumbnailUploadBehavior::class,
+                'class' => StorageUploadBehavior::class,
                 'rules' => [
-                    [['issuedId'], 'skipOnEmpty' => true, 'maxSize' => 2048 * 2048],
+                    [['issuedId'], 'extensions' => 'png, jpg, jpeg, gif', 'skipOnEmpty' => true, 'maxSize' => 2048 * 2048],
                 ],
             ],
         ];
@@ -67,7 +68,6 @@ class UserPersonal extends ActiveRecord
             [['user_id', 'active'], 'integer'],
             [['facebook_url', 'social_url', 'facebook_friend_first_url', 'facebook_friend_second_url', 'facebook_friend_third_url'], 'string', 'max' => 255],
             [['mobile_number'], 'string', 'max' => 15],
-            [['user_id'], 'unique'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
@@ -81,6 +81,39 @@ class UserPersonal extends ActiveRecord
         return [
             self::SCENARIO_DEFAULT => self::OP_ALL,
         ];
+    }
+
+
+    /**
+     * @inheritdoc
+     */
+    public static function instantiate($row)
+    {
+        return new static($row);
+    }
+
+    /**
+     * @return string
+     */
+    public static function getUPrefixStatic(): string
+    {
+        return 'userPersonal_';
+    }
+
+    /**
+     * @return string
+     */
+    public function getUPrefix(): string
+    {
+        return static::getUPrefixStatic();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getUId(): string
+    {
+        return $this->getUPrefix() . $this->id;
     }
 
     /**

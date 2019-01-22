@@ -36,14 +36,13 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'id',
             'user.email',
-            'status',
             'created',
 
             [
                 'class' => 'yii\grid\ActionColumn',
                 'headerOptions' => ['class'=>'skip-export'],
                 'contentOptions' => ['class'=>'skip-export'],
-                'template' => '{view}',
+                'template' => '{view} &nbsp {delete}',
             ],
         ],
     ]); ?>

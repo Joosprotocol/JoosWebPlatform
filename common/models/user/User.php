@@ -16,6 +16,7 @@ use Yii;
  * @property Loan[] $loans
  * @property Loan[] $notifications
  * @property UserPersonal $personal
+ * @property UserPersonal $personalActive
  * @property BlockchainProfile $blockchainProfile
  * @property string $avatarUrl
  * @property array $personalArray
@@ -80,7 +81,18 @@ class User extends CoreUser
      */
     public function getPersonal()
     {
-        return $this->hasOne(UserPersonal::class, ['user_id' => 'id']);
+        return $this->hasOne(UserPersonal::class, ['user_id' => 'id'])
+            ->orderBy(['created_at' => SORT_DESC]);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPersonalActive()
+    {
+        return $this->hasOne(UserPersonal::class, ['user_id' => 'id'])
+            ->where(['active' => UserPersonal::ACTIVE_YES])
+            ->orderBy(['created_at' => SORT_DESC]);
     }
 
     /**
@@ -88,9 +100,7 @@ class User extends CoreUser
      */
     public function getBlockchainProfile()
     {
-        return $this->hasOne(BlockchainProfile::class, ['user_id' => 'id'])
-            ->where(['active' => BlockchainProfile::AC])
-            ->orderBy(['created_ad' => SORT_DESC]);
+        return $this->hasOne(BlockchainProfile::class, ['user_id' => 'id']);
     }
 
     /**

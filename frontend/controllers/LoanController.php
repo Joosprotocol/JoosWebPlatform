@@ -125,11 +125,13 @@ class LoanController extends FrontController
     public function actionSetAsPaid($id)
     {
         $model = $this->findModel($id);
+        /** @var  $user */
+        $user = User::findOne(Yii::$app->user->id);
         $DigitalCollectorFeeService = new DigitalCollectorFeeService($model);
         $DigitalCollectorFeeService->withdrawBatch();
 
         $loanService = new LoanService($model);
-        $loanService->setStatus(Loan::STATUS_PAID);
+        $loanService->setStatus($user, Loan::STATUS_PAID);
 
         return $this->redirect(['view', 'id' => $id]);
     }

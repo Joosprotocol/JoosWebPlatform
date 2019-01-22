@@ -73,8 +73,7 @@
                 'links' : breadcrumbs,
             })|raw(html) }}
 
-            {{ use('itmaster/core/widgets/Alert') }}
-            {{ Alert.widget() }}
+            {{ Alert.widget()|raw(html) }}
 
             {#page content #}
             {% if page %}

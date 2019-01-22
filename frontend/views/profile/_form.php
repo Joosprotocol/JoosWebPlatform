@@ -15,9 +15,10 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data', 'class' => 'form-horizontal']]); ?>
 
-    <?= $this->render('_avatar', [
+    <?= $this->render('_image', [
         'model' => $model,
-        'form' => $form
+        'form' => $form,
+        'attributeName' => 'avatar'
     ]) ?>
 
         <?= $form->field($model, 'username')->textInput(['maxlength' => true]) ?>
@@ -29,6 +30,12 @@ use yii\widgets\ActiveForm;
         <?= $form->field($model, 'last_name')->textInput(['maxlength' => true]) ?>
 
         <?php if ($model->roleName === User::ROLE_BORROWER): ?>
+
+            <?= $this->render('_image', [
+                'model' => $personal,
+                'form' => $form,
+                'attributeName' => "issuedId"
+            ]) ?>
 
             <?= $form->field($personal, 'facebook_url')->textInput(['maxlength' => true]) ?>
 

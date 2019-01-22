@@ -3,16 +3,18 @@ use itmaster\core\widgets\Gallery;
 use yii\helpers\Html;
 use kartik\file\FileInput;
 
+/** @var string $attributeName */
+
 ?>
 
 <?= Gallery::widget() ?>
 
-<?= $form->field($model, 'avatar')->widget(FileInput::classname(), [
+<?= $form->field($model, $attributeName)->widget(FileInput::classname(), [
     'pluginOptions' => [
         'initialPreview' => [
-            !empty($model->avatarUrl)
-                ? '<a href="' . $model->avatarUrl . '" title="avatar" data-gallery>'
-                . Html::img($model->avatarUrl, ['class' => 'img-preview', 'title' => 'avatar', 'alt' => 'avatar'])
+            !empty($model->{$attributeName  . 'Url'})
+                ? '<a href="' . $model->{$attributeName  . 'Url'} . '" title="' . $attributeName . '" data-gallery>'
+                . Html::img($model->{$attributeName  . 'Url'}, ['class' => 'img-preview', 'title' => $attributeName, 'alt' => $attributeName])
                 . '<br />'
                 . '</a>'
                 : null

@@ -77,13 +77,18 @@ class LoanService
     }
 
     /**
+     * @param User $lender
      * @param integer $status
      * @return bool
      */
-    public function setStatus($status) : bool
+    public function setStatus(User $lender, int $status) : bool
     {
         $this->loan->status = $status;
+        $this->user = $lender;
         $transaction = Yii::$app->db->beginTransaction();
+        if ($this->isLenderOfLoan()) {
+            throw new \LogicException('Only lender owner can change status.');
+        }
 
         $valid = $this->loan->save();
 
@@ -115,7 +120,7 @@ class LoanService
      */
     private function isPersonalDataExists() : bool
     {
-        return !empty($this->loan->borrower->personal);
+        return !empty($this->loan->borrower->personalActive);
     }
 
     /**
@@ -149,10 +154,18 @@ class LoanService
             $this->loan->lender_id = $this->user->id;
         }
 
-        if ($this->loan->lender_id === null || $this->loan->borrower_id  === null ) {
+        if ($this->loan->lender_id === null || $this->loan->borrower_id  === null) {
             throw new \LogicException('Invalid data for a signed loan.');
         }
         $this->loan->status = Loan::STATUS_SIGNED;
+    }
+
+    /**
+     * @return bool
+     */
+    private function isLenderOfLoan() : bool
+    {
+        return $this->user->id === $this->loan->lender_id;
     }
 
 }

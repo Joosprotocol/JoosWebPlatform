@@ -19,6 +19,7 @@ class UserPersonalController extends BackendController
     public function actionIndex()
     {
         $searchModel = new UserPersonalSearch();
+        $searchModel->activeStrong = UserPersonal::ACTIVE_NO;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -51,6 +52,13 @@ class UserPersonalController extends BackendController
                 'model' => $model,
             ]);
         }
+    }
+
+    public function actionDelete($id)
+    {
+        $this->findModel($id)->delete();
+
+        return $this->redirect(['index']);
     }
 
 

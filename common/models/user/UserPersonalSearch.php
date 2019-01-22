@@ -10,6 +10,9 @@ use yii\data\ActiveDataProvider;
  */
 class UserPersonalSearch extends UserPersonal
 {
+    /** @var int */
+    public $activeStrong;
+
     /**
      * @inheritdoc
      */
@@ -54,6 +57,12 @@ class UserPersonalSearch extends UserPersonal
             'user_id' => $this->user_id,
             'created_at' => $this->created_at,
         ]);
+
+        if ($this->activeStrong !== null) {
+            $query->andFilterWhere([
+                'active' => $this->activeStrong,
+            ]);
+        }
 
         return $dataProvider;
     }

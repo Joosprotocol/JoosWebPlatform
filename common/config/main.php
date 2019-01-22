@@ -119,6 +119,7 @@ $config = [
                         'SnippetFrontend' => 'itmaster\core\modules\snippet\models\frontend\Snippet',
                         'Toolbar' => 'itmaster\core\helpers\Toolbar',
                         'CallbackHelper' => 'itmaster\core\helpers\CallbackHelper',
+                        'Alert' => 'itmaster\core\widgets\Alert',
                     ],
                     'functions' => [
                         't' => 'Yii::t',

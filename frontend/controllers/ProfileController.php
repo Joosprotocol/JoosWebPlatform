@@ -75,7 +75,7 @@ class ProfileController extends FrontController
     {
         $model = $this->findModel(Yii::$app->user->getIdentity()->getId());
 
-        $personal = (!empty($model->personal)) ? $model->personal : new UserPersonal();
+        $personal = new UserPersonal();
 
         if ($model->load(Yii::$app->request->post())) {
             $transaction = Yii::$app->db->beginTransaction();
@@ -96,7 +96,7 @@ class ProfileController extends FrontController
 
         return $this->render('update', [
             'model' => $model,
-            'personal' => $personal,
+            'personal' => (!empty($model->personal)) ? $model->personal : new UserPersonal(),
         ]);
     }
 

@@ -5,9 +5,9 @@ namespace frontend\forms\loan;
 
 use common\models\loan\Loan;
 use common\models\user\User;
+use LogicException;
 use Yii;
 use yii\base\Model;
-use yii\web\ForbiddenHttpException;
 use yii\web\UnauthorizedHttpException;
 
 class LoanCreateForm extends Model
@@ -22,6 +22,8 @@ class LoanCreateForm extends Model
     public $currency_type;
     /** @var Loan */
     private $loan;
+    /** @var User  */
+    private $user;
 
     /**
      * @inheritdoc
@@ -38,8 +40,8 @@ class LoanCreateForm extends Model
 
     /**
      * LoanOfferForm constructor.
-     * @param int $init_type
      * @throws UnauthorizedHttpException
+     * @internal param int $init_type
      */
     public function __construct()
     {
@@ -48,16 +50,15 @@ class LoanCreateForm extends Model
             throw new UnauthorizedHttpException('User must be authorized.');
         }
 
-        $this->checkAvailableUserRole(Yii::$app->user->identity->roleName);
-
+        $this->user = User::findOne(Yii::$app->user->id);
         $this->loan = new Loan();
         $this->loan->loadDefaultValues();
-        if (Yii::$app->user->identity->roleName === User::ROLE_LENDER) {
+        if ($this->user->roleName === User::ROLE_LENDER) {
             $this->loan->lender_id = Yii::$app->user->id;
             $this->loan->init_type = Loan::INIT_TYPE_OFFER;
         }
 
-        if (Yii::$app->user->identity->roleName === User::ROLE_BORROWER) {
+        if ($this->user->roleName === User::ROLE_BORROWER) {
             $this->loan->borrower_id = Yii::$app->user->id;
             $this->loan->init_type = Loan::INIT_TYPE_REQUEST;
         }
@@ -68,6 +69,12 @@ class LoanCreateForm extends Model
      */
     public function save()
     {
+        try {
+            $this->checkCanCreateLoan($this->user);
+        } catch (LogicException $exception) {
+            Yii::$app->getSession()->setFlash('error', $exception->getMessage());
+            return false;
+        }
         $this->loan->currency_type = $this->currency_type;
         $this->loan->amount = $this->amount;
         $this->loan->period = $this->period_days * self::PERIOD_DAY;
@@ -79,13 +86,17 @@ class LoanCreateForm extends Model
     }
 
     /**
-     * @param string $roleName
-     * @throws ForbiddenHttpException
+     * @param User $user
+     * @throws LogicException
      */
-    private function checkAvailableUserRole($roleName)
+    private function checkCanCreateLoan($user)
     {
-        if (!in_array($roleName, [User::ROLE_BORROWER, User::ROLE_LENDER])) {
-            throw new ForbiddenHttpException($roleName);
+        if (!in_array($user->roleName, [User::ROLE_BORROWER, User::ROLE_LENDER])) {
+            throw new LogicException($user->roleName . 'can\'t create loan.');
+        }
+
+        if ($user->roleName === User::ROLE_BORROWER && empty($user->personalActive)) {
+            throw new LogicException('Personal information not found.');
         }
     }
 

@@ -35,6 +35,8 @@ $this->title = $model->username;
 
     <?php if ($model->roleName === User::ROLE_BORROWER): ?>
 
+        <img src="<?= $personal->issuedIdUrl ?>" alt="">
+
         <?= DetailView::widget([
             'model' => $personal,
             'attributes' => [

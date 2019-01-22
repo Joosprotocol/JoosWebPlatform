@@ -13,7 +13,8 @@ return [
             'name' => \Yii::t('app', 'Users'),
             'slug' => 'user',
             'items' => [
-                ['label' => Yii::t('app', 'Personal'), 'url' => ['/user-personal/index']],
+                ['label' => Yii::t('app', 'Users'), 'url' => ['/user/index']],
+                ['label' => Yii::t('app', 'Personal'), 'url' => ['/user-personal/index']]
             ]
         ],
         [
