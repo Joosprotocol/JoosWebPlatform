@@ -5,6 +5,7 @@ namespace common\models\loan;
 use common\library\date\DateIntervalEnhanced;
 use common\models\payment\Payment;
 use common\models\user\User;
+use DateTime;
 use itmaster\core\behaviors\TimestampBehavior;
 use Yii;
 use yii\db\ActiveRecord;
@@ -23,6 +24,7 @@ use yii\db\ActiveRecord;
  * @property string $secret_key
  * @property integer $created_at
  * @property integer $updated_at
+ * @property integer $signed_at
  *
  * @property User $borrower
  * @property User $lender
@@ -255,6 +257,44 @@ class Loan extends ActiveRecord
         $statusHistory->status = $this->status;
         $statusHistory->link('loan', $this);
         $statusHistory->save(false);
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getTimeLeft()
+    {
+        if ($this->signed_at === null || $this->period === null) {
+            return null;
+        }
+        $timestamp = (new DateTime())->getTimestamp();
+        if ($timestamp > ($this->signed_at + $this->period)) {
+            return null;
+        }
+        $interval = (($this->signed_at + $this->period) - $timestamp);
+        $dateInterval = new DateIntervalEnhanced('PT' . $interval . 'S');
+        $dateInterval->recalculate();
+
+        return $dateInterval->getFormatted();
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getTimeOverdue()
+    {
+        if ($this->signed_at === null || $this->period === null) {
+            return null;
+        }
+        $timestamp = (new DateTime())->getTimestamp();
+        if ($timestamp < ($this->signed_at + $this->period)) {
+            return null;
+        }
+        $interval = ($timestamp - ($this->signed_at + $this->period));
+        $dateInterval = new DateIntervalEnhanced('PT' . $interval . 'S');
+        $dateInterval->recalculate();
+
+        return $dateInterval->getFormatted();
     }
 
 }

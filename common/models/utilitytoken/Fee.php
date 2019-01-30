@@ -4,6 +4,7 @@ namespace common\models\utilitytoken;
 
 use common\models\loan\Loan;
 use common\models\user\User;
+use itmaster\core\behaviors\TimestampBehavior;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -46,6 +47,17 @@ class Fee extends ActiveRecord
             [['amount'], 'number'],
             [['loan_id'], 'exist', 'skipOnError' => true, 'targetClass' => Loan::class, 'targetAttribute' => ['loan_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
+        ];
+    }
+
+    /**
+     * Method for defining behaviors
+     * @return array
+     */
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::class,
         ];
     }
 

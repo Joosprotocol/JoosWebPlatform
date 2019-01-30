@@ -26,6 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'currencyTypeName',
             'initTypeName',
             'created',
+            'timeOverdue',
             'statusName'
         ],
     ]) ?>

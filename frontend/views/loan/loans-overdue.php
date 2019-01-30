@@ -31,6 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'amount',
             'formattedPeriod',
             'currencyTypeName',
+            'timeOverdue',
             'created',
             [
                 'attribute' => 'Sign',

@@ -186,4 +186,21 @@ class LoanManagerBlockChainAdapter
         );
     }
 
+    /**
+     * @param integer $loanId
+     * @throws APICallException
+     * @throws NotFoundHttpException
+     * @throws ParseException
+     * @return object
+     */
+    public function getLoanInfo($loanId)
+    {
+        return $this->blockchain->executeContract(
+            self::CONTRACT_NAME,
+            $this->blockchain->getRequestTypeContractCall(),
+            __FUNCTION__,
+            func_get_args()
+        );
+    }
+
 }

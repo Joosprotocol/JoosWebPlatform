@@ -14,12 +14,16 @@ class LoanQueryLibrary
      * @param integer $loanId
      * @return User[]
      */
-    public static function getSuccessfulDigitalCollectorsByLoan($loanId) : array
+    public static function getDigitalCollectorsByLoan(int $loanId, bool $onlySuccessful = false) : array
     {
-        return User::find()
+        $query = User::find()
             ->innerJoin(LoanReferral::tableName(), LoanReferral::tableName() . '.digital_collector_id = ' . User::tableName() . '.id')
-            ->innerJoin(LoanFollowing::tableName(), LoanFollowing::tableName() . '.loan_referral_id = ' . LoanReferral::tableName() . '.id')
-            ->where([LoanReferral::tableName() . '.loan_id' => $loanId])
-            ->all();
+            ->where([LoanReferral::tableName() . '.loan_id' => $loanId]);
+
+        if ($onlySuccessful === true) {
+            $query->innerJoin(LoanFollowing::tableName(), LoanFollowing::tableName() . '.loan_referral_id = ' . LoanReferral::tableName() . '.id');
+        }
+
+        return $query->all();
     }
 }

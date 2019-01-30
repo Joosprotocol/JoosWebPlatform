@@ -10,7 +10,7 @@ use yii\console\Controller;
 use yii\helpers\Console;
 
 /**
- * Class HelloController
+ * Class RolesController
  * @package console\controllers
  */
 class RolesController extends Controller

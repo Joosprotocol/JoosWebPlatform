@@ -95,6 +95,18 @@ $config = [
             'cipherMode' => 'AES-256-CBC',
             'algorithm' => 'SHA256'
         ],
+        'log' => [
+            'traceLevel' => YII_DEBUG ? 3 : 0,
+            'targets' => [
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'categories' => ['blockchain'],
+                    'logFile' => '@runtime/logs/blockchain.log',
+                    'logVars' => [],
+                    'levels' => ['info', 'error', 'warning']
+                ],
+            ],
+        ],
         'view' => [
             'class' => 'yii\web\View',
             'renderers' => [
