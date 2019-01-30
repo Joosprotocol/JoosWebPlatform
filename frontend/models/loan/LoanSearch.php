@@ -14,9 +14,11 @@ class LoanSearch extends LoanSearchBase
 {
 
     /** @var  integer */
-    public $init_type_strong;
+    public $initTypeStrong;
     /** @var  integer */
-    public $status_strong;
+    public $statusStrong;
+    /** @var  integer */
+    public $ownerId;
 
     /**
      * @inheritdoc
@@ -47,7 +49,8 @@ class LoanSearch extends LoanSearchBase
      */
     public function search($params)
     {
-        $query = Loan::find();
+        $query = Loan::find()
+            ->alias('l');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -60,25 +63,33 @@ class LoanSearch extends LoanSearchBase
         }
 
         $query->andFilterWhere([
-            'id' => $this->id,
-            'lender_id' => $this->lender_id,
-            'borrower_id' => $this->borrower_id,
-            'status' => $this->status,
-            'amount' => $this->amount,
-            'period' => $this->period,
-            'currency_type' => $this->currency_type,
-            'init_type' => $this->init_type,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'l.id' => $this->id,
+            'l.lender_id' => $this->lender_id,
+            'l.borrower_id' => $this->borrower_id,
+            'l.status' => $this->status,
+            'l.amount' => $this->amount,
+            'l.period' => $this->period,
+            'l.currency_type' => $this->currency_type,
+            'l.init_type' => $this->init_type,
+            'l.created_at' => $this->created_at,
+            'l.updated_at' => $this->updated_at,
         ]);
 
         $query->andFilterWhere([
-            'init_type' => $this->init_type_strong,
-            'status' => $this->status_strong
-
+            'l.init_type' => $this->initTypeStrong,
+            'l.status' => $this->statusStrong
         ]);
 
-
+        if ($this->ownerId !== null) {
+            $query
+                ->joinWith('loanReferrals as lr')
+                ->andFilterWhere([
+                'or',
+                'l.lender_id=' . $this->ownerId,
+                'l.borrower_id=' . $this->ownerId,
+                'lr.digital_collector_id=' . $this->ownerId
+            ]);
+        }
 
         return $dataProvider;
     }

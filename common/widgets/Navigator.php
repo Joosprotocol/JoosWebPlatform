@@ -93,10 +93,14 @@ class Navigator extends CoreNavigator
      */
     private function isVisibleForRole($item)
     {
+        if (!isset($item->roles)) {
+            return true;
+        }
+
         if (empty($item->roles)) {
             return true;
         }
-        if (in_array(Yii::$app->user->identity->roleName, $item->roles)) {
+        if (!Yii::$app->user->isGuest && in_array(Yii::$app->user->identity->roleName, $item->roles)) {
             return true;
         }
         return false;

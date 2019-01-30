@@ -5,7 +5,7 @@ return [
         [
             'link_name' => Yii::t('app', 'Profile'),
             'url' => '/profile/view',
-            'roles' => ['lender']
+            'roles' => ['lender', 'borrower', 'digital-collector']
         ],
         [
             'link_name' => Yii::t('app', 'New Loan'),
@@ -26,6 +26,11 @@ return [
             'link_name' => Yii::t('app', 'Requests'),
             'url' => '/loan/requests',
             'roles' => ['lender']
+        ],
+        [
+            'link_name' => Yii::t('app', 'My Loans'),
+            'url' => '/loan/my-loans',
+            'roles' => ['lender', 'borrower', 'digital-collector']
         ],
 
     ]

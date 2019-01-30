@@ -29,6 +29,7 @@ use yii\db\ActiveRecord;
  * @property User $borrower
  * @property User $lender
  * @property LoanStatusHistory[] $loanStatusHistories
+ * @property LoanReferral[] $loanReferrals
  */
 class Loan extends ActiveRecord
 {
@@ -165,6 +166,14 @@ class Loan extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getLoanReferrals()
+    {
+        return $this->hasMany(LoanReferral::class, ['loan_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getPayments()
     {
         return $this->hasMany(Payment::class, ['loan_id' => 'id']);
@@ -211,6 +220,15 @@ class Loan extends ActiveRecord
         $interval = new DateIntervalEnhanced('PT' . $this->period . 'S');
         $interval->recalculate();
         return $interval->getFormatted();
+    }
+
+    /**
+     * @return string
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function getSigned()
+    {
+        return Yii::$app->formatter->asDatetime($this->signed_at);
     }
 
     /**

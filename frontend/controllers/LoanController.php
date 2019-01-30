@@ -61,6 +61,15 @@ class LoanController extends FrontController
                         'custom.permission.borrower:' . AccessManager::VIEW
                     ],
                 ],
+                [
+                    'allow' => true,
+                    'actions' => ['my-loans'],
+                    'roles' => [
+                        'custom.permission.lender:' . AccessManager::VIEW,
+                        'custom.permission.borrower:' . AccessManager::VIEW,
+                        'custom.permission.digital-collector:' . AccessManager::VIEW
+                    ],
+                ],
 
               ],
         ];
@@ -169,8 +178,8 @@ class LoanController extends FrontController
     public function actionOffers()
     {
         $searchModel = new LoanSearch();
-        $searchModel->init_type_strong = Loan::INIT_TYPE_OFFER;
-        $searchModel->status_strong = Loan::STATUS_STARTED;
+        $searchModel->initTypeStrong = Loan::INIT_TYPE_OFFER;
+        $searchModel->statusStrong = Loan::STATUS_STARTED;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('offers', [
@@ -182,8 +191,8 @@ class LoanController extends FrontController
     public function actionRequests()
     {
         $searchModel = new LoanSearch();
-        $searchModel->init_type_strong = Loan::INIT_TYPE_REQUEST;
-        $searchModel->status_strong = Loan::STATUS_STARTED;
+        $searchModel->initTypeStrong = Loan::INIT_TYPE_REQUEST;
+        $searchModel->statusStrong = Loan::STATUS_STARTED;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('requests', [
@@ -195,10 +204,22 @@ class LoanController extends FrontController
     public function actionLoansOverdue()
     {
         $searchModel = new LoanSearch();
-        $searchModel->status_strong = Loan::STATUS_OVERDUE;
+        $searchModel->statusStrong = Loan::STATUS_OVERDUE;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('loans-overdue', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionMyLoans()
+    {
+        $searchModel = new LoanSearch();
+        $searchModel->ownerId = Yii::$app->user->id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('loans', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
