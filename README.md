@@ -110,7 +110,7 @@ There is some default modules to template project that should be initialized bef
 These modules handles functionality that is believed will help you
 ```
 #!sh
-$ php yii manager/register <moduleName[,moduleName]>
+$ php yii core/manager/register <moduleName[,moduleName]>
 ```
 
 * site
@@ -122,7 +122,7 @@ $ php yii manager/register <moduleName[,moduleName]>
 * i18n
 
 > **NOTE:** You can enable all modules using alias 'all' in command
-> `$ php yii manager/register all`
+> `$ php yii core/manager/register all`
 
 ## Troubleshooting ##
 
@@ -180,6 +180,20 @@ If you find yourself struggling with Yii2 you should visit [official documentati
 > **NOTE:** please keep in mind that many parts of default Yii application was changed for required needs,
 > so not all information may be accurate and there may be specific none default implementation in project.
 
+## Install Joos roles and permissions ##
+
+```
+php yii roles/update
+```
+
+## Cron jobs ##
+Add to cron execution:
+
+```
+0 * * * * php yii loan-blockchain-extractor/update
+
+```
+
 ## Deploying APP to stage server ##
 
-COMMING SOON
+For the platform to work correctly, you must first upload and configure the project "ethereum backend".
