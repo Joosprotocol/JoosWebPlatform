@@ -34,12 +34,6 @@
 
             {% set menuItems = [] %}
 
-            {# Language choice widget #}
-            {{ use ('itmaster/core/widgets/LanguageChoice') }}
-            {{ language_choice_widget({
-                'languages': Language.getList(),
-                'currentLanguage': app.session.get("language", "en")
-            }) }}
 
             {# NavBar menu widget #}
             {{ use ('common/widgets/Navigator') }}
@@ -88,7 +82,7 @@
     <footer class="footer">
         <div class="container">
             {#footer content #}
-            <p class="pull-left">&copy; IT-Master {{ 'now'|date('Y') }}</p>
+            <p class="pull-left">&copy; Creator {{ 'now'|date('Y') }}</p>
             <p class="pull-right">{{ t('app', 'Created by') | raw }}</p>
         </div>
     </footer>
