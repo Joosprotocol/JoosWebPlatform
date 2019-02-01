@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\user\BlockchainProfile;
 use common\models\user\User;
 use common\models\user\UserPersonal;
 use itmaster\core\controllers\frontend\FrontController;
@@ -58,10 +59,12 @@ class ProfileController extends FrontController
 
         $model = $this->findModel(Yii::$app->user->getIdentity()->getId());
         $personal = (!empty($model->personal)) ? $model->personal : new UserPersonal();
+        $blockchainProfile = (!empty($model->blockchainProfile)) ? $model->blockchainProfile : new BlockchainProfile();
 
         return $this->render('index', [
             'model' => $model,
             'personal' => $personal,
+            'blockchainProfile' => $blockchainProfile,
         ]);
     }
 
@@ -76,15 +79,21 @@ class ProfileController extends FrontController
         $model = $this->findModel(Yii::$app->user->getIdentity()->getId());
 
         $personal = new UserPersonal();
+        $blockchainProfile = (!empty($model->blockchainProfile)) ? $model->blockchainProfile : new BlockchainProfile();
 
         if ($model->load(Yii::$app->request->post())) {
             $transaction = Yii::$app->db->beginTransaction();
             $valid = $model->save();
             if ($model->roleName === User::ROLE_BORROWER) {
-
                 $valid = $valid && $personal->load(Yii::$app->request->post());
                 $personal->user_id = $model->id;
                 $valid = $valid && $personal->save();
+            }
+
+            if ($model->roleName === User::ROLE_DIGITAL_COLLECTOR) {
+                $valid = $valid && $blockchainProfile->load(Yii::$app->request->post());
+                $blockchainProfile->user_id = $model->id;
+                $valid = $valid && $blockchainProfile->save();
             }
 
             if ($valid) {
@@ -96,7 +105,8 @@ class ProfileController extends FrontController
 
         return $this->render('update', [
             'model' => $model,
-            'personal' => (!empty($model->personal)) ? $model->personal : new UserPersonal(),
+            'personal' => (!empty($model->personal)) ? $model->personal : $personal,
+            'blockchainProfile' => (!empty($model->blockchainProfile)) ? $model->blockchainProfile : $blockchainProfile,
         ]);
     }
 

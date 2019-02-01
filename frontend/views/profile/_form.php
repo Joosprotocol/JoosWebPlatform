@@ -7,6 +7,7 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model common\models\user\User */
 /* @var $personal common\models\user\UserPersonal */
+/* @var $blockchainProfile common\models\user\BlockchainProfile */
 /* @var $form yii\widgets\ActiveForm */
 
 ?>
@@ -48,6 +49,12 @@ use yii\widgets\ActiveForm;
             <?= $form->field($personal, 'facebook_friend_second_url')->textInput(['maxlength' => true]) ?>
 
             <?= $form->field($personal, 'facebook_friend_third_url')->textInput(['maxlength' => true]) ?>
+
+        <?php endif; ?>
+
+        <?php if ($model->roleName === User::ROLE_DIGITAL_COLLECTOR): ?>
+
+            <?= $form->field($blockchainProfile, 'address')->textInput(['maxlength' => true]) ?>
 
         <?php endif; ?>
 

@@ -7,6 +7,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model common\models\user\User */
 /* @var $personal common\models\user\UserPersonal */
+/* @var $blockchainProfile common\models\user\BlockchainProfile */
 
 
 $this->title = $model->username;
@@ -46,6 +47,17 @@ $this->title = $model->username;
                 'facebook_friend_first_url',
                 'facebook_friend_second_url',
                 'facebook_friend_third_url',
+            ],
+        ]) ?>
+
+    <?php endif; ?>
+
+    <?php if ($model->roleName === User::ROLE_DIGITAL_COLLECTOR): ?>
+
+        <?= DetailView::widget([
+            'model' => $blockchainProfile,
+            'attributes' => [
+                'address',
             ],
         ]) ?>
 

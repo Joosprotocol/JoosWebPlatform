@@ -5,6 +5,8 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model \common\models\user\User */
 /* @var $personal \common\models\user\UserPersonal */
+/* @var $blockchainProfile common\models\user\BlockchainProfile */
+
 
 $this->title = Yii::t('app', 'Edit Profile') . ': ' . $model->username;
 ?>
@@ -16,6 +18,7 @@ $this->title = Yii::t('app', 'Edit Profile') . ': ' . $model->username;
     <?= $this->render('_form', [
         'model' => $model,
         'personal' => $personal,
+        'blockchainProfile' => $blockchainProfile,
     ]) ?>
 
 </div>
