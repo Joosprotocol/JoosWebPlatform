@@ -43,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($model) {
                     $route = \yii\helpers\Url::to(['loan/view', 'id' => $model->id]);
                     if (!Yii::$app->user->isGuest) {
-                        if (Yii::$app->user->identity->roleName = User::ROLE_DIGITAL_COLLECTOR) {
+                        if (Yii::$app->user->identity->roleName === User::ROLE_DIGITAL_COLLECTOR) {
                             $route = \yii\helpers\Url::to(['loan/view-overdue', 'id' => $model->id]);
                         }
                     }
