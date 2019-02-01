@@ -23,11 +23,6 @@ return [
             'items' => []
         ],
         [
-            'name' => \Yii::t('app', 'Countries'),
-            'slug' => 'country',
-            'items' => []
-        ],
-        [
             'name' => \Yii::t('app', 'Menus'),
             'slug' => 'menu',
             'items' => []

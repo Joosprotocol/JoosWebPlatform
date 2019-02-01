@@ -197,3 +197,23 @@ Add to cron execution:
 ## Deploying APP to stage server ##
 
 For the platform to work correctly, you must first upload and configure the project "ethereum backend".
+
+## Mailer setup ##
+
+Add settings to common/config/main-local.php
+
+```
+        'mailer' => [
+            'class' => 'yii\swiftmailer\Mailer',
+            'viewPath' => '@common/mail',
+            'transport' => [
+                'class' => 'Swift_SmtpTransport',
+                'host' => 'host.host',
+                'username' => 'mail@host.com',
+                'password' => 'password',
+                'port' => '465',
+                'encryption' => 'ssl',
+            ],
+            'useFileTransport' => false,
+        ],
+```
