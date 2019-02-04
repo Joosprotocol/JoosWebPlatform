@@ -18,23 +18,8 @@ return [
             ]
         ],
         [
-            'name' => \Yii::t('app', 'Roles'),
-            'slug' => 'role',
-            'items' => []
-        ],
-        [
-            'name' => \Yii::t('app', 'Menus'),
-            'slug' => 'menu',
-            'items' => []
-        ],
-        [
             'name' => \Yii::t('app', 'Pages'),
             'slug' => 'page',
-            'items' => []
-        ],
-        [
-            'name' => \Yii::t('app', 'Categories'),
-            'slug' => 'category',
             'items' => []
         ],
         [
@@ -50,11 +35,6 @@ return [
                 ['label' => Yii::t('app', 'Status Histories'), 'url' => ['/loan-status-history/index']],
             ]
         ],
-        [
-            'name' => \Yii::t('app', 'Payments'),
-            'slug' => 'payment',
-            'items' => []
-        ]
     ],
     'customRoutes' => [
         '<controller:(auth)>/<action:(signup)>' => "<controller>/<action>",
