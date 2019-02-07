@@ -30,6 +30,7 @@ use yii\db\ActiveRecord;
  * @property User $lender
  * @property LoanStatusHistory[] $loanStatusHistories
  * @property LoanReferral[] $loanReferrals
+ * @property LoanReferral $lastLoanReferral
  */
 class Loan extends ActiveRecord
 {
@@ -169,6 +170,16 @@ class Loan extends ActiveRecord
     public function getLoanReferrals()
     {
         return $this->hasMany(LoanReferral::class, ['loan_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLastLoanReferral()
+    {
+        return $this
+            ->hasOne(LoanReferral::class, ['loan_id' => 'id'])
+            ->orderBy([LoanReferral::tableName() . '.id' => SORT_DESC]);
     }
 
     /**

@@ -38,9 +38,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'contentOptions' => ['class'=>'skip-export'],
             ],
             'id',
-            'user_id',
+            'user.fullName',
             'type',
-            'text',
+            'text:html',
             'created',
 
             [

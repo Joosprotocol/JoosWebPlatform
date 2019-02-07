@@ -20,6 +20,7 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'enableStrictParsing' => true,
+            'baseUrl' => '/',
             'normalizer' => [
                 'class' => UrlNormalizer::class,
                 'action' => UrlNormalizer::ACTION_REDIRECT_PERMANENT,

@@ -5,6 +5,7 @@ namespace common\library\loan;
 
 
 use common\library\loan\contract_structures\LoanInfoObject;
+use common\library\notification\NotificationService;
 use common\models\loan\ethereum\LoanManagerBlockChainAdapter;
 use common\models\loan\Loan;
 use Yii;
@@ -64,10 +65,15 @@ class LoanBlockchainExtractor
             return false;
         }
         Yii::info(json_encode(['status' => $loanStatus, 'info' => $loanInfo]), self::LOG_CATEGORY_BLOCKCHAIN);
+        $oldStatus = $loan->status;
         $loanInfoObject = new LoanInfoObject();
         $loanInfoObject->setAttributes($loanInfo, false);
 
-        return $this->updateModel($loan, $loanStatus, $loanInfoObject);
+        if ($this->updateModel($loan, $loanStatus, $loanInfoObject)) {
+            $this->createNotification($loan, $oldStatus);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -121,5 +127,17 @@ class LoanBlockchainExtractor
         $loan->status = $status;
         $loan->signed_at = $loanInfoObject->created_at;
         return $loan->save();
+    }
+
+    /**
+     * @param Loan $loan
+     * @param int $oldStatus
+     */
+    protected function createNotification(Loan $loan, int $oldStatus)
+    {
+        if ($oldStatus == $loan->status) {
+            return;
+        }
+        NotificationService::sendChangeLoanStatusNotification($loan);
     }
 }

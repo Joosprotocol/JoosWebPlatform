@@ -3,6 +3,7 @@
 namespace common\models\notification;
 
 use common\models\user\User;
+use itmaster\core\behaviors\TimestampBehavior;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -24,12 +25,53 @@ class Notification extends ActiveRecord
     const TYPE_SUCCESS = 1;
     const TYPE_ERROR = 2;
 
+    const MESSAGE_NEW_LOAN_CREATED = 1;
+    const MESSAGE_LOAN_SIGNED = 2;
+    const MESSAGE_DIGITAL_COLLECTOR_JOINED = 3;
+    const MESSAGE_BORROWER_FOLLOWED_LINK = 4;
+    const MESSAGE_LOAN_STATUS_CHANGED = 5;
+
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
         return '{{%notification}}';
+    }
+
+    /**
+     * @param $userId
+     * @param string $text
+     * @return bool
+     */
+    public static function create($userId, $text)
+    {
+        $notification = new self;
+        $notification->text = $text;
+        $notification->user_id = $userId;
+        return $notification->save();
+    }
+
+    public static function getMessages()
+    {
+        return [
+            self::MESSAGE_NEW_LOAN_CREATED => Yii::t('app', 'New loan was created.'),
+            self::MESSAGE_LOAN_SIGNED => Yii::t('app', 'Loan was signed.'),
+            self::MESSAGE_DIGITAL_COLLECTOR_JOINED => Yii::t('app', 'New digital collector joined.'),
+            self::MESSAGE_BORROWER_FOLLOWED_LINK => Yii::t('app', 'Borrower followed referral link.'),
+            self::MESSAGE_LOAN_STATUS_CHANGED => Yii::t('app', 'Loan status changed.'),
+        ];
+    }
+
+    /**
+     * Method for defining behaviors
+     * @return array
+     */
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::class,
+        ];
     }
 
     /**

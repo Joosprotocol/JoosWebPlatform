@@ -3,6 +3,7 @@
 namespace frontend\forms\loan;
 
 
+use common\library\notification\NotificationService;
 use common\models\loan\Loan;
 use common\models\user\User;
 use LogicException;
@@ -80,6 +81,7 @@ class LoanCreateForm extends Model
         $this->loan->period = $this->period_days * self::PERIOD_DAY;
         $this->loan->status = Loan::STATUS_STARTED;
         if ($this->loan->save()) {
+            $this->sendLoanCreatedNotification();
             return true;
         }
         return false;
@@ -103,9 +105,14 @@ class LoanCreateForm extends Model
     /**
      * @return Loan
      */
-    public function getLoan(): Loan
+    public function getLoan() : Loan
     {
         return $this->loan;
+    }
+
+    protected function sendLoanCreatedNotification()
+    {
+        NotificationService::sendLoanCreatedNotification($this->loan);
     }
 
 }

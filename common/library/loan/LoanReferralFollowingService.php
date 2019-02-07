@@ -4,6 +4,7 @@
 namespace common\library\loan;
 
 
+use common\library\notification\NotificationService;
 use common\models\loan\LoanFollowing;
 use common\models\loan\LoanReferral;
 use common\models\user\User;
@@ -46,7 +47,11 @@ class LoanReferralFollowingService
             $this->loanFollowing = new LoanFollowing();
             $this->loanFollowing->borrower_id = Yii::$app->user->id;
             $this->loanFollowing->loan_referral_id = $this->loanReferral->id;
-            return $this->loanFollowing->save();
+            if ($this->loanFollowing->save()) {
+                $this->createNotification();
+                return true;
+            }
+            return false;
         }
         return true;
     }
@@ -62,18 +67,30 @@ class LoanReferralFollowingService
         if (empty($user)) {
             throw new DataNotFoundException('User not found.');
         }
-        if ($user->roleName === User::ROLE_BORROWER) {
-            return true;
+        if ($user->roleName !== User::ROLE_BORROWER) {
+            return false;
         }
-        return false;
+
+        if ($this->loanReferral->loan->borrower_id !== $userId) {
+            return false;
+        }
+        return true;
     }
 
     /**
      * @return LoanReferral
      */
-    public function getLoanReferral(): LoanReferral
+    public function getLoanReferral() : LoanReferral
     {
         return $this->loanReferral;
+    }
+
+    /**
+     * @return void
+     */
+    private function createNotification() : void
+    {
+        NotificationService::sendBorrowerFollowedLinkNotification($this->loanFollowing);
     }
 
 }

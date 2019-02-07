@@ -32,6 +32,11 @@ return [
             'url' => '/loan/my-loans',
             'roles' => ['lender', 'borrower', 'digital-collector']
         ],
+        [
+            'link_name' => Yii::t('app', 'Notifications'),
+            'url' => '/notification/index',
+            'roles' => ['lender', 'borrower', 'digital-collector']
+        ],
 
     ]
 ];

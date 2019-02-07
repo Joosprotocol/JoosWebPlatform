@@ -3,6 +3,7 @@
 use common\models\loan\Loan;
 use common\models\user\User;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
@@ -66,6 +67,25 @@ $this->params['breadcrumbs'][] = $this->title;
             ]) ?>
 
         <?php endif; ?>
+    <?php endif; ?>
+
+    <?php if (
+        !Yii::$app->user->isGuest
+        && $model->init_type === Loan::INIT_TYPE_REQUEST
+        && Yii::$app->user->identity->roleName === User::ROLE_LENDER
+        && !empty($model->loanReferrals)
+    ): ?>
+
+        <h3><?= Yii::t('app', 'Digital Collectors') ?>:</h3>
+
+        <ul>
+            <?php foreach ($model->loanReferrals as $loanReferral): ?>
+                <li>
+                    <?= HTML::a($loanReferral->digitalCollector->fullName, Url::to(['profile/public', 'id' => $loanReferral->digital_collector_id]))?>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+
     <?php endif; ?>
 
     <?php if (in_array($model->status, [Loan::STATUS_SIGNED, Loan::STATUS_OVERDUE]) && !Yii::$app->user->isGuest): ?>

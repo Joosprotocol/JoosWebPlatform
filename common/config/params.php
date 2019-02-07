@@ -35,9 +35,15 @@ return [
                 ['label' => Yii::t('app', 'Status Histories'), 'url' => ['/loan-status-history/index']],
             ]
         ],
+        [
+            'name' => \Yii::t('app', 'Notification'),
+            'slug' => 'notification',
+            'url' => ['/notification/index'],
+            'items' => []
+        ],
     ],
     'customRoutes' => [
         '<controller:(auth)>/<action:(signup)>' => "<controller>/<action>",
-        '<controller:(profile)>/<action:(view|update)>' => "<controller>/<action>",
+        '<controller:(profile)>/<action:(view|update|public)>' => "<controller>/<action>",
     ]
 ];

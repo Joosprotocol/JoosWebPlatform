@@ -10,6 +10,9 @@ use yii\data\ActiveDataProvider;
  */
 class NotificationSearch extends Notification
 {
+    /** @var  int */
+    public $userIdStrong;
+
     /**
      * @inheritdoc
      */
@@ -57,6 +60,11 @@ class NotificationSearch extends Notification
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);
+
+        $query->andFilterWhere([
+            'user_id' => $this->userIdStrong,
+        ]);
+
 
         $query->andFilterWhere(['like', 'text', $this->text]);
 

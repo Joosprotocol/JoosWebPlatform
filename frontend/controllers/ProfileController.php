@@ -28,7 +28,7 @@ class ProfileController extends FrontController
             'rules' => [
                 [
                     'allow' => true,
-                    'actions' => ['view', 'update'],
+                    'actions' => ['view', 'update', 'public'],
                     'roles' => ['@'],
                 ],
 
@@ -65,6 +65,18 @@ class ProfileController extends FrontController
             'model' => $model,
             'personal' => $personal,
             'blockchainProfile' => $blockchainProfile,
+        ]);
+    }
+
+    /**
+     * @param int $id
+     * @return mixed
+     */
+    public function actionPublic($id)
+    {
+        $model = $this->findModel($id);
+        return $this->render('public', [
+            'model' => $model
         ]);
     }
 

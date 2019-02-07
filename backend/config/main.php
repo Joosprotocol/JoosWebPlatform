@@ -34,6 +34,7 @@ return [
             ],
         ],
         'urlManager' => [
+            'baseUrl' => '/admin',
             'rules' => [
             ],
         ],

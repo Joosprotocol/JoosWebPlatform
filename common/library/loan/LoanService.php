@@ -4,6 +4,7 @@ namespace common\library\loan;
 
 use common\library\crypt\CryptorInterface;
 use common\library\ethereum\EthereumAPI;
+use common\library\notification\NotificationService;
 use common\models\loan\ethereum\LoanManagerBlockChainAdapter;
 use common\models\loan\Loan;
 use common\models\user\User;
@@ -13,7 +14,7 @@ use yii\base\Exception;
 class LoanService
 {
 
-    const COMMA_MULTIPLICATOR = 10000;
+    const COMMA_MULTIPLIER = 10000;
 
     /** @var Loan  */
     private $loan;
@@ -48,9 +49,10 @@ class LoanService
                     throw new Exception('No personal information is available.');
                 }
                 $personalEncoded = $this->getCryptedPersonalInfo();
-                $loanManagerAdapter->initLoan($this->loan->id, $this->loan->amount * self::COMMA_MULTIPLICATOR, $this->loan->currency_type, $this->loan->period, 0, $this->loan->init_type);
+                $loanManagerAdapter->initLoan($this->loan->id, $this->loan->amount * self::COMMA_MULTIPLIER, $this->loan->currency_type, $this->loan->period, 0, $this->loan->init_type);
                 $loanManagerAdapter->setLoanParticipants($this->loan->id, $this->loan->lender->id, $this->loan->lender->fullName, $this->loan->borrower->id, $this->loan->borrower->fullName, $personalEncoded);
                 $transaction->commit();
+                $this->createSignNotification();
                 return true;
             } catch (\Exception $exception) {
                 $transaction->rollBack();
@@ -86,7 +88,7 @@ class LoanService
         $this->loan->status = $status;
         $this->user = $lender;
         $transaction = Yii::$app->db->beginTransaction();
-        if ($this->isLenderOfLoan()) {
+        if (!$this->isLenderOfLoan()) {
             throw new \LogicException('Only lender owner can change status.');
         }
 
@@ -99,6 +101,7 @@ class LoanService
             try {
                 $loanManagerAdapter->setStatus($this->loan->id, $this->loan->status);
                 $transaction->commit();
+                $this->createChangeLoanStatusNotification();
                 return true;
             } catch (\Exception $exception) {
                 $transaction->rollBack();
@@ -166,6 +169,22 @@ class LoanService
     private function isLenderOfLoan() : bool
     {
         return $this->user->id === $this->loan->lender_id;
+    }
+
+    /**
+     * @return void
+     */
+    protected function createSignNotification() : void
+    {
+        NotificationService::sendLoanSignNotification($this->loan, $this->user);
+    }
+
+    /**
+     * @return void
+     */
+    protected function createChangeLoanStatusNotification() : void
+    {
+        NotificationService::sendChangeLoanStatusNotification($this->loan);
     }
 
 }

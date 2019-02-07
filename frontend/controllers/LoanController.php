@@ -5,6 +5,7 @@ namespace frontend\controllers;
 
 use common\library\loan\LoanReferralFollowingService;
 use common\library\loan\LoanService;
+use common\library\notification\NotificationService;
 use common\library\utilitytoken\fee\DigitalCollectorFeeService;
 use common\models\loan\Loan;
 use common\models\loan\LoanReferral;
@@ -157,6 +158,7 @@ class LoanController extends FrontController
             $loanReferral->loan_id = $id;
             $loanReferral->digital_collector_id = Yii::$app->user->id;
             $loanReferral->save();
+            NotificationService::sendDigitalCollectorAddedNotification($loanReferral);
         }
 
         return $this->redirect(['view-overdue', 'id' => $id]);

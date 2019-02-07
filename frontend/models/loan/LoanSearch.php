@@ -50,7 +50,8 @@ class LoanSearch extends LoanSearchBase
     public function search($params)
     {
         $query = Loan::find()
-            ->alias('l');
+            ->alias('l')
+            ->orderBy(['updated_at' => SORT_DESC]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
