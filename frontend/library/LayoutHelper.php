@@ -36,7 +36,7 @@ class LayoutHelper
     /**
      * @return int
      */
-    public function getNotificationsQuantity()
+    public static function getNotificationsQuantity()
     {
         return Notification::find()
             ->where(['user_id' => Yii::$app->user->id])
