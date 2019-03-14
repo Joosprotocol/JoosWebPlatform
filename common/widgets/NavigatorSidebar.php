@@ -3,11 +3,10 @@
 
 namespace common\widgets;
 
-use common\menu\MenuItem;
 use Yii;
+use common\widgets\Navigator as BaseNavigator;
+use yii\bootstrap\Html;
 use yii\bootstrap\Nav as WidgetNav;
-use yii\widgets\Menu as WidgetMenu;
-use itmaster\core\widgets\Navigator as CoreNavigator;
 
 /**
  * Class Navigator
@@ -15,8 +14,12 @@ use itmaster\core\widgets\Navigator as CoreNavigator;
  * It's only temporary patch for menu. It provides roles dependent visibility.
  * @package common\widgets
  */
-abstract class Navigator extends CoreNavigator
+class NavigatorSidebar extends BaseNavigator
 {
+    public function getItemParams()
+    {
+        return Yii::$app->params['frontendMenuSidebarItems'];
+    }
 
     /**
      * Initializes the widget.
@@ -28,13 +31,10 @@ abstract class Navigator extends CoreNavigator
         $options = [
             'items' => $this->items,
             'options' => $this->options,
+            'encodeLabels' => false
         ];
 
-        if ($this->isDropdown == true) {
-            return WidgetNav::widget($options);
-        } else {
-            return WidgetMenu::widget($options);
-        }
+        return WidgetNav::widget($options);
     }
 
     /**
@@ -48,36 +48,32 @@ abstract class Navigator extends CoreNavigator
             $isVisible = $this->isVisible($item);
 
             $menuItems[] = [
-                'label' => $item['label'],
+                'label' => $this->getLabel($item),
                 'url' => $item['url'],
                 'items' => !empty($item['items']) ? $this->getItems($item['items']) : null,
                 'visible' => $isVisible,
             ];
 
+            if ($isVisible) {
+                $menuItems[] = '<li class="divider"></li>';
+            }
         }
-
         return $menuItems;
     }
 
     /**
-     * @param MenuItem $item
-     * @return bool
+     * @param array $item
+     * @return string
      */
-    protected function isVisible($item)
+    private function getLabel($item)
     {
-        if ((!Yii::$app->user->isGuest && $item['visible'] === '@')
-            || Yii::$app->user->isGuest && $item['visible'] === '?') {
-            return true;
+        $label = '';
+        if (array_key_exists('iconClass', $item)) {
+            $label .= HTML::tag('div', '', ['class' => 'sidebar-item-icon ' . $item['iconClass']]);
         }
+        $label .= HTML::tag('div', $item['label'], ['class' => 'item-label']);
 
-        if (!Yii::$app->user->isGuest
-            && is_array($item['visible'])
-            && in_array(Yii::$app->user->identity->roleName, $item['visible'])) {
-            return true;
-        }
-        return false;
+        return $label;
     }
-
-    abstract public function getItemParams();
 
 }

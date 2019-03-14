@@ -59,7 +59,8 @@ class LoanController extends FrontController
                     'actions' => ['view', 'create', 'sign'],
                     'roles' => [
                         'custom.permission.lender:' . AccessManager::VIEW,
-                        'custom.permission.borrower:' . AccessManager::VIEW
+                        'custom.permission.borrower:' . AccessManager::VIEW,
+                        'custom.permission.digital-collector:' . AccessManager::VIEW
                     ],
                 ],
                 [
@@ -104,19 +105,19 @@ class LoanController extends FrontController
 
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
-
-    public function actionViewOverdue($id)
-    {
         $loan = $this->findModel($id);
         $loanService = new LoanService($loan);
 
-        return $this->render('view-overdue', [
+        try {
+            $blockchainPersonal = $loanService->getBlockchainPersonal();
+        } catch (\Exception $exception) {
+            \Yii::$app->getSession()->setFlash('error', Yii::t('app', 'Unable to get data from blockchain'));
+            $blockchainPersonal = false;
+        }
+
+        return $this->render('view', [
             'model' => $loan,
-            'blockchainPersonal' => $loanService->getBlockchainPersonal(),
+            'blockchainPersonal' => ($loan->status === Loan::STATUS_OVERDUE) ? $blockchainPersonal : false,
             'loanReferral' => LoanReferral::findByLoanIdAndCollectorId($id, Yii::$app->user->id),
         ]);
     }
@@ -161,7 +162,7 @@ class LoanController extends FrontController
             NotificationService::sendDigitalCollectorAddedNotification($loanReferral);
         }
 
-        return $this->redirect(['view-overdue', 'id' => $id]);
+        return $this->redirect(['view', 'id' => $id]);
     }
 
     /**

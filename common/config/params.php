@@ -41,9 +41,5 @@ return [
             'url' => ['/notification/index'],
             'items' => []
         ],
-    ],
-    'customRoutes' => [
-        '<controller:(auth)>/<action:(signup)>' => "<controller>/<action>",
-        '<controller:(profile)>/<action:(view|update|public)>' => "<controller>/<action>",
     ]
 ];

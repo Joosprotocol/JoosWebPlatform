@@ -1,37 +1,43 @@
 <?php
 
-use common\library\date\DateIntervalEnhanced;
-use itmaster\core\helpers\Toolbar;
-use yii\helpers\Html;
+use frontend\library\GridHelper;
+
 use kartik\grid\GridView;
+use yii\helpers\Html;
+
 
 /* @var $this yii\web\View */
 /* @var $searchModel common\models\notification\NotificationSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Offers');
+$this->title = Yii::t('app', 'Notifications');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="notification-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div id="title-line">
+        <div class="title-text"><?= Html::encode($this->title) ?></div>
+        <div class="clearfix"></div>
+    </div>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'resizeStorageKey' => 'notificationGrid',
+        'options' => [
+            'class' => 'white-grid-table'
+        ],
         'columns' => [
-            [
-                'class' => 'yii\grid\CheckboxColumn',
-                'headerOptions' => ['class'=>'skip-export'],
-                'contentOptions' => ['class'=>'skip-export'],
-            ],
             'text:html',
             'created'
 
         ],
         'panel' => [
-            'footer' => Toolbar::paginationSelect($dataProvider),
+            'heading' => false,
+        ],
+        // set your toolbar
+        'toolbar' => [
+            GridHelper::getPerPageDropdown($dataProvider)
         ],
     ]); ?>
 </div>

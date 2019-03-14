@@ -6,7 +6,8 @@ var SiteHelper = {
         $this.map = {
             actionLink: $('a.action-link'),
             userBirthday: $('input#user-birthday'),
-            datePicker: $('input#date-picker')
+            datePicker: $('input#date-picker'),
+            pageSize: $('select#page-size'),
         };
     },
 
@@ -15,6 +16,9 @@ var SiteHelper = {
         $this._map();
         $this.map.actionLink.click(function() { return $this.actionLinkClick(this); });
         $this.map.datePicker.change(function() { return $this.datePickerChange(this); });
+        $this.map.pageSize.change(function () {
+            return $this.pageSizeChange(this);
+        });
     },
 
     actionLinkClick: function(link) {
@@ -44,7 +48,15 @@ var SiteHelper = {
         $this.map.userBirthday.change();
 
         return true;
-    }
+    },
+
+    pageSizeChange: function (element) {
+        var form = $(element).parents('form');
+
+        form.submit();
+
+        return false;
+    },
 };
 
 $(function() {

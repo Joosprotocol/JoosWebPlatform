@@ -15,51 +15,116 @@ $this->title = $model->username;
 ?>
 <div class="user-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div id="title-line">
+        <div class="title-text"><?= Yii::t('app', 'Profile') ?></div>
+        <div class="clearfix"></div>
+    </div>
 
-    <p>
-        <?= Html::a('Update', ['update'], ['class' => 'btn btn-primary']) ?>
-    </p>
+    <div class="panel">
+        <div class="panel-body">
 
-    <img src="<?= $model->avatarUrl ?>" alt="">
+            <div class="panel-body-inner">
+                <div class="avatar-image">
+                    <div class="avatar-image-img" style="background-image: url(<?= $model->avatarUrl ?>)"></div>
+                </div>
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'username',
-            'email',
-            'first_name',
-            'last_name',
-            'roleName'
-        ],
-    ]) ?>
+                <div class="profile-info">
+
+                    <p class="user-name">
+                        <?= $model->username ?>
+                    </p>
+                    <p>
+                        <?= Yii::t('app', 'Email') . ': ' . $model->email ?>
+                    </p>
+                    <p>
+                        <?= Yii::t('app', 'Role') . ': ' . ucfirst($model->roleName) ?>
+                    </p>
+
+
+                    <hr>
+
+                    <div class="pull-right">
+                        <?= Html::a('Update Profile', ['update'], ['class' => 'btn btn-success']) ?>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
 
     <?php if ($model->roleName === User::ROLE_BORROWER): ?>
 
-        <img src="<?= $personal->issuedIdUrl ?>" alt="">
+        <div class="row">
 
-        <?= DetailView::widget([
-            'model' => $personal,
-            'attributes' => [
-                'facebook_url',
-                'social_url',
-                'mobile_number',
-                'facebook_friend_first_url',
-                'facebook_friend_second_url',
-                'facebook_friend_third_url',
-            ],
-        ]) ?>
+            <div class="col-md-6">
+                <div class="panel panel-white">
+                    <div class="panel-heading">
+                        Issued ID
+                    </div>
+                    <div class="panel-heading-line"></div>
+                    <div class="panel-body text-center">
+                        <img src="<?= $personal->issuedIdUrl ?>" alt="">
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="panel panel-white">
+                    <div class="panel-heading">
+                        Personal info
+                    </div>
+                    <div class="panel-heading-line"></div>
+                    <div class="panel-body">
+                        <p>
+                            <?= Yii::t('app', 'Facebook URL') . ': ' . HTML::a($personal->facebook_url, $personal->facebook_url);  ?>
+                        </p>
+
+                        <p>
+                            <?= Yii::t('app', 'Social URL') . ': ' . HTML::a($personal->social_url, $personal->social_url) ?>
+                        </p>
+
+                        <p>
+                            <?= Yii::t('app', 'Mobile Number') . ': ' . $personal->mobile_number ?>
+                        </p>
+
+                        <p>
+                            <?= Yii::t('app', 'Facebook First Friend') . ': ' . HTML::a($personal->facebook_friend_first_url, $personal->facebook_friend_first_url) ?>
+                        </p>
+
+                        <p>
+                            <?= Yii::t('app', 'Facebook Second Friend') . ': ' . HTML::a($personal->facebook_friend_second_url, $personal->facebook_friend_second_url) ?>
+                        </p>
+
+                        <p>
+                            <?= Yii::t('app', 'Facebook Third Friend') . ': ' . HTML::a($personal->facebook_friend_third_url, $personal->facebook_friend_third_url) ?>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
 
     <?php endif; ?>
 
+
     <?php if ($model->roleName === User::ROLE_DIGITAL_COLLECTOR): ?>
 
-        <?= DetailView::widget([
-            'model' => $blockchainProfile,
-            'attributes' => [
-                'address',
-            ],
-        ]) ?>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="panel panel-white">
+                    <div class="panel-heading">
+                        <?= Yii::t('app', 'Blockchain information') ?>
+                    </div>
+                    <div class="panel-heading-line"></div>
+                    <div class="panel-body">
+                        <img src="<?= $blockchainProfile->address ?>" alt="">
+                        <p>
+                            <?= Yii::t('app', 'Blockchain address') . ': ' . $blockchainProfile->address ?>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     <?php endif; ?>
 

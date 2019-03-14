@@ -56,6 +56,9 @@ class ProfileController extends FrontController
      */
     public function actionView()
     {
+        \Yii::$app->getSession()->setFlash('info', Yii::t('app', 'Info example message.'));
+        \Yii::$app->getSession()->setFlash('error', Yii::t('app', 'Error example message.'));
+        \Yii::$app->getSession()->setFlash('success', Yii::t('app', 'Success example message.'));
 
         $model = $this->findModel(Yii::$app->user->getIdentity()->getId());
         $personal = (!empty($model->personal)) ? $model->personal : new UserPersonal();
@@ -105,7 +108,12 @@ class ProfileController extends FrontController
             if ($model->roleName === User::ROLE_DIGITAL_COLLECTOR) {
                 $valid = $valid && $blockchainProfile->load(Yii::$app->request->post());
                 $blockchainProfile->user_id = $model->id;
-                $valid = $valid && $blockchainProfile->save();
+                try {
+                    $valid = $valid && $blockchainProfile->save();
+                } catch (\Exception $exception) {
+                    \Yii::$app->getSession()->setFlash('error', Yii::t('app', 'Unable to connect to blockchain'));
+                    $valid = false;
+                }
             }
 
             if ($valid) {

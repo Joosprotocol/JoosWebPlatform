@@ -45,11 +45,10 @@ img.img-preview {
     padding: 0px;
 }
 .file-input .file-preview .file-preview-frame {
-    margin: 0px;
-    height: 100px;
+
 }
 .file-preview-frame:not(.file-preview-error):hover {
-    box-shadow: 2px 2px 5px 0 #a2958a;;
+
 }
 .note {
     color: #999;

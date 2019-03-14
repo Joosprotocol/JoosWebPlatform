@@ -133,6 +133,7 @@ $config = [
                         'Toolbar' => 'itmaster\core\helpers\Toolbar',
                         'CallbackHelper' => 'itmaster\core\helpers\CallbackHelper',
                         'Alert' => 'itmaster\core\widgets\Alert',
+                        'LayoutHelper' => 'frontend\library\LayoutHelper',
                     ],
                     'functions' => [
                         't' => 'Yii::t',

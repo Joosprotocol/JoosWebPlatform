@@ -107,7 +107,7 @@ class EthereumAPI extends Component implements BlockchainAPIInterface
         $ch = null;
         \Yii::trace([$result, $curlInfo, $error], "EthereumAPI");
         if ((int)$curlInfo['http_code'] !== self::RESPONSE_SUCCESS_CODE) {
-            throw new NotFoundHttpException();
+            throw new NotFoundHttpException('Unable to connect to the blockchain service');
         }
         if ($result === false) {
             throw new APICallException($error);

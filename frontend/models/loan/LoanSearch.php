@@ -57,6 +57,10 @@ class LoanSearch extends LoanSearchBase
             'query' => $query,
         ]);
 
+        if (!empty($params['pageSize'])) {
+            $dataProvider->pagination->pageSize = $params['pageSize'];
+        }
+
         $this->load($params);
 
         if (!$this->validate()) {

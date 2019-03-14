@@ -13,7 +13,14 @@ $this->title = Yii::t('app', 'Edit Profile') . ': ' . $model->username;
 
 <div class="user-update">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div id="title-line">
+        <div class="title-text"><?= Html::encode($this->title) ?></div>
+        <div class="pull-right">
+            <?= Html::a(Yii::t('app', 'Cancel'), ['view'], ['class' => 'btn btn-primary']) ?>
+            <?= Html::submitButton(Yii::t('app', 'Update'), ['class' => 'btn btn-success', 'form' => 'user-update']) ?>
+        </div>
+        <div class="clearfix"></div>
+    </div>
 
     <?= $this->render('_form', [
         'model' => $model,

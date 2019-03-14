@@ -2,11 +2,17 @@
 
 namespace frontend\controllers;
 
+use common\models\user\User;
 use frontend\forms\user\UserSignUpForm;
+use http\Exception\InvalidArgumentException;
 use itmaster\core\controllers\AuthController as BaseAuthController;
+use itmaster\core\models\forms\LoginForm;
+use itmaster\core\models\forms\PasswordForm;
+use itmaster\core\models\forms\PasswordResetRequestForm;
 use Yii;
 use yii\bootstrap\ActiveForm;
 use yii\filters\AccessControl;
+use yii\web\BadRequestHttpException;
 use yii\web\Response;
 
 
@@ -28,7 +34,7 @@ class AuthController extends BaseAuthController
             'rules' => [
                 [
                     'allow' => true,
-                    'actions' => ['signup'],
+                    'actions' => ['signup', 'login', 'request-password-reset', 'password-reset'],
                     'roles' => ['?'],
                 ],
 
@@ -56,6 +62,31 @@ class AuthController extends BaseAuthController
         ];
     }
 
+
+    /**
+     * Logs in a user.
+     *
+     * @return mixed
+     */
+    public function actionLogin()
+    {
+        if (!\Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $model = new LoginForm();
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            return $this->goHome();
+
+        } else {
+            return $this->render('login', [
+                'model' => $model
+            ]);
+        }
+    }
+
+
+
     /**
      * Signs user up.
      *
@@ -78,6 +109,58 @@ class AuthController extends BaseAuthController
         }
 
         return $this->render('signup', [
+            'model' => $model
+        ]);
+    }
+
+
+    /**
+     * Requests password reset.
+     *
+     * @return mixed
+     */
+    public function actionRequestPasswordReset()
+    {
+        $model = new PasswordResetRequestForm();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if ($model->sendEmail()) {
+                $this->showMessage(self::PASSWORD_RESET_LINK, null, 'success');
+                return $this->refresh();
+            } else {
+                $this->showMessage(self::PASSWORD_RESET_ERROR);
+            }
+        }
+
+        return $this->render('request_password_reset', [
+            'model' => $model
+        ]);
+    }
+
+    /**
+     * Resets password.
+     *
+     * @param string $token
+     * @return mixed
+     * @throws BadRequestHttpException
+     */
+    public function actionResetPassword($token = null)
+    {
+
+        try {
+            $model = new PasswordForm($token);
+        } catch (InvalidArgumentException $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
+            $this->showMessage(self::PASSWORD_SAVED, null, 'success');
+            if ($model->isGuest) {
+                return $this->goHome();
+            }
+            $this->trigger(self::EVENT_USER_LOGIN);
+        }
+
+        return $this->render('reset_password.twig', [
             'model' => $model
         ]);
     }

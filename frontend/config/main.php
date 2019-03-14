@@ -9,12 +9,12 @@ $params = array_merge(
 
 return [
     'id' => 'frontend',
-    'name' => 'Yii2 CMS',
+    'name' => 'JOOS',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
     'homeUrl' => '/',
-    'defaultRoute' => 'site/default/index',
+    'defaultRoute' => 'loan/my-loans',
     'layout' => 'main.twig',
     'components' => [
         'request' => [
@@ -43,6 +43,13 @@ return [
             'theme' => [
                 'pathMap' => [
                     '@frontend/views' => '@frontend/views',
+                ],
+            ],
+            'renderers' => [
+                'twig' => [
+                    'globals' => [
+                        'Alert' => 'frontend\widgets\AlertMultiple',
+                    ],
                 ],
             ],
         ],

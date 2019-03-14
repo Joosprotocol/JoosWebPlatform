@@ -31,6 +31,10 @@ use yii\db\ActiveRecord;
  * @property LoanStatusHistory[] $loanStatusHistories
  * @property LoanReferral[] $loanReferrals
  * @property LoanReferral $lastLoanReferral
+ * @property string $currencyTypeName
+ * @property string $formattedPeriod
+ * @property string $initTypeName
+ * @property string $statusName
  */
 class Loan extends ActiveRecord
 {

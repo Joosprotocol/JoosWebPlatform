@@ -12,7 +12,9 @@ class AppAsset extends AssetBundle
 {
     public $basePath = '@webroot';
     public $baseUrl = '@web';
-    public $css = [];
+    public $css = [
+        'css/styles.css'
+    ];
     public $js = [
         'js/SignUpHelper.js',
     ];

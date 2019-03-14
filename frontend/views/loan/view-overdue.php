@@ -1,6 +1,7 @@
 <?php
 
 use common\models\loan\Loan;
+use common\models\user\User;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\DetailView;
@@ -16,122 +17,165 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="loan-view">
 
-    <h1><?= Yii::t('app', 'Overdue Loan') ?></h1>
+    <div id="title-line">
+        <div class="title-text"><?= Yii::t('app', 'Loan Overdue') ?></div>
+        <div class="clearfix"></div>
+    </div>
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'formattedPeriod',
-            'period',
-            'currencyTypeName',
-            'initTypeName',
-            'created',
-            'timeOverdue',
-            'statusName'
-        ],
-    ]) ?>
+    <div class="panel">
+        <div class="panel-body">
 
-    <?php if (!empty($model->lender_id)): ?>
-        <h3><?= Yii::t('app', 'Lender') ?></h3>
-        <?= DetailView::widget([
-            'model' => $model,
-            'attributes' => [
-                'lender.fullName',
-            ],
-        ]) ?>
-    <?php endif; ?>
+            <div class="panel-body-inner">
 
-    <?php if (!empty($model->borrower_id)): ?>
-        <h3><?= Yii::t('app', 'Borrower') ?></h3>
-        <?= DetailView::widget([
-            'model' => $model,
-            'attributes' => [
-                'borrower.fullName',
-            ],
-        ]) ?>
-    <?php endif; ?>
+                <p>
+                    <b>
+                        <?= Yii::t('app', 'Amount') . ': ' . $model->amount;  ?>
+                    </b>
+                </p>
 
-    <?php if ($model->status === Loan::STATUS_OVERDUE && $blockchainPersonal !== false): ?>
+                <p>
+                    <?= Yii::t('app', 'Status') . ': ' . $model->statusName;  ?>
+                </p>
+                <p>
+                    <?= Yii::t('app', 'Currency') . ': ' . $model->currencyTypeName;  ?>
+                </p>
+
+                <p>
+                    <?= Yii::t('app', 'Type') . ': ' . $model->initTypeName;  ?>
+                </p>
+                <p>
+                    <?= Yii::t('app', 'Created') . ': ' . $model->created;  ?>
+                </p>
+                <p>
+                    <?= Yii::t('app', 'Period') . ': ' . $model->formattedPeriod;  ?>
+                </p>
+                <p>
+                    <?= Yii::t('app', 'Time Overdue') . ': ' . $model->timeOverdue;  ?>
+                </p>
+
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+
+        <?php if (!empty($model->lender_id)): ?>
+
+            <div class="col-md-4">
+                <div class="panel panel-white">
+                    <div class="panel-heading">
+                        <?= Yii::t('app', 'Lender') ?>
+                    </div>
+                    <div class="panel-heading-line"></div>
+                    <div class="panel-body text-center">
+                        <div class="avatar-circle">
+                            <div class="avatar-circle-img" style="background-image: url(<?= $model->lender->avatarUrl ?>)"></div>
+                        </div>
+                        <div>
+                            <?= HTML::a($model->lender->fullName, Url::to(['profile/public', 'id' => $model->lender->id])) ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        <?php endif; ?>
+
+        <?php if (!empty($model->borrower_id)): ?>
+            <div class="col-md-4">
+                <div class="panel panel-white">
+                    <div class="panel-heading">
+                        <?= Yii::t('app', 'Borrower') ?>
+                    </div>
+                    <div class="panel-heading-line"></div>
+                    <div class="panel-body text-center">
+                        <div class="avatar-circle">
+                            <div class="avatar-circle-img" style="background-image: url(<?= $model->borrower->avatarUrl ?>)"></div>
+                        </div>
+                        <div>
+                            <?= HTML::a($model->borrower->fullName, Url::to(['profile/public', 'id' => $model->borrower->id])) ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+
+
+    </div>
+
+
+
+
+    <?php if ($model->status === Loan::STATUS_OVERDUE && $blockchainPersonal !== false && Yii::$app->user->identity->roleName === User::ROLE_DIGITAL_COLLECTOR): ?>
 
         <?php if (!empty($loanReferral)): ?>
 
-            <p>
-                <b>
-                    Payment Referral
-                </b>
-                <?= HTML::a('Link', Url::to(['loan/follow', 'slug' => $loanReferral->slug])); ?>
+            <div class="panel panel-white">
+                <div class="panel-heading">
+                    <?= Yii::t('app', 'Personal info') ?>
+                </div>
+                <div class="panel-heading-line"></div>
+                <div class="panel-body">
+                    <div class="panel-body-inner">
 
-            </p>
+                        <p>
+                            <b>
+                                Payment Referral
+                            </b>
+                            <?= HTML::a('Link', Url::to(['loan/follow', 'slug' => $loanReferral->slug])); ?>
 
-            <h3><?= Yii::t('app', 'Personal data') ?></h3>
+                        </p>
+                        <p></p>
+                        <p>
+                            <b>
+                                <?= Yii::t('app', 'Issued ID') . ': ' ?>
+                            </b>
+                        </p>
 
-            <p>
-                <b>
-                    email
-                </b>
-                <?= $blockchainPersonal['email'] ?>
-            </p>
+                        <p>
+                            <img src="<?= $blockchainPersonal['issuedIdUrl'] ?>" alt="">
+                        </p>
 
-            <p>
-                <b>
-                    avatar
-                </b>
-                <img src="<?= $blockchainPersonal['avatarUrl'] ?>" alt="">
-            </p>
+                        <p>
+                            <?= Yii::t('app', 'Email') . ': ' . $blockchainPersonal['email'] ?>
+                        </p>
 
-            <p>
-                <b>
-                    issued_id
-                </b>
-                <img src="<?= $blockchainPersonal['issuedIdUrl'] ?>" alt="">
-            </p>
+                        <p>
+                            <?= Yii::t('app', 'Facebook URL') . ': ' . HTML::a($blockchainPersonal['facebook_url'], $blockchainPersonal['facebook_url']);  ?>
+                        </p>
 
-            <p>
-                <b>
-                    facebook_url
-                </b>
-                <?= $blockchainPersonal['facebook_url'] ?>
-            </p>
+                        <p>
+                            <?= Yii::t('app', 'Social URL') . ': ' . HTML::a($blockchainPersonal['social_url'], $blockchainPersonal['social_url']) ?>
+                        </p>
 
-            <p>
-                <b>
-                    social_url
-                </b>
-                <?= $blockchainPersonal['social_url'] ?>
-            </p>
+                        <p>
+                            <?= Yii::t('app', 'Mobile Number') . ': ' . $blockchainPersonal['mobile_number'] ?>
+                        </p>
 
-            <p>
-                <b>
-                    mobile_number
-                </b>
-                <?= $blockchainPersonal['mobile_number'] ?>
-            </p>
+                        <p>
+                            <?= Yii::t('app', 'Facebook First Friend') . ': ' . HTML::a($blockchainPersonal['facebook_friend_first_url'], $blockchainPersonal['facebook_friend_first_url']) ?>
+                        </p>
 
-            <p>
-                <b>
-                    facebook_friend_first_url
-                </b>
-                <?= $blockchainPersonal['facebook_friend_first_url'] ?>
-            </p>
+                        <p>
+                            <?= Yii::t('app', 'Facebook Second Friend') . ': ' . HTML::a($blockchainPersonal['facebook_friend_second_url'], $blockchainPersonal['facebook_friend_second_url']) ?>
+                        </p>
 
-            <p>
-                <b>
-                    facebook_friend_second_url
-                </b>
-                <?= $blockchainPersonal['facebook_friend_second_url'] ?>
-            </p>
+                        <p>
+                            <?= Yii::t('app', 'Facebook Third Friend') . ': ' . HTML::a($blockchainPersonal['facebook_friend_third_url'], $blockchainPersonal['facebook_friend_third_url']) ?>
+                        </p>
 
-            <p>
-                <b>
-                    facebook_friend_third_url
-                </b>
-                <?= $blockchainPersonal['facebook_friend_third_url'] ?>
-            </p>
+                    </div>
+                </div>
+            </div>
+
+
+
+
 
         <?php else: ?>
 
             <?= Html::a(Yii::t('app', 'Join'), ['loan/join-as-collector', 'id' => $model->id], [
-                'class' => 'btn btn-danger',
+                'class' => 'btn btn-success',
                 'data' => [
                     'confirm' => Yii::t('app', 'Are you sure you want to join as collector to this contract?'),
                     'method' => 'post',

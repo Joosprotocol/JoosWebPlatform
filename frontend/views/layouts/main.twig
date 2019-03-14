@@ -16,76 +16,100 @@
         {{ void(this.head) }}
         {% include('_counters.twig') %}
     </head>
-    <body>
+    <body class="{% if (LayoutHelper.isGuest == false) %}logged-in{% else %}guest{% endif %}">
     {{ void(this.beginBody()) }}
     <div class="wrap">
 
         {% set location = constant('itmaster\\core\\modules\\snippet\\models\\frontend\\Snippet::LOCATION_FOOTER') %}
 
-        <section id="header">
-            {# header content #}
-            {{ nav_bar_begin({
-                'brandLabel': app.name,
-                'brandUrl' : app.homeUrl,
-                'options' : {
-                    'class' : 'navbar navbar-default navbar-fixed-top main-menu',
-                }
-            }) }}
+        {% if (LayoutHelper.isGuest == false) %}
 
-            {% set menuItems = [] %}
+            <section id="header">
+                {# header content #}
+                {{ nav_bar_begin({
+                    'brandLabel': app.name,
+                    'brandUrl' : app.homeUrl,
+                    'innerContainerOptions' : {'class' : 'container-fluid'},
+                    'options' : {
+                        'class' : 'navbar navbar-default navbar-fixed-top main-menu',
+                        'id' : 'top-line'
+                    }
+                }) }}
+
+                {% set menuItems = [] %}
 
 
-            {# NavBar menu widget #}
-            {{ use ('common/widgets/Navigator') }}
-            {{ navigator_widget({
-                'options': {
-                    'class': 'navbar-nav navbar-right'
-                },
-                'isDropdown': true,
-                'menuCode': 'main',
-            }) }}
+                {# NavBar menu widget #}
 
-            {# Bootstrap Nav menu widget #}
-            {{ use ('yii/bootstrap/Nav') }}
-            {{ nav_widget({
-                'options': {
-                    'class': 'navbar-nav navbar-right',
-                },
-                'items': menuItems
-            }) }}
-            {{ nav_bar_end() }}
+                {{ use ('common/widgets/NavigatorProfile') }}
+                {{ navigator_profile_widget({
+                    'options': {
+                        'class': 'navbar-nav navbar-right',
+                        'id' : 'profile-menu'
+                    },
+                    'isDropdown': true,
+                    'menuCode': 'profile',
+                }) }}
+
+
+                <div class="pull-right">
+                    <a id="notification-menu" href="/notification/index"><span class="glyphicon glyphicon-envelope"></span>{% if (LayoutHelper.getNotificationsQuantity != 0) %}<div class="notification-circle">{{LayoutHelper.getNotificationsQuantity}}</div>{% endif %}</a>
+                </div>
+
+
+                {{ nav_bar_end() }}
+            </section>
+
+        {% endif %}
+
+        <section id="main">
+            {% if (LayoutHelper.isGuest == false) %}
+            <div id="sidebar">
+
+                <div class="user-info">
+
+                    <div class="avatar-circle">
+                        <div class="avatar-circle-img" style="background-image: url({{ LayoutHelper.getUser().avatarUrl }})"></div>
+                    </div>
+
+                    <div class="full-name">
+                        {{ LayoutHelper.getUser().fullName }}
+                    </div>
+
+                    <div class="role-name">
+                        {{ LayoutHelper.getUser().roleName|capitalize }}
+                    </div>
+
+                </div>
+
+                {{ use ('common/widgets/NavigatorSidebar') }}
+                {{ navigator_sidebar_widget({
+                    'options': {
+                        'class': 'sidebar-nav',
+                        'id' : 'sidebar-menu'
+                    },
+                    'isDropdown': true,
+                    'menuCode': 'sidebar-inner',
+                }) }}
+
+
+            </div>
+            {% endif %}
+            <div class="container-fluid">
+
+                {{ Alert.widget()|raw(html) }}
+
+                <div id="content">
+
+                    {#page content #}
+                    {#% if page %}
+                        {% include('_content.twig') %}
+                    {% endif %#}
+                        {{ content|raw(html) }}
+                </div>
+            </div>
         </section>
-
-        <div class="container">
-            {% if this.params['breadcrumbs'] %}
-                {% set breadcrumbs = this.params['breadcrumbs'] %}
-            {% else %}
-                {% set breadcrumbs = [] %}
-            {% endif %}
-
-            {{ Breadcrumbs.widget({
-                'links' : breadcrumbs,
-            })|raw(html) }}
-
-            {{ Alert.widget()|raw(html) }}
-
-            {#page content #}
-            {% if page %}
-                <h1> {{ seo['h1'] }} </h1>
-                {% include('_content.twig') %}
-            {% endif %}
-                {{ content|raw(html) }}
-        </div>
-
     </div>
-
-    <footer class="footer">
-        <div class="container">
-            {#footer content #}
-            <p class="pull-left">&copy; Creator {{ 'now'|date('Y') }}</p>
-            <p class="pull-right">{{ t('app', 'Created by') | raw }}</p>
-        </div>
-    </footer>
 
     {{ void(this.endBody()) }}
 

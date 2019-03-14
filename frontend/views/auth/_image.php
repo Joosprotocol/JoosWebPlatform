@@ -8,12 +8,12 @@ use kartik\file\FileInput;
 
 <?= Gallery::widget() ?>
 
-<?= $form->field($model, $attributeName)->widget(FileInput::classname(), [
+<?= $form->field($model, $attributeName)->label(false)->widget(FileInput::classname(), [
     'pluginOptions' => [
         'initialPreview' => [
-            !empty($model->avatarUrl)
-                ? '<a href="' . $model->avatarUrl . '" title="' . $attributeName . '" data-gallery>'
-                . Html::img($model->avatarUrl, ['class' => 'img-preview', 'title' => $attributeName, 'alt' => $attributeName])
+            !empty($model->{$attributeName  . 'Url'})
+                ? '<a href="' . $model->{$attributeName  . 'Url'} . '" title="' . $attributeName . '" data-gallery>'
+                . Html::img($model->{$attributeName  . 'Url'}, ['class' => 'img-preview', 'title' => $attributeName, 'alt' => $attributeName])
                 . '<br />'
                 . '</a>'
                 : null
@@ -23,18 +23,23 @@ use kartik\file\FileInput;
         'showCaption' => false,
         'showUpload' => false,
         'showClose' => false,
-        'removeClass' => 'btn btn-danger',
-        'browseClass' => 'btn btn-success',
+        'removeClass' => 'additional-btn remove',
+        'browseClass' => 'additional-btn browse',
         'browseLabel' => '',
         'removeLabel' => '',
-        'browseIcon' => '<i class="glyphicon glyphicon-picture"></i>',
+        'browseIcon' => '<i class="glyphicon glyphicon-camera"></i>',
         'previewTemplates' => [
-            'generic' => '<div class="file-preview-frame" id="{previewId}" data-fileindex="{fileindex}">
+            'generic' => '<div class=" file-preview-frame ' . $attributeName . '-image" id="{previewId}" data-fileindex="{fileindex}">
+                    <div class="' . $attributeName . '-image-inner">
                     {content}
+                    </div> 
                 </div>',
-            'image' => '<div class="file-preview-frame" id="{previewId}" data-fileindex="{fileindex}">
+            'image' => '<div class="file-preview-frame ' . $attributeName . '-image" id="{previewId}" data-fileindex="{fileindex}">
+                    <div class="' . $attributeName . '-image-inner">
                     <img src="{data}" class="img-preview" title="{caption}" alt="{caption}">
+                    </div> 
                 </div>',
         ]
     ],
 ]) ?>
+

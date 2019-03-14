@@ -14,18 +14,39 @@ $this->title = $model->username;
 ?>
 <div class="user-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div id="title-line">
+        <div class="title-text"><?= Yii::t('app', 'Profile') ?></div>
+        <div class="pull-right">
+            <?= Html::a(Yii::t('app', 'Cancel'), ['view'], ['class' => 'btn btn-primary']) ?>
+            <?= Html::submitButton(Yii::t('app', 'Update'), ['class' => 'btn btn-success', 'form']) ?>
+        </div>
+        <div class="clearfix"></div>
+    </div>
 
-    <img src="<?= $model->avatarUrl ?>" alt="">
+    <div class="panel">
+        <div class="panel-body">
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'username',
-            'first_name',
-            'last_name',
-            'roleName'
-        ],
-    ]) ?>
+            <div class="panel-body-inner">
+                <div class="avatar-image">
+                    <div class="avatar-image-img" style="background-image: url(<?= $model->avatarUrl ?>)"></div>
+                </div>
+
+                <div class="profile-info">
+
+                    <p class="user-name">
+                        <?= $model->username ?>
+                    </p>
+
+                    <p>
+                        <?= Yii::t('app', 'Role') . ': ' . ucfirst($model->roleName) ?>
+                    </p>
+
+
+                    <hr>
+
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>

@@ -1,6 +1,7 @@
 <?php
 
 use common\library\date\DateIntervalEnhanced;
+use frontend\library\GridHelper;
 use itmaster\core\helpers\Toolbar;
 use yii\helpers\Html;
 use kartik\grid\GridView;
@@ -14,18 +15,19 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="loan-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div id="title-line">
+        <div class="title-text"><?= Html::encode($this->title) ?></div>
+        <div class="clearfix"></div>
+    </div>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-        'resizeStorageKey' => 'loanGrid',
+        'resizeStorageKey' => 'loanOverdueGrid',
+        'options' => [
+            'class' => 'white-grid-table'
+        ],
         'columns' => [
-            [
-                'class' => 'yii\grid\CheckboxColumn',
-                'headerOptions' => ['class'=>'skip-export'],
-                'contentOptions' => ['class'=>'skip-export'],
-            ],
             'id',
             'borrower.fullName',
             'amount',
@@ -34,21 +36,20 @@ $this->params['breadcrumbs'][] = $this->title;
             'timeOverdue',
             'created',
             [
-                'attribute' => 'Sign',
+                'attribute' => 'View',
                 'format' => 'html',
                 'value' => function ($model) {
-                    return Html::a(Yii::t('app', 'View'), \yii\helpers\Url::to(['loan/view-overdue', 'id' => $model->id]));
+                    return Html::a(Yii::t('app', 'View'), \yii\helpers\Url::to(['loan/view', 'id' => $model->id]));
                 }
             ],
 
-            /*[
-                'class' => 'yii\grid\ActionColumn',
-                'headerOptions' => ['class'=>'skip-export'],
-                'contentOptions' => ['class'=>'skip-export'],
-            ],*/
         ],
         'panel' => [
-            'footer' => Toolbar::paginationSelect($dataProvider),
+            'heading' => false,
+        ],
+        // set your toolbar
+        'toolbar' => [
+            GridHelper::getPerPageDropdown($dataProvider)
         ],
     ]); ?>
 </div>
