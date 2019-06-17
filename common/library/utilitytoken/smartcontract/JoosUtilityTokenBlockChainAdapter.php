@@ -1,7 +1,7 @@
 <?php
 
 
-namespace common\models\loan\ethereum;
+namespace common\library\utilitytoken\smartcontract;
 
 
 use common\library\ethereum\BlockchainAPIInterface;
@@ -34,7 +34,7 @@ class JoosUtilityTokenBlockChainAdapter
             self::CONTRACT_NAME,
             $this->blockchain->getRequestTypeContractSend(),
             __FUNCTION__,
-            func_get_args()
+            [$address, $amount]
         );
     }
 
@@ -51,7 +51,7 @@ class JoosUtilityTokenBlockChainAdapter
             self::CONTRACT_NAME,
             $this->blockchain->getRequestTypeContractSend(),
             __FUNCTION__,
-            func_get_args()
+            [$address]
         );
     }
 }

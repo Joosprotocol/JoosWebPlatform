@@ -191,6 +191,7 @@ Add to cron execution:
 
 ```
 0 * * * * php yii loan-blockchain-extractor/update
+* * * * * php yii collateral/make-loans-from-platform > collateral_loans_autocreating.log 2>&1
 
 ```
 

@@ -4,10 +4,14 @@
 namespace common\library\notification;
 
 
+use common\models\collateral\Collateral;
+use common\models\collateral\CollateralLoan;
 use common\models\loan\Loan;
 use common\models\loan\LoanFollowing;
 use common\models\loan\LoanReferral;
 use common\models\notification\Notification;
+use common\models\payment\Payment;
+use common\models\user\BlockchainProfile;
 use common\models\user\User;
 use Yii;
 use yii\bootstrap\Html;
@@ -27,6 +31,16 @@ class NotificationService
             . HTML::a(Yii::t('app', 'Significant'), Url::to(['profile/public', 'id' => $user->id]));
         Notification::create($loan->borrower_id, $message);
         Notification::create($loan->lender_id, $message);
+    }
+
+    /**
+     * @param CollateralLoan $collateralLoan
+     */
+    public static function sendCollateralLoanSignNotification(CollateralLoan $collateralLoan)
+    {
+        $message = Notification::getMessages()[Notification::MESSAGE_COLLATERAL_LOAN_SIGNED] . '&nbsp;'
+            . HTML::a(Yii::t('app', 'Collateral Loan'), Url::to(['collateral/loan', 'hashId' => $collateralLoan->hash_id]));
+        Notification::create($collateralLoan->collateral->investor_id, $message);
     }
 
     /**
@@ -101,5 +115,81 @@ class NotificationService
         foreach ($loan->loanReferrals as $loanReferral) {
             Notification::create($loanReferral->digital_collector_id, $message);
         }
+    }
+
+    public static function sendChangeCollateralLoanStatusNotification(CollateralLoan $collateralLoan) : void
+    {
+        $message = Notification::getMessages()[Notification::MESSAGE_COLLATERAL_LOAN_STATUS_CHANGED] . '&nbsp;'
+            . HTML::a(Yii::t('app', 'Loan'), Url::to(['collateral/loan', 'hashId' => $collateralLoan->hash_id])) . '&nbsp;'
+            . Yii::t('app', 'Status') . ': ' . $collateralLoan->getStatusName();
+
+        Notification::create($collateralLoan->collateral->investor_id, $message);
+    }
+
+    /**
+     * @param Collateral $collateral
+     */
+    public static function sendCollateralCreatedNotification($collateral)
+    {
+        $message = Notification::getMessages()[Notification::MESSAGE_NEW_COLLATERAL_CREATED] . '&nbsp;'
+            . HTML::a('Collateral', Url::to(['collateral/view', 'hashId' => $collateral->hash_id]));
+        Notification::create($collateral->lender_id ?? $collateral->investor_id, $message);
+    }
+
+    /**
+     * @param Collateral $collateral
+     */
+    public static function sendCollateralPaidNotification($collateral)
+    {
+        $message = Notification::getMessages()[Notification::MESSAGE_NEW_COLLATERAL_PAID] . '&nbsp;'
+            . HTML::a('Collateral', Url::to(['collateral/view', 'hashId' => $collateral->hash_id]));
+        Notification::create($collateral->lender_id ?? $collateral->investor_id, $message);
+    }
+
+    /**
+     * @param Payment $payment
+     * @internal param CollateralLoan $collateralLoan
+     */
+    public static function sendCollateralLoanNewPaymentNotification(Payment $payment)
+    {
+        $message = Notification::getMessages()[Notification::MESSAGE_COLLATERAL_LOAN_NEW_PAYMENT] . '&nbsp;'
+            . HTML::a('Loan (for Collateral)', Url::to(['collateral/loan', 'hashId' => $payment->collateralLoan->hash_id]));
+        Notification::create($payment->collateralLoan->collateral->investor_id, $message);
+        if (!empty($payment->collateralLoan->lender_id)) {
+            Notification::create($payment->collateralLoan->lender_id, $message);
+        }
+    }
+
+    /**
+     * @param Collateral $collateral
+     * @internal param Loan $loan
+     */
+    public static function sendCollateralLoanPaymentAddressErrorNotification(Collateral $collateral)
+    {
+        $message = Notification::getMessages()[Notification::MESSAGE_COLLATERAL_LOAN_PAYMENT_ADDRESS_ERROR] . '&nbsp;'
+            . HTML::a('Collateral', Url::to(['collateral/view', 'id' => $collateral->hash_id]));
+        Notification::create($collateral->investor_id, $message);
+    }
+
+    /**
+     * @param CollateralLoan $collateralLoan
+     */
+    public static function sendNewCollateralLoanPaymentNotification(CollateralLoan $collateralLoan)
+    {
+        $message = Notification::getMessages()[Notification::MESSAGE_NEW_COLLATERAL_LOAN_PAYMENT_PLATFORM] . '&nbsp;' . $collateralLoan->getFormattedAmountWithCurrency() . '.&nbsp;'
+            . HTML::a('Collateral', Url::to(['collateral/view', 'hashId' => $collateralLoan->collateral->hash_id]));
+        Notification::create($collateralLoan->collateral->investor_id, $message);
+    }
+
+    /**
+     * @param CollateralLoan $collateralLoan
+     * @param BlockchainProfile $blockchainProfile
+     */
+    public static function sendCollateralLoanWithdrawNotification(CollateralLoan $collateralLoan, BlockchainProfile $blockchainProfile)
+    {
+        $message = Notification::getMessages()[Notification::MESSAGE_COLLATERAL_LOAN_WITHDRAWN] . '&nbsp;'
+            . HTML::a('Collateral Loan', Url::to(['collateral/loan', 'hashId' => $collateralLoan->hash_id])) . '&nbsp;'
+            . Yii::t('app', 'Address:') . '&nbsp;' . $blockchainProfile->address;
+        Notification::create($collateralLoan->collateral->investor_id, $message);
     }
 }

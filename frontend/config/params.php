@@ -16,6 +16,12 @@ return [
             'iconClass' => 'sidebar-icon-plus'
         ],
         [
+            'label' => Yii::t('app', 'New Collateral'),
+            'url' => '/collateral/create',
+            'visible' => ['lender', 'borrower'],
+            'iconClass' => 'sidebar-icon-plus'
+        ],
+        [
             'label' => Yii::t('app', 'Loans Overdue'),
             'url' => '/loan/loans-overdue',
             'visible' => ['digital-collector'],
@@ -38,6 +44,18 @@ return [
             'url' => '/loan/my-loans',
             'visible' => ['lender', 'borrower', 'digital-collector'],
             'iconClass' => 'sidebar-icon-pen'
+        ],
+        [
+            'label' => Yii::t('app', 'Collaterals'),
+            'url' => '/collateral/index',
+            'visible' => ['lender'],
+            'iconClass' => 'sidebar-icon-safe'
+        ],
+        [
+            'label' => Yii::t('app', 'My Collaterals'),
+            'url' => '/collateral/my-collaterals',
+            'visible' => ['borrower'],
+            'iconClass' => 'sidebar-icon-safe'
         ],
         [
             'label' => Yii::t('app', 'Logout'),

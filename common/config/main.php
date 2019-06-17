@@ -26,6 +26,7 @@ $config = [
                 'action' => UrlNormalizer::ACTION_REDIRECT_PERMANENT,
             ],
             'rules' => [
+                'collateral/<action:[\w-]+>/<hashId:[\w-]+>' => 'collateral/<action>',
                 '<controller:[\w-]+>/<action:[\w-]+>' => '<controller>/<action>',
                 '<controller:[\w-]+>/<action:[\w-]+>/<id:\d+>' => '<controller>/<action>',
                 '<module:[\w-]+>/<controller:[\w-]+>/<action:[\w-]+>' => '<module>/<controller>/<action>',
@@ -96,6 +97,23 @@ $config = [
             'cipherMode' => 'AES-256-CBC',
             'algorithm' => 'SHA256'
         ],
+        'cryptoApi' => [
+            'class' => 'common\library\blockchain\CryptoAPI',
+            'apiRequestHandlerClass' => 'common\library\api\APIRequestHandler',
+            'apiUrl' => 'https://api.cryptoapis.io',
+            'apiKey' => '00d38a3e19134323f9bcc750312915b895302462',
+            'environment' => 'test',
+            'networks' => [
+                'bitcoin' => [
+                    'test' => 'testnet',
+                    'prod' => 'mainnet',
+                ],
+                'ethereum' => [
+                    'test' => 'rinkeby',
+                    'prod' => 'mainnet'
+                ]
+            ]
+        ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
@@ -103,6 +121,20 @@ $config = [
                     'class' => 'yii\log\FileTarget',
                     'categories' => ['blockchain'],
                     'logFile' => '@runtime/logs/blockchain.log',
+                    'logVars' => [],
+                    'levels' => ['info', 'error', 'warning']
+                ],
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'categories' => ['api'],
+                    'logFile' => '@runtime/logs/api.log',
+                    'logVars' => [],
+                    'levels' => ['info', 'error', 'warning']
+                ],
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'categories' => ['collateral'],
+                    'logFile' => '@runtime/logs/collateral.log',
                     'logVars' => [],
                     'levels' => ['info', 'error', 'warning']
                 ],

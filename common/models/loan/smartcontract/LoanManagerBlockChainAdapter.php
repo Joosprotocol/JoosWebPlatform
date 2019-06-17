@@ -1,6 +1,6 @@
 <?php
 
-namespace common\models\loan\ethereum;
+namespace common\models\loan\smartcontract;
 
 use common\library\ethereum\BlockchainAPIInterface;
 use common\library\exceptions\APICallException;
@@ -38,7 +38,7 @@ class LoanManagerBlockChainAdapter
             self::CONTRACT_NAME,
             $this->blockchain->getRequestTypeContractSend(),
             __FUNCTION__,
-            func_get_args()
+            [$loanId, $amount, $currencyType, $period, $percent, $initType]
         );
     }
 
@@ -61,7 +61,7 @@ class LoanManagerBlockChainAdapter
             self::CONTRACT_NAME,
             $this->blockchain->getRequestTypeContractSend(),
             __FUNCTION__,
-            func_get_args()
+            [$loanId, $lenderId, $lenderFullName, $borrowerId, $borrowerFullName, $personal]
         );
     }
 
@@ -69,18 +69,15 @@ class LoanManagerBlockChainAdapter
      * @param integer $loanId
      * @param integer $status
      * @return object|string
-     * @throws APICallException
-     * @throws NotFoundHttpException
-     * @throws ParseException
+     * @internal param $sad
      */
     public function setStatus($loanId, $status)
     {
-
         return $this->blockchain->executeContract(
             self::CONTRACT_NAME,
             $this->blockchain->getRequestTypeContractSend(),
             __FUNCTION__,
-            func_get_args()
+            [$loanId, $status]
         );
     }
 
@@ -92,12 +89,11 @@ class LoanManagerBlockChainAdapter
      */
     public function isOwner()
     {
-
         return $this->blockchain->executeContract(
             self::CONTRACT_NAME,
             $this->blockchain->getRequestTypeContractCall(),
             __FUNCTION__,
-            func_get_args()
+            []
         );
     }
 
@@ -114,7 +110,7 @@ class LoanManagerBlockChainAdapter
             self::CONTRACT_NAME,
             $this->blockchain->getRequestTypeContractCall(),
             __FUNCTION__,
-            func_get_args()
+            [$loanId]
         );
     }
 
@@ -131,7 +127,7 @@ class LoanManagerBlockChainAdapter
             self::CONTRACT_NAME,
             $this->blockchain->getRequestTypeContractCall(),
             __FUNCTION__,
-            func_get_args()
+            [$loanId]
         );
     }
 
@@ -148,7 +144,7 @@ class LoanManagerBlockChainAdapter
             self::CONTRACT_NAME,
             $this->blockchain->getRequestTypeContractCall(),
             __FUNCTION__,
-            func_get_args()
+            [$loanId]
         );
     }
 
@@ -165,7 +161,7 @@ class LoanManagerBlockChainAdapter
             self::CONTRACT_NAME,
             $this->blockchain->getRequestTypeContractCall(),
             __FUNCTION__,
-            func_get_args()
+            [$loanId]
         );
     }
 
@@ -182,7 +178,7 @@ class LoanManagerBlockChainAdapter
             self::CONTRACT_NAME,
             $this->blockchain->getRequestTypeContractCall(),
             __FUNCTION__,
-            func_get_args()
+            [$loanId]
         );
     }
 
@@ -199,7 +195,7 @@ class LoanManagerBlockChainAdapter
             self::CONTRACT_NAME,
             $this->blockchain->getRequestTypeContractCall(),
             __FUNCTION__,
-            func_get_args()
+            [$loanId]
         );
     }
 

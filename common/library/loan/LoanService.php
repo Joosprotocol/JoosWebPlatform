@@ -5,7 +5,7 @@ namespace common\library\loan;
 use common\library\crypt\CryptorInterface;
 use common\library\ethereum\EthereumAPI;
 use common\library\notification\NotificationService;
-use common\models\loan\ethereum\LoanManagerBlockChainAdapter;
+use common\models\loan\smartcontract\LoanManagerBlockChainAdapter;
 use common\models\loan\Loan;
 use common\models\user\User;
 use Yii;
@@ -13,8 +13,6 @@ use yii\base\Exception;
 
 class LoanService
 {
-
-    const COMMA_MULTIPLIER = 10000;
 
     /** @var Loan  */
     private $loan;
@@ -49,7 +47,7 @@ class LoanService
                     throw new Exception('No personal information is available.');
                 }
                 $personalEncoded = $this->getCryptedPersonalInfo();
-                $loanManagerAdapter->initLoan($this->loan->id, $this->loan->amount * self::COMMA_MULTIPLIER, $this->loan->currency_type, $this->loan->period, 0, $this->loan->init_type);
+                $loanManagerAdapter->initLoan($this->loan->id, $this->loan->amount, $this->loan->currency_type, $this->loan->period, 0, $this->loan->init_type);
                 $loanManagerAdapter->setLoanParticipants($this->loan->id, $this->loan->lender->id, $this->loan->lender->fullName, $this->loan->borrower->id, $this->loan->borrower->fullName, $personalEncoded);
                 $transaction->commit();
                 $this->createSignNotification();

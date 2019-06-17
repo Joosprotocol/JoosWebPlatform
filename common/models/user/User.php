@@ -2,6 +2,8 @@
 
 namespace common\models\user;
 
+use common\library\blockchain\BlockchainType;
+use common\library\cryptocurrency\CryptoCurrencyTypes;
 use common\models\loan\Loan;
 use common\models\notification\Notification;
 use itmaster\core\behaviors\TimestampBehavior;
@@ -17,7 +19,9 @@ use Yii;
  * @property Loan[] $notifications
  * @property UserPersonal $personal
  * @property UserPersonal $personalActive
- * @property BlockchainProfile $blockchainProfile
+ * @property BlockchainProfile[] $blockchainProfiles
+ * @property BlockchainProfile $ethereumProfile
+ * @property BlockchainProfile $bitcoinProfile
  * @property string $avatarUrl
  * @property array $personalArray
  * @property string $fullName
@@ -98,10 +102,29 @@ class User extends CoreUser
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getBlockchainProfile()
+    public function getBlockchainProfiles()
     {
-        return $this->hasOne(BlockchainProfile::class, ['user_id' => 'id']);
+        return $this->hasMany(BlockchainProfile::class, ['user_id' => 'id']);
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEthereumProfile()
+    {
+        return $this->hasOne(BlockchainProfile::class, ['user_id' => 'id'])
+            ->where(['network' => CryptoCurrencyTypes::NETWORK_TYPE_ETHEREUM]);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getBitcoinProfile()
+    {
+        return $this->hasOne(BlockchainProfile::class, ['user_id' => 'id'])
+            ->where(['network' => CryptoCurrencyTypes::NETWORK_TYPE_BITCOIN]);
+    }
+
 
     /**
      * @return array

@@ -4,7 +4,8 @@
 namespace frontend\forms\user;
 
 
-use common\models\loan\ethereum\Web3BlockChainAdapter;
+use common\library\cryptocurrency\CryptoCurrencyTypes;
+use common\library\web3\Web3BlockChainAdapter;
 use common\models\user\BlockchainProfile;
 use common\models\user\User;
 use common\models\user\UserPersonal;
@@ -47,10 +48,14 @@ class UserSignUpForm extends Model
     /** @var  string */
     public $facebookFriendThirdUrl;
     /** @var  BlockchainProfile */
-    public $blockchainProfile;
+    public $ethereumProfile;
+    /** @var  BlockchainProfile */
+    public $bitcoinProfile;
     /** @var  string */
-    public $address;
-
+    public $bitcoinAddress;
+    /** @var  string */
+    public $ethereumAddress;
+    
     /**
      * @inheritdoc
      */
@@ -86,15 +91,8 @@ class UserSignUpForm extends Model
             [['mobileNumber'], 'string', 'max' => 15],
 
             /*DIGITAL COLLECTOR FIELDS*/
-            [['address'],
-                'required',
-                'when' => function ($model) {
-                    return $model->roleName == User::ROLE_DIGITAL_COLLECTOR;
-                },
-                'whenClient' => 'function (attribute, value) { return false; }',
-            ],
-            [['address'], 'validateAddress'],
-            [['address'], 'string', 'max' => 255],
+            [['ethereumAddress'], 'validateAddress'],
+            [['ethereumAddress', 'bitcoinAddress'], 'string', 'max' => 255],
         ];
     }
 
@@ -119,10 +117,8 @@ class UserSignUpForm extends Model
         if ($this->roleName === User::ROLE_BORROWER) {
             $valid = $valid && $this->saveUserPersonal();
         }
-        if ($this->roleName === User::ROLE_DIGITAL_COLLECTOR) {
-            $valid = $valid && $this->saveBlockchainProfile();
-        }
 
+        $valid = $valid && $this->saveBlockchainProfile();
 
         if ($valid) {
             $transaction->commit();
@@ -191,11 +187,27 @@ class UserSignUpForm extends Model
      */
     private function saveBlockchainProfile() : bool
     {
-        $this->blockchainProfile = new BlockchainProfile();
-        $this->blockchainProfile->loadDefaultValues();
-        $this->blockchainProfile->user_id = $this->user->id;
-        $this->blockchainProfile->address = $this->address;
-        return $this->blockchainProfile->save();
+        $result = true;
+        
+        if (!empty($this->ethereumAddress)) {
+            $this->ethereumProfile = new BlockchainProfile();
+            $this->ethereumProfile->loadDefaultValues();
+            $this->ethereumProfile->user_id = $this->user->id;
+            $this->ethereumProfile->address = $this->ethereumAddress;
+            $this->ethereumProfile->network = CryptoCurrencyTypes::NETWORK_TYPE_ETHEREUM;
+            $result = $result && $this->ethereumProfile->save();
+        }
+        
+        if (!empty($this->bitcoinAddress)) {
+            $this->bitcoinProfile = new BlockchainProfile();
+            $this->bitcoinProfile->loadDefaultValues();
+            $this->bitcoinProfile->user_id = $this->user->id;
+            $this->bitcoinProfile->address = $this->bitcoinAddress;
+            $this->bitcoinProfile->network = CryptoCurrencyTypes::NETWORK_TYPE_BITCOIN;
+            $result = $result && $this->bitcoinProfile->save();
+        }
+        
+        return $result;
     }
 
     /**
@@ -207,7 +219,7 @@ class UserSignUpForm extends Model
     {
         $web3BlockChainAdapter = new Web3BlockChainAdapter(Yii::$app->ethereumAPI);
         if (!$web3BlockChainAdapter->isAccount($this->$attribute)) {
-            $this->addError($attribute, 'The address does not exist in the blockchain.');
+            $this->addError($attribute, 'The ethereum address does not exist in the blockchain.');
         }
     }
 }

@@ -2,6 +2,12 @@
 
 namespace common\models\payment;
 
+use common\behaviors\AmountBehavior;
+use common\models\blockchain\PaymentAddress;
+use common\models\collateral\Collateral;
+use common\models\collateral\CollateralLoan;
+use common\models\collateral\CollateralLoanPayment;
+use common\models\collateral\CollateralPayment;
 use common\models\loan\Loan;
 use itmaster\core\behaviors\TimestampBehavior;
 use Yii;
@@ -11,12 +17,25 @@ use yii\db\ActiveRecord;
  * This is the model class for table "{{%payment}}".
  *
  * @property integer $id
- * @property integer $loan_id
- * @property string $amount
+ * @property integer $currency_type
+ * @property integer $amount
+ * @property string $hash
+ * @property string $created
+ * @property string $updated
  * @property integer $created_at
  * @property integer $updated_at
  *
  * @property Loan $loan
+ * @property CollateralLoan $collateralLoan
+ * @property Collateral $collateral
+ * @property CollateralLoanPayment $collateralLoanPayment
+ * @property CollateralPayment $collateralPayment
+ * @property PaymentAddress $collateralLoanPaymentAddress
+ *
+ * @property string $formattedAmount
+ * @property string $formattedAmountWithCurrency
+ * @property string $currencyName
+ *
  */
 class Payment extends ActiveRecord
 {
@@ -36,6 +55,7 @@ class Payment extends ActiveRecord
     {
         return [
             TimestampBehavior::class,
+            AmountBehavior::class
         ];
     }
 
@@ -45,10 +65,10 @@ class Payment extends ActiveRecord
     public function rules()
     {
         return [
-            [['loan_id'], 'required'],
-            [['loan_id', 'created_at', 'updated_at'], 'integer'],
-            [['amount'], 'number'],
-            [['loan_id'], 'exist', 'skipOnError' => true, 'targetClass' => Loan::class, 'targetAttribute' => ['loan_id' => 'id']],
+            [['currency_type', 'amount'], 'required'],
+            [['currency_type', 'created_at', 'updated_at', 'currency_type', 'amount'], 'integer'],
+            [['hash'], 'string'],
+
         ];
     }
 
@@ -59,8 +79,9 @@ class Payment extends ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'loan_id' => Yii::t('app', 'Loan ID'),
+            'currency_type' => Yii::t('app', 'Currency Type'),
             'amount' => Yii::t('app', 'Amount'),
+            'hash' => Yii::t('app', 'Hash'),
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
         ];
@@ -69,8 +90,44 @@ class Payment extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getLoan()
+    public function getCollateralPayment()
     {
-        return $this->hasOne(Loan::class, ['id' => 'loan_id']);
+        return $this->hasOne(CollateralPayment::class, ['payment_id' => 'id']);
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCollateral()
+    {
+        return $this->hasOne(Collateral::class, ['id' => 'collateral_id'])
+            ->via('collateralPayment');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCollateralLoanPayment()
+    {
+        return $this->hasOne(CollateralLoanPayment::class, ['payment_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCollateralLoan()
+    {
+        return $this->hasOne(CollateralLoan::class, ['id' => 'collateral_loan_id'])
+            ->via('collateralLoanPayment');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCollateralLoanPaymentAddress()
+    {
+        return $this->hasOne(CollateralLoan::class, ['id' => 'payment_address_id'])
+            ->via('collateralLoanPayment');
+    }
+
 }

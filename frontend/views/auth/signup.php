@@ -91,6 +91,8 @@ $fieldOptions = [
                         ]) ?>
                     </div>
 
+                    <?= $form->field($model, 'facebookUrl', $fieldOptions)->textInput(['maxlength' => true]) ?>
+
                     <?= $form->field($model, 'socialUrl', $fieldOptions)->textInput(['maxlength' => true]) ?>
 
                     <?= $form->field($model, 'mobileNumber', $fieldOptions)->textInput(['maxlength' => true]) ?>
@@ -103,15 +105,17 @@ $fieldOptions = [
 
                 </div>
 
-                <div id="signup-digital-collector-mode" style="display: none">
+                <div id="signup-blockchain-profile">
 
                     <div class="clearfix"></div>
 
                     <div class="title text-center"></div>
 
-                    <div class="subtitle text-center"><p><?= Yii::t('app', 'Digital Collector data') ?></p></div>
+                    <div class="subtitle text-center"><p><?= Yii::t('app', 'Blockchain Profiles') ?></p></div>
 
-                    <?= $form->field($model, 'address', $fieldOptions)->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'ethereumAddress', $fieldOptions)->textInput(['maxlength' => true]) ?>
+
+                    <?= $form->field($model, 'bitcoinAddress', $fieldOptions)->textInput(['maxlength' => true]) ?>
 
                 </div>
 

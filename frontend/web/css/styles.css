@@ -19,6 +19,28 @@ hr {
     opacity: 0.5;
 }
 
+/*LOADING_BUTTON*/
+
+.spin-icon {
+    animation-name: spin;
+    animation-duration: 1000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    /* transform: rotate(3deg); */
+    /* transform: rotate(0.3rad);/ */
+    /* transform: rotate(3grad); */
+    /* transform: rotate(.03turn);  */
+}
+
+.btn .spin-icon {
+    display: none;
+}
+
+.btn.loading .spin-icon {
+    display: inherit;
+}
+
+
 /*---NAVBAR---*/
 
 #top-line {
@@ -212,6 +234,10 @@ hr {
 
 .sidebar-icon-plus {
     background-image: url(/images/layout/sidebar-icon-plus.png)
+}
+
+.sidebar-icon-safe {
+    background-image: url(/images/layout/sidebar-icon-safe.png)
 }
 
 .sidebar-item-icon {
@@ -1025,4 +1051,12 @@ a, a:hover, a:focus {
     top: calc(50% - 300px);
 }
 
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}
 

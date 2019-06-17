@@ -8,7 +8,6 @@ var SignUpHelper = {
             dataContainerSignUp: $('#signup-data-container'),
 
             divBorrowerMode: $('#signup-borrower-mode'),
-            divDigitalCollectorMode: $('#signup-digital-collector-mode'),
         };
     },
 
@@ -24,14 +23,11 @@ var SignUpHelper = {
         if ($(select).val() == roleNames.borrower_name) {
             this.map.divBorrowerMode.show(200);
         }
-        if ($(select).val() == roleNames.digital_collector_name) {
-            this.map.divDigitalCollectorMode.show(200);
-        }
+
     },
 
     closeAllSignUpRoleDivs: function () {
         this.map.divBorrowerMode.hide(200);
-        this.map.divDigitalCollectorMode.hide(200);
     }
 
 };

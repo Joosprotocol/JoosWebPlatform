@@ -1,5 +1,6 @@
 <?php
 
+use common\library\cryptocurrency\CryptoCurrencyTypes;
 use common\models\user\User;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
@@ -7,7 +8,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model common\models\user\User */
 /* @var $personal common\models\user\UserPersonal */
-/* @var $blockchainProfile common\models\user\BlockchainProfile */
+/* @var $blockchainProfiles common\models\user\BlockchainProfile[] */
 
 
 $this->title = $model->username;
@@ -107,7 +108,7 @@ $this->title = $model->username;
     <?php endif; ?>
 
 
-    <?php if ($model->roleName === User::ROLE_DIGITAL_COLLECTOR): ?>
+    <?php if (!empty($blockchainProfiles)): ?>
 
         <div class="row">
             <div class="col-md-6">
@@ -117,10 +118,12 @@ $this->title = $model->username;
                     </div>
                     <div class="panel-heading-line"></div>
                     <div class="panel-body">
-                        <img src="<?= $blockchainProfile->address ?>" alt="">
-                        <p>
-                            <?= Yii::t('app', 'Blockchain address') . ': ' . $blockchainProfile->address ?>
-                        </p>
+
+                        <?php foreach($blockchainProfiles as $blockchainProfile): ?>
+                            <p>
+                                <?= CryptoCurrencyTypes::networksNameList()[$blockchainProfile->network] . ' ' . Yii::t('app', 'address') . ': ' . $blockchainProfile->address ?>
+                            </p>
+                        <?php endforeach;?>
                     </div>
                 </div>
             </div>

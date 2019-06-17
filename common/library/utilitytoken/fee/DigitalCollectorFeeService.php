@@ -6,7 +6,7 @@ use common\library\ethereum\EthereumAPI;
 use common\library\exceptions\APICallException;
 use common\library\exceptions\ParseException;
 use common\library\loan\LoanQueryLibrary;
-use common\models\loan\ethereum\JoosUtilityTokenBlockChainAdapter;
+use common\library\utilitytoken\smartcontract\JoosUtilityTokenBlockChainAdapter;
 use common\models\loan\Loan;
 use common\models\user\User;
 use common\models\utilitytoken\Fee;
@@ -20,7 +20,6 @@ class DigitalCollectorFeeService
     const FEE_MANUAL_PERCENT_CONFIG_NAME = 'loan.feeManualPercent';
     const FEE_JOOS_PERCENT_CONFIG_NAME = 'loan.feeJoosPercent';
     const FEE_PERCENT_DEFAULT = 5;
-    const AMOUNT_DECIMAL_MULTIPLIER = 10000;
 
     /** @var User */
     private $user;
@@ -121,7 +120,7 @@ class DigitalCollectorFeeService
     protected function getCalculatedAmount() : int
     {
         $feePercent = $this->getFeePercent();
-        return floor($this->loan->amount * self::AMOUNT_DECIMAL_MULTIPLIER * $feePercent / 100 / $this->digitalCollectorsQuantity);
+        return floor($this->loan->amount * $feePercent / 100 / $this->digitalCollectorsQuantity);
     }
 
 
@@ -167,12 +166,12 @@ class DigitalCollectorFeeService
      */
     private function mintUtilityTokens()
     {
-        if (empty($this->user->blockchainProfile)) {
+        if (empty($this->user->ethereumProfile)) {
             throw new DataNotFoundException('Blockchain profile not found.');
         }
 
         $loanManagerAdapter = new JoosUtilityTokenBlockChainAdapter($this->ethereumApi);
-        return $loanManagerAdapter->mint($this->user->blockchainProfile->address, $this->fee->amount);
+        return $loanManagerAdapter->mint($this->user->ethereumProfile->address, $this->fee->amount);
     }
 
     /**

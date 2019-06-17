@@ -6,7 +6,7 @@ namespace common\library\loan;
 
 use common\library\loan\contract_structures\LoanInfoObject;
 use common\library\notification\NotificationService;
-use common\models\loan\ethereum\LoanManagerBlockChainAdapter;
+use common\models\loan\smartcontract\LoanManagerBlockChainAdapter;
 use common\models\loan\Loan;
 use Yii;
 

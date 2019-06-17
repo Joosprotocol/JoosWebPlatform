@@ -1,6 +1,9 @@
 <?php
 
+use common\library\cryptocurrency\CryptoCurrencyTypes;
+use common\models\user\BlockchainProfile;
 use common\models\user\User;
+use yii\helpers\ArrayHelper;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
@@ -122,7 +125,7 @@ use yii\widgets\ActiveForm;
 
         <?php endif; ?>
 
-        <?php if ($model->roleName === User::ROLE_DIGITAL_COLLECTOR): ?>
+        <?php if ($model->roleName === User::ROLE_DIGITAL_COLLECTOR || $model->roleName === User::ROLE_BORROWER): ?>
 
             <div class="col-lg-8">
 
@@ -134,7 +137,9 @@ use yii\widgets\ActiveForm;
 
                     <div class="panel-body">
 
-                        <?= $form->field($blockchainProfile, 'address')->textInput(['maxlength' => true]) ?>
+                        <?= $form->field($blockchainAddressForm, 'bitcoinAddress')->textInput(['maxlength' => true]) ?>
+
+                        <?= $form->field($blockchainAddressForm, 'ethereumAddress')->textInput(['maxlength' => true]) ?>
 
                     </div>
 

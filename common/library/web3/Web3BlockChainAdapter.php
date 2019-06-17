@@ -1,7 +1,7 @@
 <?php
 
 
-namespace common\models\loan\ethereum;
+namespace common\library\web3;
 
 
 use common\library\ethereum\BlockchainAPIInterface;
@@ -33,7 +33,7 @@ class Web3BlockChainAdapter
         return $this->blockchain->executeWeb3(
             $this->blockchain->getRequestTypeWeb3Custom(),
             self::METHOD_UTILS_IS_ADDRESS,
-            func_get_args()
+            [$address]
         );
     }
 

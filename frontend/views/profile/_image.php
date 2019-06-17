@@ -31,14 +31,10 @@ use kartik\file\FileInput;
         'browseIcon' => '<i class="glyphicon glyphicon-camera"></i>',
         'previewTemplates' => [
             'generic' => '<div class="file-preview-frame ' . $attributeName . '-image" id="{previewId}" data-fileindex="{fileindex}">
-                    <div class="' . $attributeName . '-image-inner">
-                    {content}
-                    </div> 
+                    <div class="' . $attributeName . '-image-inner">{content}</div>
                 </div>',
             'image' => '<div class="file-preview-frame ' . $attributeName . '-image" id="{previewId}" data-fileindex="{fileindex}">
-                    <div class="' . $attributeName . '-image-inner">
-                    <img src="{data}" class="img-preview" title="{caption}" alt="{caption}">
-                    </div> 
+                    <div class="' . $attributeName . '-image-inner"><img src="{data}" class="img-preview" title="{caption}" alt="{caption}"></div>
                 </div>',
         ]
     ],

@@ -30,7 +30,7 @@ class GridHelper
         );
         return Html::tag(
             'form',
-             $paginationDropDownElement,
+            $paginationDropDownElement,
             ['class' => 'form-inline pull-left pagination-dropdown']
         );
     }

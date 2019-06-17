@@ -25,7 +25,7 @@ $this->title = Yii::t('app', 'Edit Profile') . ': ' . $model->username;
     <?= $this->render('_form', [
         'model' => $model,
         'personal' => $personal,
-        'blockchainProfile' => $blockchainProfile,
+        'blockchainAddressForm' => $blockchainAddressForm,
     ]) ?>
 
 </div>

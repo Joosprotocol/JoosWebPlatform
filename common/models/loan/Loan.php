@@ -17,7 +17,7 @@ use yii\db\ActiveRecord;
  * @property integer $lender_id
  * @property integer $borrower_id
  * @property integer $status
- * @property string $amount
+ * @property integer $amount
  * @property integer $period
  * @property integer $init_type
  * @property integer $currency_type
@@ -38,7 +38,6 @@ use yii\db\ActiveRecord;
  */
 class Loan extends ActiveRecord
 {
-
     const INIT_TYPE_OFFER = 0;
     const INIT_TYPE_REQUEST = 1;
 
@@ -78,7 +77,6 @@ class Loan extends ActiveRecord
         return [
             [['lender_id', 'borrower_id', 'status', 'period', 'currency_type', 'init_type', 'created_at', 'updated_at'], 'integer'],
             [['status', 'currency_type', 'init_type'], 'required'],
-            [['amount'], 'number'],
             [['secret_key'], 'string', 'max' => 255],
             [['currency_type'], 'in', 'range' => array_keys(self::currencyTypeList())],
             [['init_type'], 'in', 'range' => array_keys(self::initTypeList())],

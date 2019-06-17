@@ -34,6 +34,7 @@ Yii::$container->set(
     )
 );
 
+Yii::$container->set('common\library\api\APIRequestHandlerInterface', 'common\library\api\APIRequestHandler');
 Yii::$container->set('itmaster\core\module\ModuleManagerInterface', 'configManager');
 Yii::$container->set('itmaster\core\config\ConfigInterface', 'configManager');
 Yii::$container->set('dosamigos\tinymce\TinyMce', [
@@ -49,7 +50,7 @@ Yii::$container->set('dosamigos\tinymce\TinyMce', [
     ]
 ]);
 
-Event::on(Application::class,Application::EVENT_BEFORE_REQUEST, function (Event $event) {
+Event::on(Application::class, Application::EVENT_BEFORE_REQUEST, function (Event $event) {
     /** @var Application $app */
     $app = $event->sender;
     /** @var itmaster\seo\Module $moduleSeo */

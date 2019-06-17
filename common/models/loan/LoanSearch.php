@@ -16,8 +16,7 @@ class LoanSearch extends Loan
     public function rules()
     {
         return [
-            [['id', 'lender_id', 'borrower_id', 'status', 'period', 'currency_type', 'init_type', 'created_at', 'updated_at'], 'integer'],
-            [['amount'], 'number'],
+            [['id', 'amount', 'lender_id', 'borrower_id', 'status', 'period', 'currency_type', 'init_type', 'created_at', 'updated_at'], 'integer'],
             [['secret_key'], 'safe'],
         ];
     }

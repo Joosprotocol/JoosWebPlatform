@@ -2,9 +2,12 @@
 
 namespace frontend\controllers;
 
+use common\library\cryptocurrency\CryptoCurrencyTypes;
+use common\library\exceptions\InvalidModelException;
 use common\models\user\BlockchainProfile;
 use common\models\user\User;
 use common\models\user\UserPersonal;
+use frontend\forms\user\BlockchainAddressForm;
 use itmaster\core\controllers\frontend\FrontController;
 use Yii;
 use yii\filters\AccessControl;
@@ -56,18 +59,12 @@ class ProfileController extends FrontController
      */
     public function actionView()
     {
-        \Yii::$app->getSession()->setFlash('info', Yii::t('app', 'Info example message.'));
-        \Yii::$app->getSession()->setFlash('error', Yii::t('app', 'Error example message.'));
-        \Yii::$app->getSession()->setFlash('success', Yii::t('app', 'Success example message.'));
-
         $model = $this->findModel(Yii::$app->user->getIdentity()->getId());
         $personal = (!empty($model->personal)) ? $model->personal : new UserPersonal();
-        $blockchainProfile = (!empty($model->blockchainProfile)) ? $model->blockchainProfile : new BlockchainProfile();
-
         return $this->render('index', [
             'model' => $model,
             'personal' => $personal,
-            'blockchainProfile' => $blockchainProfile,
+            'blockchainProfiles' => $model->blockchainProfiles,
         ]);
     }
 
@@ -94,39 +91,41 @@ class ProfileController extends FrontController
         $model = $this->findModel(Yii::$app->user->getIdentity()->getId());
 
         $personal = new UserPersonal();
-        $blockchainProfile = (!empty($model->blockchainProfile)) ? $model->blockchainProfile : new BlockchainProfile();
 
         if ($model->load(Yii::$app->request->post())) {
             $transaction = Yii::$app->db->beginTransaction();
-            $valid = $model->save();
-            if ($model->roleName === User::ROLE_BORROWER) {
-                $valid = $valid && $personal->load(Yii::$app->request->post());
-                $personal->user_id = $model->id;
-                $valid = $valid && $personal->save();
-            }
-
-            if ($model->roleName === User::ROLE_DIGITAL_COLLECTOR) {
-                $valid = $valid && $blockchainProfile->load(Yii::$app->request->post());
-                $blockchainProfile->user_id = $model->id;
-                try {
-                    $valid = $valid && $blockchainProfile->save();
-                } catch (\Exception $exception) {
-                    \Yii::$app->getSession()->setFlash('error', Yii::t('app', 'Unable to connect to blockchain'));
-                    $valid = false;
+            try {
+                if (!$model->save()) {
+                    throw new InvalidModelException($personal);
                 }
-            }
 
-            if ($valid) {
+                if ($model->roleName === User::ROLE_BORROWER) {
+                    $personal->load(Yii::$app->request->post());
+                    $personal->user_id = $model->id;
+                    if (!$personal->save()) {
+                        throw new InvalidModelException($personal);
+                    }
+                }
+
+                if ($model->roleName === User::ROLE_DIGITAL_COLLECTOR
+                    || $model->roleName === User::ROLE_BORROWER) {
+                    $blockchainAddressForm = new BlockchainAddressForm($model);
+                    $blockchainAddressForm->load(Yii::$app->request->post());
+                    $blockchainAddressForm->save();
+                }
+
                 $transaction->commit();
                 return $this->redirect(['view']);
+            } catch (\Exception $exception) {
+                $transaction->rollBack();
+
             }
-            $transaction->rollBack();
         }
 
         return $this->render('update', [
             'model' => $model,
             'personal' => (!empty($model->personal)) ? $model->personal : $personal,
-            'blockchainProfile' => (!empty($model->blockchainProfile)) ? $model->blockchainProfile : $blockchainProfile,
+            'blockchainAddressForm' => new BlockchainAddressForm($model),
         ]);
     }
 

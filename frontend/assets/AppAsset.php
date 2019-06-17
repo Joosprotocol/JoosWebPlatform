@@ -17,6 +17,10 @@ class AppAsset extends AssetBundle
     ];
     public $js = [
         'js/SignUpHelper.js',
+        'js/CollateralCalcHelper.js',
+        'js/CollateralPaymentHelper.js',
+        'js/CollateralLoanPaymentHelper.js',
+
     ];
     public $depends = [
         'itmaster\core\assets\FrontendAsset\FrontendAsset',

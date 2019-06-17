@@ -30,6 +30,14 @@ class Notification extends ActiveRecord
     const MESSAGE_DIGITAL_COLLECTOR_JOINED = 3;
     const MESSAGE_BORROWER_FOLLOWED_LINK = 4;
     const MESSAGE_LOAN_STATUS_CHANGED = 5;
+    const MESSAGE_NEW_COLLATERAL_CREATED = 6;
+    const MESSAGE_NEW_COLLATERAL_PAID = 7;
+    const MESSAGE_COLLATERAL_LOAN_PAYMENT_ADDRESS_ERROR = 8;
+    const MESSAGE_NEW_COLLATERAL_LOAN_PAYMENT_PLATFORM = 9;
+    const MESSAGE_COLLATERAL_LOAN_NEW_PAYMENT = 10;
+    const MESSAGE_COLLATERAL_LOAN_SIGNED = 11;
+    const MESSAGE_COLLATERAL_LOAN_STATUS_CHANGED = 12;
+    const MESSAGE_COLLATERAL_LOAN_WITHDRAWN = 13;
 
     /**
      * @inheritdoc
@@ -57,9 +65,17 @@ class Notification extends ActiveRecord
         return [
             self::MESSAGE_NEW_LOAN_CREATED => Yii::t('app', 'New loan was created.'),
             self::MESSAGE_LOAN_SIGNED => Yii::t('app', 'Loan was signed.'),
+            self::MESSAGE_COLLATERAL_LOAN_SIGNED => Yii::t('app', 'Collateral Loan was signed.'),
             self::MESSAGE_DIGITAL_COLLECTOR_JOINED => Yii::t('app', 'New digital collector joined.'),
             self::MESSAGE_BORROWER_FOLLOWED_LINK => Yii::t('app', 'Borrower followed referral link.'),
             self::MESSAGE_LOAN_STATUS_CHANGED => Yii::t('app', 'Loan status changed.'),
+            self::MESSAGE_COLLATERAL_LOAN_STATUS_CHANGED => Yii::t('app', 'Collateral Loan status changed.'),
+            self::MESSAGE_NEW_COLLATERAL_CREATED => Yii::t('app', 'New collateral was created.'),
+            self::MESSAGE_NEW_COLLATERAL_PAID => Yii::t('app', 'New collateral paid.'),
+            self::MESSAGE_COLLATERAL_LOAN_NEW_PAYMENT => Yii::t('app', 'Payment for Collateral Loan is successfully received.'),
+            self::MESSAGE_COLLATERAL_LOAN_PAYMENT_ADDRESS_ERROR => Yii::t('app', 'Payment by collateral was reverted. Please set you Ethereum payment address on "profile page".'),
+            self::MESSAGE_NEW_COLLATERAL_LOAN_PAYMENT_PLATFORM => Yii::t('app', 'Collateral is successfully loaned by "Joos" platform.'),
+            self::MESSAGE_COLLATERAL_LOAN_WITHDRAWN => Yii::t('app', 'Collateral funds successfully withdrawn.'),
         ];
     }
 

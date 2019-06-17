@@ -14,7 +14,7 @@ use yii\db\ActiveRecord;
  * @property integer $id
  * @property integer $loan_id
  * @property integer $user_id
- * @property string $amount
+ * @property integer $amount
  * @property integer $status
  * @property integer $currency_type
  * @property integer $created_at
@@ -42,9 +42,8 @@ class Fee extends ActiveRecord
     public function rules()
     {
         return [
-            [['loan_id', 'user_id', 'status', 'currency_type'], 'required'],
-            [['loan_id', 'user_id', 'status', 'currency_type', 'created_at', 'updated_at'], 'integer'],
-            [['amount'], 'number'],
+            [['loan_id', 'user_id', 'status', 'currency_type', 'amount'], 'required'],
+            [['loan_id', 'user_id', 'status', 'currency_type', 'amount', 'created_at', 'updated_at'], 'integer'],
             [['loan_id'], 'exist', 'skipOnError' => true, 'targetClass' => Loan::class, 'targetAttribute' => ['loan_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];

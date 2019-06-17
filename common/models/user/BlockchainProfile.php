@@ -2,7 +2,8 @@
 
 namespace common\models\user;
 
-use common\models\loan\ethereum\Web3BlockChainAdapter;
+use common\library\cryptocurrency\CryptoCurrencyTypes;
+use common\library\web3\Web3BlockChainAdapter;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -12,6 +13,7 @@ use yii\db\ActiveRecord;
  * @property integer $id
  * @property integer $user_id
  * @property string $address
+ * @property integer $network
  *
  * @property User $user
  */
@@ -31,7 +33,7 @@ class BlockchainProfile extends ActiveRecord
     public function rules()
     {
         return [
-            [['user_id'], 'integer'],
+            [['user_id', 'network'], 'integer'],
             [['address'], 'required'],
             [['address'], 'validateAddress'],
             [['address'], 'string', 'max' => 255],
@@ -48,6 +50,7 @@ class BlockchainProfile extends ActiveRecord
             'id' => Yii::t('app', 'ID'),
             'user_id' => Yii::t('app', 'User ID'),
             'address' => Yii::t('app', 'Address'),
+            'network' => Yii::t('app', 'Network'),
         ];
     }
 
@@ -60,7 +63,7 @@ class BlockchainProfile extends ActiveRecord
     public function validateAddress($attribute)
     {
         $web3BlockChainAdapter = new Web3BlockChainAdapter(Yii::$app->ethereumAPI);
-        if (!$web3BlockChainAdapter->isAccount($this->$attribute)) {
+        if ($this->network === CryptoCurrencyTypes::NETWORK_TYPE_ETHEREUM && !$web3BlockChainAdapter->isAccount($this->$attribute)) {
             $this->addError($attribute, 'The address does not exist in the blockchain.');
         }
     }
