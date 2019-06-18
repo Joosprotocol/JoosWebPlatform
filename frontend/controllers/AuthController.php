@@ -58,7 +58,27 @@ class AuthController extends BaseAuthController
             self::SIGNUP_ERROR => Yii::t(
                 'app',
                 'There is a registering user error. Please correct validation errors.'
-            )
+            ),
+            self::SIGNUP_CONFIRMED => Yii::t(
+                'app',
+                'Your signup is confirmed. Thank you for using our site.'
+            ),
+            self::SIGNUP_TOKEN_ERROR => Yii::t(
+                'app',
+                'Access token error. Please check your confirmation link.'
+            ),
+            self::PASSWORD_RESET_LINK => Yii::t(
+                'app',
+                'A reset password link is sent to your email. Please, check your email for further instructions.'
+            ),
+            self::PASSWORD_RESET_ERROR => Yii::t(
+                'app',
+                'Sorry, we are unable to reset password for email provided.'
+            ),
+            self::PASSWORD_SAVED => Yii::t(
+                'app',
+                'New password is successfully saved. Thank you for using our site.'
+            ),
         ];
     }
 
