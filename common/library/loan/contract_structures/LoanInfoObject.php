@@ -15,7 +15,7 @@ class LoanInfoObject extends Model
     public $amount;
     public $currency_type;
     public $period;
-    public $percent;
+    public $fee;
     public $init_type;
     public $created_at;
 }

@@ -7,6 +7,17 @@ use Yii;
 
 class DateIntervalEnhanced extends DateInterval
 {
+    const PERIOD_DAYS_IN_YEAR = 365;
+    const PERIOD_MONTHS_IN_YEAR = 12;
+
+    const PERIOD_YEAR = self::PERIOD_DAY * self::PERIOD_DAYS_IN_YEAR;
+    const PERIOD_MONTH = self::PERIOD_DAY * self::PERIOD_DAYS_IN_YEAR / self::PERIOD_MONTHS_IN_YEAR;
+    const PERIOD_DAY = 24 * 60 * 60;
+    const PERIOD_HOUR = 60 * 60;
+    const PERIOD_MINUTE = 60;
+
+
+
     /** @var  string */
     private $formatted;
 
@@ -19,11 +30,11 @@ class DateIntervalEnhanced extends DateInterval
      */
     public function to_seconds()
     {
-        return ($this->y * 365 * 24 * 60 * 60) +
-            ($this->m * 30 * 24 * 60 * 60) +
-            ($this->d * 24 * 60 * 60) +
-            ($this->h * 60 * 60) +
-            ($this->i * 60) +
+        return ($this->y * self::PERIOD_YEAR) +
+            ($this->m * self::PERIOD_MONTH) +
+            ($this->d * self::PERIOD_DAY) +
+            ($this->h * self::PERIOD_HOUR) +
+            ($this->i * self::PERIOD_MINUTE) +
             $this->s;
     }
 
@@ -33,31 +44,31 @@ class DateIntervalEnhanced extends DateInterval
     public function recalculate()
     {
         $seconds = $this->to_seconds();
-        $this->y = floor($seconds / 60 / 60 / 24 / 365);
+        $this->y = floor($seconds / self::PERIOD_YEAR);
         if (!empty($this->y)) {
             $this->formatted .= '%y ' . Yii::t('app', 'years') . ' ';
         }
-        $seconds -= $this->y * 31536000;
-        $this->m = floor($seconds / 60 / 60 / 24 / 30);
+        $seconds -= $this->y * self::PERIOD_YEAR;
+        $this->m = floor($seconds / self::PERIOD_MONTH);
         if (!empty($this->m)) {
             $this->formatted .= '%m ' . Yii::t('app', 'months') . ' ';
         }
-        $seconds -= $this->m * 2592000;
-        $this->d = floor($seconds / 60 / 60 / 24);
+        $seconds -= $this->m * self::PERIOD_MONTH;
+        $this->d = floor($seconds / self::PERIOD_DAY);
         if (!empty($this->d)) {
             $this->formatted .= '%d ' . Yii::t('app', 'days') . ' ';
         }
-        $seconds -= $this->d * 86400;
-        $this->h = floor($seconds / 60 / 60);
+        $seconds -= $this->d * self::PERIOD_DAY;
+        $this->h = floor($seconds / self::PERIOD_HOUR);
         if (!empty($this->h)) {
             $this->formatted .= '%h ' . Yii::t('app', 'hours') . ' ';
         }
-        $seconds -= $this->h * 3600;
-        $this->i = floor($seconds / 60);
+        $seconds -= $this->h * self::PERIOD_HOUR;
+        $this->i = floor($seconds / self::PERIOD_MINUTE);
         if (!empty($this->i)) {
             $this->formatted .= '%i ' . Yii::t('app', 'min') . ' ';
         }
-        $seconds -= $this->i * 60;
+        $seconds -= $this->i * self::PERIOD_MINUTE;
         $this->s = $seconds;
         if (!empty($this->y)) {
             $this->formatted .= '%s ' . Yii::t('app', 'sec') . ' ';

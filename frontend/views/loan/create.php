@@ -1,11 +1,12 @@
 <?php
 
 use common\models\loan\Loan;
+use frontend\forms\loan\LoanCreateForm;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model frontend\forms\loan\LoanCreateForm */
+/* @var $model LoanCreateForm */
 
 $this->title = Yii::t('app', 'New') . ' ' . Yii::t('app', $model->getLoan()->getInitTypeName());
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Loans'), 'url' => ['index']];
@@ -39,7 +40,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?= $form->field($model, 'amount')->textInput(['maxlength' => true]) ?>
                         </div>
                         <div class="col-md-6">
-                            <?= $form->field($model, 'period_days')->textInput(['value' => 30]) ?>
+                            <?= $form->field($model, 'period')->dropdownList(LoanCreateForm::periodList()) ?>
+                        </div>
+                        <div class="col-md-6">
+                            <?= $form->field($model, 'fee')->textInput(['value' => 10]) ?>
                         </div>
                         <div class="col-md-6">
                             <?= $form->field($model, 'currency_type')->dropdownList(Loan::currencyTypeList()) ?>

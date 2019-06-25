@@ -3,9 +3,6 @@
 
 namespace common\library\loan;
 
-
-use common\library\loan\contract_structures\LoanInfoObject;
-use common\library\notification\NotificationService;
 use common\models\loan\smartcontract\LoanManagerBlockChainAdapter;
 use common\models\loan\Loan;
 use Yii;
@@ -30,7 +27,7 @@ class LoanBlockchainExtractor
     public function update() : int
     {
         Yii::info($this->getMessages()[self::LOG_UPDATE_MESSAGE], self::LOG_CATEGORY_BLOCKCHAIN);
-        $loans = $this->getSignedRoles();
+        $loans = $this->getLoansExpectedOverdue();
         $counter = 0;
         foreach ($loans as $loan) {
             $counter += (int) $this->updateOne($loan);
@@ -43,10 +40,11 @@ class LoanBlockchainExtractor
     /**
      * @return Loan[]
      */
-    private function getSignedRoles() : array
+    private function getLoansExpectedOverdue() : array
     {
         return Loan::find()
-            ->where(['status' => Loan::STATUS_SIGNED])
+            ->where(['status' => [Loan::STATUS_SIGNED, Loan::STATUS_PARTIALLY_PAID]])
+            ->andWhere('period < UNIX_TIMESTAMP() - signed_at')
             ->all();
     }
 
@@ -58,22 +56,14 @@ class LoanBlockchainExtractor
     {
         Yii::info(json_encode(['loan_id' => $loan->id]), self::LOG_CATEGORY_BLOCKCHAIN);
         try {
-            $loanStatus = $this->loanManagerAdapter->getStatus($loan->id);
-            $loanInfo = (array) $this->loanManagerAdapter->getLoanInfo($loan->id);
+            $loanService = new LoanService($loan);
+            $loanService->updateStatus();
+            return true;
         } catch (\Exception $exception) {
             Yii::error(json_encode($exception), self::LOG_CATEGORY_BLOCKCHAIN);
             return false;
         }
-        Yii::info(json_encode(['status' => $loanStatus, 'info' => $loanInfo]), self::LOG_CATEGORY_BLOCKCHAIN);
-        $oldStatus = $loan->status;
-        $loanInfoObject = new LoanInfoObject();
-        $loanInfoObject->setAttributes($loanInfo, false);
 
-        if ($this->updateModel($loan, $loanStatus, $loanInfoObject)) {
-            $this->createNotification($loan, $oldStatus);
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -87,57 +77,4 @@ class LoanBlockchainExtractor
         ];
     }
 
-    /**
-     * @param int $loanStatus
-     * @return bool
-     */
-    private function isAvailableStatus($loanStatus) : bool
-    {
-        if (in_array($loanStatus, $this->getAvailableLoanStatuses())) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * @return array
-     */
-    private function getAvailableLoanStatuses() : array
-    {
-        return [
-            Loan::STATUS_SIGNED,
-            Loan::STATUS_PAID,
-            Loan::STATUS_PAUSED,
-            Loan::STATUS_OVERDUE
-        ];
-    }
-
-    /**
-     * @param Loan $loan
-     * @param int $status
-     * @param LoanInfoObject $loanInfoObject
-     * @return bool
-     */
-    private function updateModel(Loan $loan, int $status, LoanInfoObject $loanInfoObject) : bool
-    {
-        if (!$this->isAvailableStatus($status)) {
-            return false;
-        }
-
-        $loan->status = $status;
-        $loan->signed_at = $loanInfoObject->created_at;
-        return $loan->save();
-    }
-
-    /**
-     * @param Loan $loan
-     * @param int $oldStatus
-     */
-    protected function createNotification(Loan $loan, int $oldStatus)
-    {
-        if ($oldStatus == $loan->status) {
-            return;
-        }
-        NotificationService::sendChangeLoanStatusNotification($loan);
-    }
 }

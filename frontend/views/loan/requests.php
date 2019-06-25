@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'class' => 'white-grid-table'
         ],
         'columns' => [
-            'id',
+            'hash_id',
             'borrower.fullName',
             'amount',
             'formattedPeriod',
@@ -37,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'Sign',
                 'format' => 'html',
                 'value' => function ($model) {
-                    return Html::a(Yii::t('app', 'View'), \yii\helpers\Url::to(['loan/view', 'id' => $model->id]));
+                    return Html::a(Yii::t('app', 'View'), \yii\helpers\Url::to(['loan/view', 'hashId' => $model->hash_id]));
                 }
             ],
 

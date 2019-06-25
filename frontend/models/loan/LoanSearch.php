@@ -28,6 +28,7 @@ class LoanSearch extends LoanSearchBase
         return [
             [['id', 'lender_id', 'borrower_id', 'status', 'period', 'currency_type', 'init_type', 'created_at'], 'integer'],
             [['amount'], 'number'],
+            [['hash_id'], 'string'],
         ];
     }
 
@@ -95,6 +96,9 @@ class LoanSearch extends LoanSearchBase
                 'lr.digital_collector_id=' . $this->ownerId
             ]);
         }
+
+        $query->andFilterWhere(['like', 'hash_id', $this->hash_id]);
+
 
         return $dataProvider;
     }

@@ -6,6 +6,7 @@ use common\library\exceptions\InvalidModelException;
 use common\models\blockchain\PaymentAddress;
 use common\models\collateral\Collateral;
 use common\models\collateral\CollateralLoan;
+use common\models\loan\Loan;
 use common\models\payment\Payment;
 use yii\base\InvalidCallException;
 
@@ -17,6 +18,34 @@ class PaymentService
 {
     /** @var Payment */
     private $entity;
+
+
+    /**
+     *
+     * Method creates new Payment. Now address is written to 'hash'
+     * because only single wallet is created specially for single transaction.
+     *
+     * @param Loan $loan
+     * @param int $amount
+     * @param string $hash
+     * @return Payment
+     * @throws InvalidModelException
+     * @throws InvalidCallException
+     */
+    public function createForLoan(Loan $loan, int $amount, string $hash = null) : Payment
+    {
+        $payment = new Payment();
+        $payment->amount = $amount;
+        $payment->hash = $hash;
+        $payment->currency_type = $loan->currency_type;
+        if (!$payment->save()) {
+            throw new InvalidModelException($payment);
+        }
+        $this->entity = $payment;
+
+        $loan->link('payments', $payment);
+        return $this->entity;
+    }
 
     /**
      *

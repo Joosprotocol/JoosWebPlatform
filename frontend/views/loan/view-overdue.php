@@ -11,7 +11,7 @@ use yii\widgets\DetailView;
 /* @var $blockchainPersonal array */
 /* @var $loanReferral \common\models\loan\LoanReferral */
 
-$this->title = $model->id;
+$this->title = $model->hash_id;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Loans'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -174,7 +174,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?php else: ?>
 
-            <?= Html::a(Yii::t('app', 'Join'), ['loan/join-as-collector', 'id' => $model->id], [
+            <?= Html::a(Yii::t('app', 'Join'), ['loan/join-as-collector', 'hashId' => $model->hash_id], [
                 'class' => 'btn btn-success',
                 'data' => [
                     'confirm' => Yii::t('app', 'Are you sure you want to join as collector to this contract?'),
@@ -193,7 +193,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php if ($model->status === Loan::STATUS_SIGNED && !Yii::$app->user->isGuest): ?>
         <?php if ($model->lender_id === Yii::$app->user->id): ?>
 
-            <?= Html::a(Yii::t('app', 'Set as paid'), ['loan/set-as-paid', 'id' => $model->id], [
+            <?= Html::a(Yii::t('app', 'Set as paid'), ['loan/set-as-paid', 'hsahId' => $model->hash_id], [
                 'class' => 'btn btn-danger',
                 'data' => [
                     'confirm' => Yii::t('app', 'Are you sure you want to set as paid this contract?'),

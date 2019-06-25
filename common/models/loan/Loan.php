@@ -2,6 +2,8 @@
 
 namespace common\models\loan;
 
+use common\behaviors\HashIdBehavior;
+use common\library\cryptocurrency\CryptoCurrencyTypes;
 use common\library\date\DateIntervalEnhanced;
 use common\models\payment\Payment;
 use common\models\user\User;
@@ -20,8 +22,10 @@ use yii\db\ActiveRecord;
  * @property integer $amount
  * @property integer $period
  * @property integer $init_type
+ * @property float $fee
  * @property integer $currency_type
  * @property string $secret_key
+ * @property integer $hash_id
  * @property integer $created_at
  * @property integer $updated_at
  * @property integer $signed_at
@@ -31,6 +35,7 @@ use yii\db\ActiveRecord;
  * @property LoanStatusHistory[] $loanStatusHistories
  * @property LoanReferral[] $loanReferrals
  * @property LoanReferral $lastLoanReferral
+ * @property Payment[] $payments
  * @property string $currencyTypeName
  * @property string $formattedPeriod
  * @property string $initTypeName
@@ -41,14 +46,15 @@ class Loan extends ActiveRecord
     const INIT_TYPE_OFFER = 0;
     const INIT_TYPE_REQUEST = 1;
 
-    const CURRENCY_TYPE_MANUAL = 0;
+    const CURRENCY_TYPE_MANUAL = 99;
     const CURRENCY_TYPE_JOOS = 1;
 
     const STATUS_STARTED = 0; // after creation
     const STATUS_SIGNED = 1; // signed by two person
-    const STATUS_PAID = 2; // loan paid
-    const STATUS_PAUSED = 3; // loan paid
-    const STATUS_OVERDUE = 4; // loan paid
+    const STATUS_PARTIALLY_PAID = 2; // partially paid
+    const STATUS_PAID = 3; // loan paid
+    const STATUS_PAUSED = 4; // loan paused
+    const STATUS_OVERDUE = 5; // loan overdue
 
     /**
      * @inheritdoc
@@ -66,6 +72,7 @@ class Loan extends ActiveRecord
     {
         return [
             TimestampBehavior::class,
+            HashIdBehavior::class
         ];
     }
 
@@ -78,6 +85,7 @@ class Loan extends ActiveRecord
             [['lender_id', 'borrower_id', 'status', 'period', 'currency_type', 'init_type', 'created_at', 'updated_at'], 'integer'],
             [['status', 'currency_type', 'init_type'], 'required'],
             [['secret_key'], 'string', 'max' => 255],
+            [['fee'], 'double'],
             [['currency_type'], 'in', 'range' => array_keys(self::currencyTypeList())],
             [['init_type'], 'in', 'range' => array_keys(self::initTypeList())],
             [['status'], 'in', 'range' => array_keys(self::statusList())],
@@ -92,8 +100,8 @@ class Loan extends ActiveRecord
     public static function currencyTypeList()
     {
         return [
-            self::CURRENCY_TYPE_MANUAL => Yii::t('app', 'Manual'),
-            self::CURRENCY_TYPE_JOOS => Yii::t('app', 'JOOS'),
+            CryptoCurrencyTypes::CURRENCY_TYPE_USD_MANUAL => Yii::t('app', 'USD Cash'),
+            CryptoCurrencyTypes::CURRENCY_TYPE_JOOS => Yii::t('app', 'JOOS'),
         ];
     }
 
@@ -117,6 +125,7 @@ class Loan extends ActiveRecord
             self::STATUS_STARTED => Yii::t('app', 'Started'),
             self::STATUS_SIGNED => Yii::t('app', 'Signed'),
             self::STATUS_PAID => Yii::t('app', 'Paid'),
+            self::STATUS_PARTIALLY_PAID => Yii::t('app', 'Partially Paid'),
             self::STATUS_PAUSED => Yii::t('app', 'Paused'),
             self::STATUS_OVERDUE => Yii::t('app', 'Overdue'),
         ];
@@ -137,6 +146,7 @@ class Loan extends ActiveRecord
             'init_type' => Yii::t('app', 'Init Type'),
             'currency_type' => Yii::t('app', 'Currency'),
             'secret_key' => Yii::t('app', 'Secret Key'),
+            'fee' => Yii::t('app', 'Fee'),
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
         ];
@@ -187,9 +197,18 @@ class Loan extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getLoanPayment()
+    {
+        return $this->hasMany(LoanPayment::class, ['loan_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getPayments()
     {
-        return $this->hasMany(Payment::class, ['loan_id' => 'id']);
+        return $this->hasMany(Payment::class, ['id' => 'payment_id'])
+            ->via('loanPayment');
     }
 
     /**
@@ -227,6 +246,7 @@ class Loan extends ActiveRecord
 
     /**
      * @return string
+     * @throws \Exception
      */
     public function getFormattedPeriod()
     {
@@ -245,7 +265,9 @@ class Loan extends ActiveRecord
     }
 
     /**
+     * @param $insert
      * @return bool
+     * @throws \yii\base\Exception
      */
     public function beforeSave($insert)
     {
@@ -273,6 +295,7 @@ class Loan extends ActiveRecord
 
     /**
      * @return void
+     * @throws \yii\base\Exception
      */
     private function generateSecretKey()
     {
@@ -292,6 +315,7 @@ class Loan extends ActiveRecord
 
     /**
      * @return null|string
+     * @throws \Exception
      */
     public function getTimeLeft()
     {
@@ -311,6 +335,7 @@ class Loan extends ActiveRecord
 
     /**
      * @return null|string
+     * @throws \Exception
      */
     public function getTimeOverdue()
     {
@@ -326,6 +351,14 @@ class Loan extends ActiveRecord
         $dateInterval->recalculate();
 
         return $dateInterval->getFormatted();
+    }
+
+    /**
+     * @return int
+     */
+    public function getAmountToPay()
+    {
+        return (int) ($this->amount * (100 + $this->fee) / 100);
     }
 
 }

@@ -9,7 +9,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model common\models\loan\Loan */
 
-$this->title = $model->id;
+$this->title = $model->hash_id;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Loans'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php if (in_array($model->status, [Loan::STATUS_SIGNED, Loan::STATUS_OVERDUE])): ?>
                 <?php if ($model->lender_id === Yii::$app->user->id): ?>
 
-                    <?= Html::a(Yii::t('app', 'Set as paid'), ['loan/set-as-paid', 'id' => $model->id], [
+                    <?= Html::a(Yii::t('app', 'Set as paid'), ['loan/set-as-paid', 'hashId' => $model->hash_id], [
                         'class' => 'btn btn-success',
                         'data' => [
                             'confirm' => Yii::t('app', 'Are you sure you want to set as paid this contract?'),
@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 || ($model->init_type === Loan::INIT_TYPE_REQUEST && Yii::$app->user->identity->roleName === User::ROLE_LENDER))
             ): ?>
 
-                <?= Html::a(Yii::t('app', 'Sign'), ['loan/sign', 'id' => $model->id], [
+                <?= Html::a(Yii::t('app', 'Sign'), ['loan/sign', 'hashId' => $model->hash_id], [
                     'class' => 'btn btn-success',
                     'data' => [
                         'confirm' => Yii::t('app', 'Are you sure you want to sign this contract?'),
@@ -62,10 +62,21 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <div class="panel-body-inner">
 
+
                 <p>
                     <b>
-                        <?= Yii::t('app', 'Amount') . ': ' . $model->amount;  ?>
+                        <?= Yii::t('app', 'Amount To Pay') . ': ' . $model->getAmountToPay() . ' ' . $model->currencyTypeName;  ?>
                     </b>
+                </p>
+
+                <p>
+                    <b>
+                        <?= Yii::t('app', 'Amount') . ': ' . $model->amount . ' ' . $model->currencyTypeName;  ?>
+                    </b>
+                </p>
+
+                <p>
+                    <?= Yii::t('app', 'Fee') . ': ' . $model->fee . '%';  ?>
                 </p>
 
                 <p>
@@ -228,7 +239,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?php else: ?>
 
-            <?= Html::a(Yii::t('app', 'Join'), ['loan/join-as-collector', 'id' => $model->id], [
+            <?= Html::a(Yii::t('app', 'Join'), ['loan/join-as-collector', 'hashId' => $model->hash_id], [
                 'class' => 'btn btn-success',
                 'data' => [
                     'confirm' => Yii::t('app', 'Are you sure you want to join as collector to this contract?'),

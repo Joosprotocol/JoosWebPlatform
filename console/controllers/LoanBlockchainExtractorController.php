@@ -4,6 +4,7 @@ namespace console\controllers;
 
 use common\library\loan\LoanBlockchainExtractor;
 use yii\console\Controller;
+use yii\helpers\Console;
 
 
 /**
@@ -15,6 +16,7 @@ class LoanBlockchainExtractorController extends Controller
     public function actionUpdate()
     {
         $loanBlockchainExtractor = new LoanBlockchainExtractor();
-        $loanBlockchainExtractor->update();
+        $counter = $loanBlockchainExtractor->update();
+        $this->stdout('Loans updated: ' . $counter . "\n"  .  PHP_EOL, Console::FG_GREEN);
     }
 }

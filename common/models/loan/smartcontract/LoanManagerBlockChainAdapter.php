@@ -21,29 +21,29 @@ class LoanManagerBlockChainAdapter
     }
 
     /**
-     * @param integer $loanId
+     * @param string $hashId
      * @param integer $amount
      * @param integer $currencyType
      * @param integer $period
-     * @param integer $percent
+     * @param integer $fee
      * @param integer $initType
      * @return object|string
      * @throws APICallException
      * @throws NotFoundHttpException
      * @throws ParseException
      */
-    public function initLoan($loanId, $amount, $currencyType, $period, $percent, $initType)
+    public function initLoan($hashId, $amount, $currencyType, $period, $fee, $initType)
     {
         return $this->blockchain->executeContract(
             self::CONTRACT_NAME,
             $this->blockchain->getRequestTypeContractSend(),
             __FUNCTION__,
-            [$loanId, $amount, $currencyType, $period, $percent, $initType]
+            [$hashId, $amount, $currencyType, $period, $fee, $initType]
         );
     }
 
     /**
-     * @param integer $loanId
+     * @param string $hashId
      * @param integer $lenderId
      * @param string $lenderFullName
      * @param integer $borrowerId
@@ -54,30 +54,29 @@ class LoanManagerBlockChainAdapter
      * @throws NotFoundHttpException
      * @throws ParseException
      */
-    public function setLoanParticipants($loanId, $lenderId, $lenderFullName, $borrowerId, $borrowerFullName, $personal)
+    public function setLoanParticipants($hashId, $lenderId, $lenderFullName, $borrowerId, $borrowerFullName, $personal)
     {
 
         return $this->blockchain->executeContract(
             self::CONTRACT_NAME,
             $this->blockchain->getRequestTypeContractSend(),
             __FUNCTION__,
-            [$loanId, $lenderId, $lenderFullName, $borrowerId, $borrowerFullName, $personal]
+            [$hashId, $lenderId, $lenderFullName, $borrowerId, $borrowerFullName, $personal]
         );
     }
 
     /**
-     * @param integer $loanId
-     * @param integer $status
+     * @param string $loanHashId
+     * @param integer $amount
      * @return object|string
-     * @internal param $sad
      */
-    public function setStatus($loanId, $status)
+    public function createPayment(string $loanHashId, int $amount)
     {
         return $this->blockchain->executeContract(
             self::CONTRACT_NAME,
             $this->blockchain->getRequestTypeContractSend(),
             __FUNCTION__,
-            [$loanId, $status]
+            [$loanHashId, $amount]
         );
     }
 
@@ -98,104 +97,104 @@ class LoanManagerBlockChainAdapter
     }
 
     /**
-     * @param integer $loanId
+     * @param string $hashId
      * @return bool
      * @throws APICallException
      * @throws NotFoundHttpException
      * @throws ParseException
      */
-    public function isDeclared($loanId)
+    public function isDeclared($hashId)
     {
         return $this->blockchain->executeContract(
             self::CONTRACT_NAME,
             $this->blockchain->getRequestTypeContractCall(),
             __FUNCTION__,
-            [$loanId]
+            [$hashId]
         );
     }
 
     /**
-     * @param integer $loanId
+     * @param string $hashId
      * @return bool
      * @throws APICallException
      * @throws NotFoundHttpException
      * @throws ParseException
      */
-    public function isFull($loanId)
+    public function isFull($hashId)
     {
         return $this->blockchain->executeContract(
             self::CONTRACT_NAME,
             $this->blockchain->getRequestTypeContractCall(),
             __FUNCTION__,
-            [$loanId]
+            [$hashId]
         );
     }
 
     /**
-     * @param integer $loanId
+     * @param string $hashId
      * @return bool
      * @throws APICallException
      * @throws NotFoundHttpException
      * @throws ParseException
      */
-    public function isOverdue($loanId)
+    public function isOverdue($hashId)
     {
         return $this->blockchain->executeContract(
             self::CONTRACT_NAME,
             $this->blockchain->getRequestTypeContractCall(),
             __FUNCTION__,
-            [$loanId]
+            [$hashId]
         );
     }
 
     /**
-     * @param integer $loanId
+     * @param string $hashId
      * @throws APICallException
      * @throws NotFoundHttpException
      * @throws ParseException
      * @return integer
      */
-    public function getStatus($loanId)
+    public function getStatus($hashId)
     {
         return $this->blockchain->executeContract(
             self::CONTRACT_NAME,
             $this->blockchain->getRequestTypeContractCall(),
             __FUNCTION__,
-            [$loanId]
+            [$hashId]
         );
     }
 
     /**
-     * @param integer $loanId
+     * @param string $hashId
      * @throws APICallException
      * @throws NotFoundHttpException
      * @throws ParseException
      * @return object
      */
-    public function getLoanParticipants($loanId)
+    public function getLoanParticipants($hashId)
     {
         return $this->blockchain->executeContract(
             self::CONTRACT_NAME,
             $this->blockchain->getRequestTypeContractCall(),
             __FUNCTION__,
-            [$loanId]
+            [$hashId]
         );
     }
 
     /**
-     * @param integer $loanId
+     * @param string $hashId
      * @throws APICallException
      * @throws NotFoundHttpException
      * @throws ParseException
      * @return object
      */
-    public function getLoanInfo($loanId)
+    public function getLoanInfo($hashId)
     {
         return $this->blockchain->executeContract(
             self::CONTRACT_NAME,
             $this->blockchain->getRequestTypeContractCall(),
             __FUNCTION__,
-            [$loanId]
+            [$hashId]
         );
     }
 

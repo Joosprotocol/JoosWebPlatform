@@ -27,7 +27,7 @@ class NotificationService
     public static function sendLoanSignNotification(Loan $loan, User $user)
     {
         $message = Notification::getMessages()[Notification::MESSAGE_LOAN_SIGNED] . '&nbsp;'
-            . HTML::a(Yii::t('app', 'Loan'), Url::to(['loan/view', 'id' => $loan->id])) . '&nbsp;'
+            . HTML::a(Yii::t('app', 'Loan'), Url::to(['loan/view', 'hashId' => $loan->hash_id])) . '&nbsp;'
             . HTML::a(Yii::t('app', 'Significant'), Url::to(['profile/public', 'id' => $user->id]));
         Notification::create($loan->borrower_id, $message);
         Notification::create($loan->lender_id, $message);
@@ -49,7 +49,7 @@ class NotificationService
     public static function sendLoanCreatedNotification(Loan $loan)
     {
         $message = Notification::getMessages()[Notification::MESSAGE_NEW_LOAN_CREATED] . '&nbsp;'
-            . HTML::a('Loan', Url::to(['loan/view', 'id' => $loan->id]));
+            . HTML::a('Loan', Url::to(['loan/view', 'hashId' => $loan->hash_id]));
         Notification::create($loan->lender_id ?? $loan->borrower_id, $message);
     }
 
@@ -63,7 +63,7 @@ class NotificationService
         }
 
         $message = Notification::getMessages()[Notification::MESSAGE_DIGITAL_COLLECTOR_JOINED] . '&nbsp;'
-            . HTML::a(Yii::t('app', 'Loan'), Url::to(['loan/view', 'id' => $loanReferral->loan_id])) . '&nbsp;'
+            . HTML::a(Yii::t('app', 'Loan'), Url::to(['loan/view', 'hashId' => $loanReferral->loan->hash_id])) . '&nbsp;'
             . HTML::a(Yii::t('app', 'Digital Collector'), Url::to(['profile/public', 'id' => $loanReferral->digital_collector_id]));
 
 
@@ -85,7 +85,7 @@ class NotificationService
         }
 
         $message = Notification::getMessages()[Notification::MESSAGE_BORROWER_FOLLOWED_LINK] . '&nbsp;'
-        . HTML::a(Yii::t('app', 'Loan'), Url::to(['loan/view', 'id' => $loanFollowing->loanReferral->loan_id])) . '&nbsp;'
+        . HTML::a(Yii::t('app', 'Loan'), Url::to(['loan/view', 'hashId' => $loanFollowing->loanReferral->loan->hash_id])) . '&nbsp;'
         . HTML::a(Yii::t('app', 'Borrower'), Url::to(['profile/public', 'id' => $loanFollowing->borrower_id]));
 
         Notification::create($loanFollowing->borrower_id, $message);
@@ -102,7 +102,7 @@ class NotificationService
     public static function sendChangeLoanStatusNotification(Loan $loan) : void
     {
         $message = Notification::getMessages()[Notification::MESSAGE_LOAN_STATUS_CHANGED] . '&nbsp;'
-            . HTML::a(Yii::t('app', 'Loan'), Url::to(['loan/view', 'id' => $loan->id])) . '&nbsp;'
+            . HTML::a(Yii::t('app', 'Loan'), Url::to(['loan/view', 'hashId' => $loan->hash_id])) . '&nbsp;'
             . Yii::t('app', 'Status') . ': ' . $loan->getStatusName();
 
         Notification::create($loan->borrower_id, $message);
@@ -161,13 +161,29 @@ class NotificationService
     }
 
     /**
+     * @param Payment $payment
+     * @internal param Loan $loan
+     */
+    public static function sendLoanNewPaymentNotification(Payment $payment)
+    {
+        $message = Notification::getMessages()[Notification::MESSAGE_COLLATERAL_LOAN_NEW_PAYMENT] . '&nbsp;'
+            . HTML::a('Loan', Url::to(['collateral/loan', 'hashId' => $payment->loan->hash_id]));
+        if (!empty($payment->loan->lender_id)) {
+            Notification::create($payment->loan->lender_id, $message);
+        }
+        if (!empty($payment->loan->borrower_id)) {
+            Notification::create($payment->loan->borrower_id, $message);
+        }
+    }
+
+    /**
      * @param Collateral $collateral
      * @internal param Loan $loan
      */
     public static function sendCollateralLoanPaymentAddressErrorNotification(Collateral $collateral)
     {
         $message = Notification::getMessages()[Notification::MESSAGE_COLLATERAL_LOAN_PAYMENT_ADDRESS_ERROR] . '&nbsp;'
-            . HTML::a('Collateral', Url::to(['collateral/view', 'id' => $collateral->hash_id]));
+            . HTML::a('Collateral', Url::to(['collateral/view', 'hashId' => $collateral->hash_id]));
         Notification::create($collateral->investor_id, $message);
     }
 

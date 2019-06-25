@@ -13,12 +13,23 @@ use yii\web\UnauthorizedHttpException;
 
 class LoanCreateForm extends Model
 {
-    const PERIOD_DAY = 24 * 60 * 60;
+    const PERIOD_DAY_IN_SEC = 24 * 60 * 60;
+    const PERIOD_DAYS_IN_YEAR = 365;
+    const PERIOD_MONTHS_IN_YEAR = 12;
 
-    /** @var number */
+    const PERIOD_TYPE_WEEK = 1;
+    const PERIOD_TYPE_MONTH = 2;
+    const PERIOD_TYPE_TWO_MONTH = 3;
+    const PERIOD_TYPE_THREE_MONTH = 4;
+    const PERIOD_TYPE_SIX_MONTH = 5;
+    const PERIOD_TYPE_YEAR = 6;
+
+    /** @var float */
     public $amount;
+    /** @var number */
+    public $fee;
     /** @var integer */
-    public $period_days;
+    public $period;
     /** @var integer */
     public $currency_type;
     /** @var Loan */
@@ -32,10 +43,43 @@ class LoanCreateForm extends Model
     public function rules()
     {
         return [
-            [['currency_type', 'period_days'], 'integer'],
+            [['currency_type', 'period'], 'integer'],
             [['amount'], 'number'],
-            [['period_days'], 'default', 'value' => 30],
+            [['fee'], 'number', 'max' => 100, 'min' => 0],
+            [['amount', 'period', 'currency_type', 'fee'], 'required'],
+            [['period'], 'in', 'range' => array_keys(self::periodList())],
             [['currency_type'], 'in', 'range' => array_keys(Loan::currencyTypeList())],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public static function periodList() : array
+    {
+        return [
+            self::PERIOD_TYPE_WEEK => Yii::t('app', 'Week'),
+            self::PERIOD_TYPE_MONTH => Yii::t('app', 'Month'),
+            self::PERIOD_TYPE_TWO_MONTH => Yii::t('app', 'Two month'),
+            self::PERIOD_TYPE_THREE_MONTH => Yii::t('app', 'Three month'),
+            self::PERIOD_TYPE_SIX_MONTH => Yii::t('app', 'Six month'),
+            self::PERIOD_TYPE_YEAR => Yii::t('app', 'Year'),
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public static function periodValues() : array
+    {
+        return [
+            //self::PERIOD_TYPE_WEEK => self::PERIOD_DAY_IN_SEC * 7,
+            self::PERIOD_TYPE_WEEK => 100,
+            self::PERIOD_TYPE_MONTH => self::PERIOD_DAY_IN_SEC * self::PERIOD_DAYS_IN_YEAR * 1 / self::PERIOD_MONTHS_IN_YEAR,
+            self::PERIOD_TYPE_TWO_MONTH => self::PERIOD_DAY_IN_SEC * self::PERIOD_DAYS_IN_YEAR * 2 / self::PERIOD_MONTHS_IN_YEAR,
+            self::PERIOD_TYPE_THREE_MONTH => self::PERIOD_DAY_IN_SEC * self::PERIOD_DAYS_IN_YEAR * 3 / self::PERIOD_MONTHS_IN_YEAR,
+            self::PERIOD_TYPE_SIX_MONTH => self::PERIOD_DAY_IN_SEC * self::PERIOD_DAYS_IN_YEAR / 2,
+            self::PERIOD_TYPE_YEAR => self::PERIOD_DAY_IN_SEC * self::PERIOD_DAYS_IN_YEAR,
         ];
     }
 
@@ -78,8 +122,9 @@ class LoanCreateForm extends Model
         }
         $this->loan->currency_type = $this->currency_type;
         $this->loan->amount = $this->amount;
-        $this->loan->period = $this->period_days * self::PERIOD_DAY;
+        $this->loan->period = self::periodValues()[$this->period];
         $this->loan->status = Loan::STATUS_STARTED;
+        $this->loan->fee = $this->fee;
         if ($this->loan->save()) {
             $this->sendLoanCreatedNotification();
             return true;

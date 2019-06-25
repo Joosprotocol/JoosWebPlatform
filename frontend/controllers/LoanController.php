@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 
+use common\library\loan\LoanPaymentService;
 use common\library\loan\LoanReferralFollowingService;
 use common\library\loan\LoanService;
 use common\library\notification\NotificationService;
@@ -96,86 +97,98 @@ class LoanController extends FrontController
     {
         $model = new LoanCreateForm();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->getLoan()->id]);
+            return $this->redirect(['view', 'hashId' => $model->getLoan()->hash_id]);
         }
         return $this->render('create', [
             'model' => $model,
         ]);
     }
 
-    public function actionView($id)
+    public function actionView($hashId)
     {
-        $loan = $this->findModel($id);
+        $loan = $this->findModel($hashId);
         $loanService = new LoanService($loan);
 
-        try {
-            $blockchainPersonal = $loanService->getBlockchainPersonal();
-        } catch (\Exception $exception) {
-            \Yii::$app->getSession()->setFlash('error', Yii::t('app', 'Unable to get data from blockchain'));
-            $blockchainPersonal = false;
+        $blockchainPersonal = false;
+        if ($loan->status === Loan::STATUS_OVERDUE) {
+            try {
+                $blockchainPersonal = $loanService->getBlockchainPersonal();
+            } catch (\Exception $exception) {
+                \Yii::$app->getSession()->setFlash('error', Yii::t('app', 'Unable to get data from blockchain'));
+            }
         }
 
         return $this->render('view', [
             'model' => $loan,
-            'blockchainPersonal' => ($loan->status === Loan::STATUS_OVERDUE) ? $blockchainPersonal : false,
-            'loanReferral' => LoanReferral::findByLoanIdAndCollectorId($id, Yii::$app->user->id),
+            'blockchainPersonal' => $blockchainPersonal,
+            'loanReferral' => LoanReferral::findByLoanIdAndCollectorId($loan->id, Yii::$app->user->id),
         ]);
     }
 
-    public function actionSign($id)
+    public function actionSign($hashId)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($hashId);
         /** @var  $user */
         $user = User::findOne(Yii::$app->user->id);
         $loanService = new LoanService($model);
         $loanService->sign($user);
-
-        return $this->redirect(['view', 'id' => $id]);
+        $loanService->updateStatus();
+        $loanService->updateSignedAt();
+        return $this->redirect(['view', 'hashId' => $hashId]);
     }
 
-    public function actionSetAsPaid($id)
+
+    public function actionSetAsPaid($hashId)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($hashId);
         /** @var  $user */
         $user = User::findOne(Yii::$app->user->id);
         $DigitalCollectorFeeService = new DigitalCollectorFeeService($model);
         $DigitalCollectorFeeService->withdrawBatch();
 
         $loanService = new LoanService($model);
-        $loanService->setStatus($user, Loan::STATUS_PAID);
+        $loanPaymentService = new LoanPaymentService($model);
+        if ($loanPaymentService->canUserSetAsPaid($user)) {
+            $loanPaymentService = new LoanPaymentService($model);
+            $loanPaymentService->setAsPaid();
 
-        return $this->redirect(['view', 'id' => $id]);
+            $loanService->updateStatus();
+        }
+
+        return $this->redirect(['view', 'hashId' => $hashId]);
     }
 
     /**
      * Action only for digital-collector
-     * @param $id
+     * @param string $hashId
      * @return \yii\web\Response
      */
-    public function actionJoinAsCollector($id)
+    public function actionJoinAsCollector($hashId)
     {
-        if (LoanReferral::findByLoanIdAndCollectorId($id, Yii::$app->user->id) === null) {
+        if (LoanReferral::findByLoanIdAndCollectorId($hashId, Yii::$app->user->id) === null) {
             $loanReferral = new LoanReferral();
-            $loanReferral->loan_id = $id;
+            $model = $this->findModel($hashId);
+            $loanReferral->loan_id = $model->id;
             $loanReferral->digital_collector_id = Yii::$app->user->id;
             $loanReferral->save();
             NotificationService::sendDigitalCollectorAddedNotification($loanReferral);
         }
 
-        return $this->redirect(['view', 'id' => $id]);
+        return $this->redirect(['view', 'hashId' => $hashId]);
     }
 
     /**
      * Action only for borrower
      * @param $slug
      * @return \yii\web\Response
+     * @throws \itmaster\core\exceptions\DataNotFoundException
      */
     public function actionFollow($slug)
     {
         $loanReferralFollowingService = new LoanReferralFollowingService($slug, Yii::$app->user->id);
         $loanReferralFollowingService->register();
 
-        return $this->redirect(['view', 'id' => $loanReferralFollowingService->getLoanReferral()->loan_id]);
+        return $this->redirect(['view', 'hashId' => $loanReferralFollowingService->getLoanReferral()->loan->hash_id]);
     }
 
     public function actionOffers()
@@ -231,13 +244,13 @@ class LoanController extends FrontController
     /**
      * Finds the Loan model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
+     * @param string $hashId
      * @return Loan the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel($hashId)
     {
-        if (($model = Loan::findOne($id)) !== null) {
+        if (($model = Loan::findOne(['hash_id' => $hashId])) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));

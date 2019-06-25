@@ -38,6 +38,8 @@ class Notification extends ActiveRecord
     const MESSAGE_COLLATERAL_LOAN_SIGNED = 11;
     const MESSAGE_COLLATERAL_LOAN_STATUS_CHANGED = 12;
     const MESSAGE_COLLATERAL_LOAN_WITHDRAWN = 13;
+    const MESSAGE_LOAN_NEW_PAYMENT = 14;
+
 
     /**
      * @inheritdoc
@@ -73,6 +75,7 @@ class Notification extends ActiveRecord
             self::MESSAGE_NEW_COLLATERAL_CREATED => Yii::t('app', 'New collateral was created.'),
             self::MESSAGE_NEW_COLLATERAL_PAID => Yii::t('app', 'New collateral paid.'),
             self::MESSAGE_COLLATERAL_LOAN_NEW_PAYMENT => Yii::t('app', 'Payment for Collateral Loan is successfully received.'),
+            self::MESSAGE_LOAN_NEW_PAYMENT => Yii::t('app', 'Payment for Loan is successfully received.'),
             self::MESSAGE_COLLATERAL_LOAN_PAYMENT_ADDRESS_ERROR => Yii::t('app', 'Payment by collateral was reverted. Please set you Ethereum payment address on "profile page".'),
             self::MESSAGE_NEW_COLLATERAL_LOAN_PAYMENT_PLATFORM => Yii::t('app', 'Collateral is successfully loaned by "Joos" platform.'),
             self::MESSAGE_COLLATERAL_LOAN_WITHDRAWN => Yii::t('app', 'Collateral funds successfully withdrawn.'),

@@ -18,6 +18,7 @@ class LoanSearch extends Loan
         return [
             [['id', 'amount', 'lender_id', 'borrower_id', 'status', 'period', 'currency_type', 'init_type', 'created_at', 'updated_at'], 'integer'],
             [['secret_key'], 'safe'],
+            [['hash_id'], 'string'],
         ];
     }
 
@@ -67,6 +68,8 @@ class LoanSearch extends Loan
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);
+
+        $query->andFilterWhere(['like', 'hash_id', $this->hash_id]);
 
         return $dataProvider;
     }

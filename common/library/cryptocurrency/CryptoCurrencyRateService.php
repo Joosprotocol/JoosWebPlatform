@@ -13,7 +13,7 @@ class CryptoCurrencyRateService implements CurrencyRateInterface
         return [
             CryptoCurrencyTypes::CURRENCY_TYPE_BTC => 5000,
             CryptoCurrencyTypes::CURRENCY_TYPE_ETH => 600,
-            CryptoCurrencyTypes::CURRENCY_TYPE_USD => 1,
+            CryptoCurrencyTypes::CURRENCY_TYPE_USD_MANUAL => 1,
             CryptoCurrencyTypes::CURRENCY_TYPE_ETH_USDT => 1,
         ];
     }

@@ -9,6 +9,7 @@ use common\models\collateral\CollateralLoan;
 use common\models\collateral\CollateralLoanPayment;
 use common\models\collateral\CollateralPayment;
 use common\models\loan\Loan;
+use common\models\loan\LoanPayment;
 use itmaster\core\behaviors\TimestampBehavior;
 use Yii;
 use yii\db\ActiveRecord;
@@ -128,6 +129,23 @@ class Payment extends ActiveRecord
     {
         return $this->hasOne(CollateralLoan::class, ['id' => 'payment_address_id'])
             ->via('collateralLoanPayment');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLoanPayment()
+    {
+        return $this->hasOne(LoanPayment::class, ['payment_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLoan()
+    {
+        return $this->hasOne(Loan::class, ['id' => 'loan_id'])
+            ->via('loanPayment');
     }
 
 }

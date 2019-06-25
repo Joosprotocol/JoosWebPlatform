@@ -18,7 +18,7 @@ return [
         [
             'label' => Yii::t('app', 'New Collateral'),
             'url' => '/collateral/create',
-            'visible' => ['lender', 'borrower'],
+            'visible' => ['borrower'],
             'iconClass' => 'sidebar-icon-plus'
         ],
         [

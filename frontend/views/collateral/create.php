@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div id="collateral-create-data"
          data-required-amount-max = "<?= $model::REQUIRED_AMOUNT_MAX ?>"
          data-required-amount-min = "<?= $model::REQUIRED_AMOUNT_MIN ?>"
-         data-currency-rates = "<?= json_encode($currencyRateList) ?>"
+         data-currency-rates = '<?= json_encode($currencyRateList) ?>'
          data-lvr = <?= $model->getLvr() ?>>
 
     </div>
