@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'class' => 'white-grid-table'
         ],
         'columns' => [
-            'id',
+            'hash_id',
             [
                 'attribute' => 'status',
                 'filter' => Collateral::statusList(),
@@ -67,12 +67,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     return Html::a(Yii::t('app', 'View'), \yii\helpers\Url::to(['collateral/view', 'hashId' => $model->hash_id]));
                 }
             ],
-
-            /*[
-                'class' => 'yii\grid\ActionColumn',
-                'headerOptions' => ['class'=>'skip-export'],
-                'contentOptions' => ['class'=>'skip-export'],
-            ],*/
         ],
         'panel' => [
             'heading' => false,

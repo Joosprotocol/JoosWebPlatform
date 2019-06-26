@@ -4,6 +4,7 @@ namespace frontend\models\collateral;
 
 use common\models\collateral\Collateral;
 use common\models\collateral\CollateralSearch as CollateralSearchBase;
+use common\models\loan\Loan;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
@@ -26,6 +27,7 @@ class CollateralSearch extends CollateralSearchBase
         return [
             [['id', 'investor_id', 'status', 'currency_type', 'created_at'], 'integer'],
             [['amount'], 'number'],
+            [['hash_id'], 'string'],
         ];
     }
 
@@ -75,11 +77,34 @@ class CollateralSearch extends CollateralSearchBase
             'c.updated_at' => $this->updated_at,
         ]);
 
-        $query->andFilterWhere([
-            'c.status' => $this->statusStrong,
-            'c.investor_id' =>  $this->investorIdStrong,
-        ]);
+        $query->andFilterWhere(['like', 'hash_id', $this->hash_id]);
 
+
+        return $dataProvider;
+    }
+
+    /**
+     * @param ActiveDataProvider $dataProvider
+     * @return ActiveDataProvider
+     */
+    public function filterAvailableToLoan(ActiveDataProvider $dataProvider)
+    {
+        $dataProvider->query->andFilterWhere([
+            'c.status' => [Loan::STATUS_STARTED, Loan::STATUS_PARTIALLY_PAID],
+        ]);
+        return $dataProvider;
+    }
+
+    /**
+     * @param ActiveDataProvider $dataProvider
+     * @param integer $investorId
+     * @return ActiveDataProvider
+     */
+    public function filterByInvestor(ActiveDataProvider $dataProvider, int $investorId)
+    {
+        $dataProvider->query->andFilterWhere([
+            'c.investor_id' =>  $investorId,
+        ]);
         return $dataProvider;
     }
 }

@@ -193,8 +193,8 @@ class CollateralController extends FrontController
     public function actionMyCollaterals()
     {
         $searchModel = new CollateralSearch();
-        $searchModel->investorIdStrong = Yii::$app->user->id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->filterByInvestor($dataProvider, Yii::$app->user->id);
 
         return $this->render('index-personal', [
             'searchModel' => $searchModel,

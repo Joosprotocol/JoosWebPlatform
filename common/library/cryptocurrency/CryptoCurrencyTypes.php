@@ -12,7 +12,7 @@ class CryptoCurrencyTypes
     const CURRENCY_TYPE_ETH = 2;
     const CURRENCY_TYPE_USD_MANUAL = 100;
     const CURRENCY_TYPE_ETH_USDT = 3;
-    const CURRENCY_TYPE_JOOS = 3;
+    const CURRENCY_TYPE_JOOS = 4;
 
     const NETWORK_TYPE_BITCOIN = 0;
     const NETWORK_TYPE_ETHEREUM = 1;

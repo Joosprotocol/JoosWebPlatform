@@ -46,12 +46,6 @@ return [
             'iconClass' => 'sidebar-icon-pen'
         ],
         [
-            'label' => Yii::t('app', 'Collaterals'),
-            'url' => '/collateral/index',
-            'visible' => ['lender'],
-            'iconClass' => 'sidebar-icon-safe'
-        ],
-        [
             'label' => Yii::t('app', 'My Collaterals'),
             'url' => '/collateral/my-collaterals',
             'visible' => ['borrower'],
