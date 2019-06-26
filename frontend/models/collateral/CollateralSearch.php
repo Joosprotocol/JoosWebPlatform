@@ -51,7 +51,8 @@ class CollateralSearch extends CollateralSearchBase
     {
         $query = Collateral::find()
             ->alias('c')
-            ->orderBy(['updated_at' => SORT_DESC]);
+            ->orderBy(['updated_at' => SORT_DESC])
+            ->with('collateralLoans');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

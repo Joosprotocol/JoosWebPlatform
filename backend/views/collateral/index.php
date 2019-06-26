@@ -1,8 +1,12 @@
 <?php
 
+use common\library\cryptocurrency\CryptoCurrencyTypes;
+use common\models\collateral\Collateral;
+use common\models\user\User;
 use itmaster\core\helpers\Toolbar;
 use yii\helpers\Html;
 use kartik\grid\GridView;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel common\models\collateral\CollateralSearch */
@@ -38,18 +42,55 @@ $this->params['breadcrumbs'][] = $this->title;
                 'contentOptions' => ['class'=>'skip-export'],
             ],
             'id',
-            'lender_id',
-            'investor_id',
-            'statusName',
-            'amount',
-            'currencyName',
-            'currency_type',
-            'formattedPeriod',
-            'created',
+            'hash_id',
             [
-                'class' => 'yii\grid\ActionColumn',
-                'headerOptions' => ['class'=>'skip-export'],
-                'contentOptions' => ['class'=>'skip-export'],
+                'label' => Yii::t('app', 'Loans'),
+                'format' => 'html',
+                'value' => function ($model) {
+                    /* @var $model Collateral */
+                    $linksArray = [];
+                    foreach ($model->collateralLoans as $collateralLoan) {
+                        $linksArray[] = $collateralLoan->id;
+                    }
+                    return implode($linksArray, "&nbsp;|&nbsp;");
+                }
+            ],
+            [
+                'attribute' => 'investor_id',
+                'format' => 'html',
+                'filter' => User::getList(),
+                'value' => function ($model) {
+                    /* @var $model Collateral */
+                    return Html::a($model->investor->fullName, Url::to(['/user/view', 'id' => $model->investor->id]));
+                }
+            ],
+            [
+                'attribute' => 'status',
+                'filter' => Collateral::statusList(),
+                'value' => 'statusName'
+            ],
+            [
+                'label' => 'amount',
+                'value' => function ($model) {
+                    /* @var $model Collateral */
+                    return ($model->getFormattedAmount());
+                }
+            ],
+            [
+                'label' => 'start_amount',
+                'value' => function ($model) {
+                    /* @var $model Collateral */
+                    return ($model->start_amount / CryptoCurrencyTypes::precisionList()[$model->currency_type]);
+                }
+            ],
+            [
+                'attribute' => 'currency_type',
+                'filter' => Collateral::currencyPostingTypeList(),
+                'value' => 'currencyName'
+            ],
+            [
+                'attribute' => 'created_at',
+                'value' => 'created'
             ],
         ],
     ]); ?>

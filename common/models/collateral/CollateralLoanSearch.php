@@ -8,7 +8,7 @@ use yii\data\ActiveDataProvider;
 /**
  * CollateralSearch represents the model behind the search form about `custom_modules\collateral\models\Collateral`.
  */
-class CollateralSearch extends Collateral
+class CollateralLoanSearch extends CollateralLoan
 {
     /**
      * @inheritdoc
@@ -16,9 +16,12 @@ class CollateralSearch extends Collateral
     public function rules()
     {
         return [
-            [['id', 'investor_id', 'status', 'currency_type', 'created_at'], 'integer'],
-            [['amount'], 'number'],
+            [['amount', 'collateral_amount', 'lender_id',  'collateral_id', 'period', 'status', 'currency_type', 'created_at', 'withdrawn_profile_id'], 'integer'],
+            [['lvr', 'fee'], 'double'],
             [['hash_id'], 'string'],
+            ['is_platform', 'boolean'],
+
+
         ];
     }
 
@@ -40,7 +43,7 @@ class CollateralSearch extends Collateral
      */
     public function search($params)
     {
-        $query = Collateral::find();
+        $query = CollateralLoan::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -58,13 +61,22 @@ class CollateralSearch extends Collateral
 
         $query->andFilterWhere([
             'id' => $this->id,
-            'investor_id' => $this->investor_id,
+            'lender_id' => $this->lender_id,
+            'collateral_id' => $this->collateral_id,
+            'lvr' => $this->lvr,
+            'fee' => $this->fee,
             'status' => $this->status,
             'amount' => $this->amount,
+            'period' => $this->period,
+            'collateral_amount' => $this->collateral_amount,
             'currency_type' => $this->currency_type,
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'withdrawn_profile_id' => $this->withdrawn_profile_id,
+            'is_platform' => $this->is_platform,
         ]);
+
+        $query->andFilterWhere(['like', 'hash_id', $this->hash_id]);
+
 
         return $dataProvider;
     }

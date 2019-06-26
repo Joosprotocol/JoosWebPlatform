@@ -55,6 +55,7 @@ return [
             'slug' => 'loan',
             'items' => [
                 ['label' => Yii::t('app', 'Collateral'), 'url' => ['/collateral/index']],
+                ['label' => Yii::t('app', 'Loan'), 'url' => ['/collateral-loan/index']],
             ]
         ],
         [
