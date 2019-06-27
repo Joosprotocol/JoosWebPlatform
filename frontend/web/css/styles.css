@@ -429,6 +429,15 @@ a.btn {
     display: inline-block;
 }
 
+.btn,
+.btn:hover,
+.btn:focus,
+.btn:focus-within,
+.btn:visited,
+.btn:active {
+    outline: none;
+}
+
 a, a:hover, a:focus {
     color: #3aafa9;
     text-decoration: none;

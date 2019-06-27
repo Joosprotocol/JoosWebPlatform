@@ -187,8 +187,12 @@ php yii roles/update
 ```
 
 ## Cron jobs ##
-Add to cron execution:
+Add tasks to cron with command:
 
+```
+crontab -e
+```
+Tasks:
 ```
 0 * * * * php yii loan-blockchain-extractor/update >> loan_blockchain_extractions.log 2>&1
 * * * * * php yii collateral/make-loans-from-platform >> collateral_loans_autocreating.log 2>&1
@@ -197,7 +201,83 @@ Add to cron execution:
 
 ## Deploying APP to stage server ##
 
-For the platform to work correctly, you must first upload and configure the project "ethereum backend".
+#### Ethereum backend settings
+
+1. For the platform to work correctly, you must first upload and configure the project "ethereum backend".
+2. Setup common/config/main.php
+
+```php
+    'components' => [
+        'ethereumAPI' => [
+            'class' => 'common\library\ethereum\EthereumAPI',
+            'url' => 'http://localhost:3000/',
+        ],
+    ]
+``` 
+> Project "ethereum backend" is separated service. Main feature is providing access to smart contracts. It's bridge between Joos platform and contracts on blockchain. "ethereum backend" listens port 3000. It configured there as default. If "ethereum backend" will be launched on other server or other port please make sure you change main.php and set correct ip:port. 
+- Check that the "ethereum backend" is always running.
+
+#### CryptoApi settings
+
+[CryptoAPIs](https://api.cryptoapis.io) is a trusted API provider for crypto & blockchain applications. We provide live and historical data for both Crypto market and Blockchain protocols.
+This service used for transactions of crypto currencies. So we don't need start p2p heavyweight node.
+
+1. Setup common/config/main.php
+    ```php
+        'components' => [
+            'cryptoApi' => [
+    ...
+                'apiUrl' => 'https://api.cryptoapis.io',
+                'apiKey' => '00d38a3e19134323f9bcc750312915b895302462',
+                'environment' => 'test',
+                'networks' => [
+                    'bitcoin' => [
+                        'test' => 'testnet',
+                        'prod' => 'mainnet',
+                    ],
+                    'ethereum' => [
+                        'test' => 'rinkeby',
+                        'prod' => 'mainnet'
+                    ]
+                ]
+            ],
+        ]
+    ``` 
+    Settings:
+- ```'environment'``` Define what name of network will be used for some blockchain. Ex: on 'test' bitcoin uses 'testnet' network, but on 'prod' it uses 'mainnet'. Can be:
+  - ```'test'``` or ```'prod'```
+- ```'apiKey'``` Key for access. Provided by service. Has some limitations.
+
+#### Hub wallets settings
+Platform have to hold funds somewhere between certain transactions. So we use few own wallets for funds reservations.
+> Some currencies (for ex. ETH & USDT) may belong to the same blockchain network (Ethereum). In this case can we use one wallet to both or more.
+> > Now we use only Ethereum based USDT. It's ERC-20 contract. Upd:27.06.19
+1. Setup common/config/params.php
+
+```php
+'blockchain' => [
+    'bitcoin' => [
+        'hubAddress' => 'mx7ad8afsfBoYyB1TAdus6bv3Wz3e2SqCX',
+        'hubWif' => 'cSzR52mn3ZG4XnuyQwspGYEu14ZecYErYpF2kks4s8pSLEwq2MaV',
+    ],
+    'ethereum' => [
+        'hubAddress' => '0x2ba6415b8e06bcbaace060318839285ad9352da6',
+        'hubPrivateKey' => 'ffdfd77b43d71d70e38722a3d15af48a0529561276a3025cf6a0ad320404bbb3',
+    ],
+    'ethereumUsdt' => [
+        'contractAddress' => '0xc29d73460d4fc8fe79c6c45d63ced24f61848ea1',
+        'hubAddress' => '0xc3e954803e3c8504a55cc947afa8fc2e0509232e',
+        'hubPrivateKey' => '2fba5048ee1685c0663f5a17908452c6719b47f9e82107bec9d95caa8ac3a305',
+    ]
+]
+```
+Settings:
+
+- ```'hubAddress'``` Address of wallet for containing funds;
+- ```'hubWif'``` / ```'hubPrivateKey'``` Secret key depends of blockchain;
+- ```'contractAddress'``` Address of ERC-20 USDT token.
+
+You should change ```'contractAddress'``` setting when you switch to 'prod'. These address is unexisted on main blockchain. You must set real Tether USDT contract address. Check it here: [USD₮ supported on Ethereum ](https://tether.to/usd%E2%82%AE-and-eur%E2%82%AE-now-supported-on-ethereum/)
 
 ## Mailer setup ##
 
