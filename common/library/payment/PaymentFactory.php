@@ -14,7 +14,7 @@ use yii\base\InvalidCallException;
  * Class PaymentService
  * @package common\library\payment
  */
-class PaymentService
+class PaymentFactory
 {
     /** @var Payment */
     private $entity;

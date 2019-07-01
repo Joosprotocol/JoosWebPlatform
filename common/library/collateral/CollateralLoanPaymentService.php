@@ -8,7 +8,7 @@ use common\library\cryptocurrency\CryptoCurrencyTypes;
 use common\library\ethereum\EthereumAPI;
 use common\library\exceptions\InvalidModelException;
 use common\library\notification\NotificationService;
-use common\library\payment\PaymentService;
+use common\library\payment\PaymentFactory;
 use common\models\blockchain\PaymentAddress;
 use common\models\collateral\CollateralLoan;
 use common\models\collateral\CollateralLoanPayment;
@@ -241,7 +241,7 @@ class CollateralLoanPaymentService
                 if (!$this->collateralLoan->save(false)) {
                     throw new InvalidModelException($this->collateralLoan);
                 }
-                $paymentService = new PaymentService();
+                $paymentService = new PaymentFactory();
                 $this->payment = $paymentService->createForCollateralLoan($this->collateralLoan, $this->paymentAddress, $this->paidAmount);
 
                 $collateralLoanManagerAdapter = new CollateralLoanManagerBlockChainAdapter($this->ethereumApi);

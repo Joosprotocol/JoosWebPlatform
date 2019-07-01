@@ -194,7 +194,7 @@ crontab -e
 ```
 Tasks:
 ```
-0 * * * * php yii loan-blockchain-extractor/update >> loan_blockchain_extractions.log 2>&1
+0 * * * * php yii blockchain/fetch-overdue >> blockchain_fetch_overdue.log 2>&1
 * * * * * php yii collateral/make-loans-from-platform >> collateral_loans_autocreating.log 2>&1
 
 ```

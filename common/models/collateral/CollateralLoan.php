@@ -3,6 +3,7 @@
 namespace common\models\collateral;
 
 use common\behaviors\HashIdBehavior;
+use common\library\business\OverdueInterface;
 use common\library\cryptocurrency\CryptoCurrencyTypes;
 use common\library\date\DateIntervalEnhanced;
 use common\models\payment\Payment;
@@ -42,8 +43,9 @@ use yii\db\ActiveRecord;
  * @property string $currencyName
  * @property string $statusName
  * @property int $amountToPay
+ * @property int signed_at
  */
-class CollateralLoan extends ActiveRecord
+class CollateralLoan extends ActiveRecord implements OverdueInterface
 {
     const STATUS_STARTED = 0; // after creation
     const STATUS_SIGNED = 1; // signed by person+person or person+platform
@@ -227,6 +229,22 @@ class CollateralLoan extends ActiveRecord
     public function getFormattedAmountWithCurrency()
     {
         return (string) $this->getFormattedAmount() . ' ' . $this->currencyName;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSignedAt(): int
+    {
+        return $this->signed_at;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPeriod(): int
+    {
+        return $this->period;
     }
 
 }

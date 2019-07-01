@@ -61,4 +61,15 @@ class CollateralLoanQueryLibrary
         return self::getUnusedPaymentAddressQuery()
             ->all();
     }
+
+    /**
+     * @return CollateralLoan[]
+     */
+    public static function getCollateralLoansExpectedOverdue() : array
+    {
+        return CollateralLoan::find()
+            ->where(['status' => [CollateralLoan::STATUS_SIGNED, CollateralLoan::STATUS_PARTIALLY_PAID]])
+            ->andWhere('period < UNIX_TIMESTAMP() - signed_at')
+            ->all();
+    }
 }

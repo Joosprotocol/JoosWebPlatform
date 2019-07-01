@@ -121,6 +121,8 @@ class CollateralLoanPlatformProvider
                 throw new InvalidModelException($collateralLoanService->getCollateralLoan());
             }
 
+            $collateralLoanService->updateSignedAt();
+
             $usdtManager = new EthereumUsdtCryptoManager();
             NotificationService::sendNewCollateralLoanPaymentNotification($this->collateralLoan);
             $usdtManager->sendAmount($this->hubAddress, $this->collateral->investor->ethereumProfile->address, $this->loanAmount, $this->hubPrivateKey);

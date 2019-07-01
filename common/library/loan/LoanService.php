@@ -164,8 +164,8 @@ class LoanService
      */
     public function updateStatus()
     {
-        $collateralLoanManagerAdapter = new LoanManagerBlockChainAdapter($this->ethereumApi);
-        $newStatus = (int) $collateralLoanManagerAdapter->getStatus($this->loan->hash_id);
+        $loanManagerAdapter = new LoanManagerBlockChainAdapter($this->ethereumApi);
+        $newStatus = (int) $loanManagerAdapter->getStatus($this->loan->hash_id);
         if ($newStatus === 0) {
             return false;
         }

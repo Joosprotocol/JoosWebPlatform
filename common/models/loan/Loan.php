@@ -3,6 +3,7 @@
 namespace common\models\loan;
 
 use common\behaviors\HashIdBehavior;
+use common\library\business\OverdueInterface;
 use common\library\cryptocurrency\CryptoCurrencyTypes;
 use common\library\date\DateIntervalEnhanced;
 use common\models\payment\Payment;
@@ -41,7 +42,7 @@ use yii\db\ActiveRecord;
  * @property string $initTypeName
  * @property string $statusName
  */
-class Loan extends ActiveRecord
+class Loan extends ActiveRecord implements OverdueInterface
 {
     const INIT_TYPE_OFFER = 0;
     const INIT_TYPE_REQUEST = 1;
@@ -359,6 +360,22 @@ class Loan extends ActiveRecord
     public function getAmountToPay()
     {
         return (int) ($this->amount * (100 + $this->fee) / 100);
+    }
+
+    /**
+     * @return int
+     */
+    public function getPeriod(): int
+    {
+        return $this->period;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSignedAt(): int
+    {
+        return $this->signed_at;
     }
 
 }

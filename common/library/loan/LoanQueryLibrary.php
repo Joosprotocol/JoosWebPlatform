@@ -3,6 +3,7 @@
 
 namespace common\library\loan;
 
+use common\models\loan\Loan;
 use common\models\loan\LoanFollowing;
 use common\models\loan\LoanReferral;
 use common\models\user\User;
@@ -25,5 +26,16 @@ class LoanQueryLibrary
         }
 
         return $query->all();
+    }
+
+    /**
+     * @return Loan[]
+     */
+    public static function getLoansExpectedOverdue() : array
+    {
+        return Loan::find()
+            ->where(['status' => [Loan::STATUS_SIGNED, Loan::STATUS_PARTIALLY_PAID]])
+            ->andWhere('period < UNIX_TIMESTAMP() - signed_at')
+            ->all();
     }
 }

@@ -12,6 +12,7 @@ use \Exception;
 
 class CollateralLoanService
 {
+    const FIELD_CREATED_AT = 'created_at';
     /** @var CollateralLoan  */
     private $collateralLoan;
     /** @var EthereumAPI */
@@ -97,17 +98,45 @@ class CollateralLoanService
 
     /**
      * @return bool
+     * @throws \common\library\exceptions\APICallException
+     * @throws \common\library\exceptions\ParseException
+     * @throws \yii\web\NotFoundHttpException
      */
     public function updateStatus()
     {
         $collateralLoanManagerAdapter = new CollateralLoanManagerBlockChainAdapter($this->ethereumApi);
-        $this->collateralLoan->status = $collateralLoanManagerAdapter->getStatus($this->collateralLoan->hash_id);
+        $newStatus = (int) $collateralLoanManagerAdapter->getStatus($this->collateralLoan->hash_id);
+        if ($newStatus === 0) {
+            return false;
+        }
+        if ($newStatus === $this->collateralLoan->status) {
+            return true;
+        }
+        $this->collateralLoan->status = $newStatus;
         if ($this->collateralLoan->save()) {
             $this->createChangeLoanStatusNotification();
             return true;
         }
         return false;
     }
+
+    /**
+     * @return bool
+     * @throws \common\library\exceptions\APICallException
+     * @throws \common\library\exceptions\ParseException
+     * @throws \yii\web\NotFoundHttpException
+     */
+    public function updateSignedAt()
+    {
+        $collateralLoanManagerAdapter = new CollateralLoanManagerBlockChainAdapter($this->ethereumApi);
+        $loanInfo = (array) $collateralLoanManagerAdapter->getLoanInfo($this->collateralLoan->hash_id);
+        if (empty($loanInfo[self::FIELD_CREATED_AT])) {
+            return false;
+        }
+        $this->collateralLoan->signed_at = $loanInfo[self::FIELD_CREATED_AT];
+        return $this->collateralLoan->save();
+    }
+
 
     /**
      * @return Exception

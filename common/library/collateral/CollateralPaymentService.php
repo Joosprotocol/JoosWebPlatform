@@ -9,7 +9,7 @@ use common\library\blockchain\EthereumCryptoManager;
 use common\library\cryptocurrency\CryptoCurrencyTypes;
 use common\library\exceptions\InvalidModelException;
 use common\library\notification\NotificationService;
-use common\library\payment\PaymentService;
+use common\library\payment\PaymentFactory;
 use common\models\blockchain\PaymentAddress;
 use common\models\collateral\Collateral;
 use Yii;
@@ -98,7 +98,7 @@ class CollateralPaymentService extends Model
                     throw new InvalidModelException($this->collateral);
                 }
                 $this->sendCollateralPaidNotification();
-                $paymentService = new PaymentService();
+                $paymentService = new PaymentFactory();
                 $paymentService->createForCollateral($this->collateral, $this->paidAmount, $this->collateral->paymentAddress->address);
 
                 $this->isAlreadyPaid = true;
