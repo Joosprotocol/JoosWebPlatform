@@ -14,6 +14,7 @@ use yii\db\ActiveRecord;
  * @property integer $user_id
  * @property integer $type
  * @property string $text
+ * @property integer $status
  * @property integer $created_at
  * @property integer $updated_at
  *
@@ -21,6 +22,9 @@ use yii\db\ActiveRecord;
  */
 class Notification extends ActiveRecord
 {
+    const STATUS_UNREAD = 0;
+    const STATUS_READ = 1;
+
     const TYPE_INFO = 0;
     const TYPE_SUCCESS = 1;
     const TYPE_ERROR = 2;
@@ -100,7 +104,7 @@ class Notification extends ActiveRecord
     {
         return [
             [['user_id', 'text'], 'required'],
-            [['user_id', 'type', 'created_at', 'updated_at'], 'integer'],
+            [['user_id', 'type', 'status', 'created_at', 'updated_at'], 'integer'],
             [['text'], 'string', 'max' => 255],
             [['type'], 'in', 'range' => array_keys(self::typeList())],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
@@ -129,6 +133,7 @@ class Notification extends ActiveRecord
             'user_id' => Yii::t('app', 'User ID'),
             'type' => Yii::t('app', 'Type'),
             'text' => Yii::t('app', 'Text'),
+            'status' => Yii::t('app', 'Status'),
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
         ];

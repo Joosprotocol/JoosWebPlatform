@@ -4,7 +4,7 @@
 namespace frontend\library;
 
 
-use common\models\notification\Notification;
+use common\library\notification\NotificationQueryLibrary;
 use Yii;
 
 class LayoutHelper
@@ -38,8 +38,6 @@ class LayoutHelper
      */
     public static function getNotificationsQuantity()
     {
-        return Notification::find()
-            ->where(['user_id' => Yii::$app->user->id])
-            ->count();
+        return NotificationQueryLibrary::getUnreadQuantity(Yii::$app->user->id);
     }
 }

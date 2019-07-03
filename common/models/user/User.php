@@ -2,7 +2,6 @@
 
 namespace common\models\user;
 
-use common\library\blockchain\BlockchainType;
 use common\library\cryptocurrency\CryptoCurrencyTypes;
 use common\models\loan\Loan;
 use common\models\notification\Notification;

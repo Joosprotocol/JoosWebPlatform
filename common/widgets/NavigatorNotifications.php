@@ -70,9 +70,7 @@ class NavigatorNotifications extends BaseNavigator
     {
         $label = HTML::tag('span', '', ['class' => $item['iconClass']]);
 
-        $counter = Notification::find()
-            ->where(['user_id' => Yii::$app->user->id])
-            ->count();
+        $counter = 0;
 
         if ($counter != 0) {
             $label .= HTML::tag('div', $counter, ['class' => 'notification-circle']);

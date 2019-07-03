@@ -20,6 +20,7 @@ class AppAsset extends AssetBundle
         'js/CollateralCalcHelper.js',
         'js/CollateralPaymentHelper.js',
         'js/CollateralLoanPaymentHelper.js',
+        'js/NotificationHelper.js',
 
     ];
     public $depends = [
