@@ -2,6 +2,7 @@
 
 namespace common\library\blockchain;
 
+use common\config\constant\Blockchain;
 use Yii;
 use yii\base\InvalidConfigException;
 
@@ -42,9 +43,6 @@ class EthereumUsdtCryptoAPI
     const GAS_PRICE_DEFAULT = 1000000000;
     const GAS_LIMIT_DEFAULT = 60000;
 
-    const SETTING_ETHEREUM_USDT = 'ethereumUsdt';
-    const SETTING_CONTRACT_ADDRESS = 'contractAddress';
-    const SETTING_BLOCKCHAIN = 'blockchain';
 
     const PREFIX_HEX = '0x';
     const OP_CODE_TRANSACT = 'a9059cbb';
@@ -185,10 +183,10 @@ class EthereumUsdtCryptoAPI
      */
     public function getUsdtContractAddress()
     {
-        if (empty(Yii::$app->params[self::SETTING_BLOCKCHAIN][self::SETTING_ETHEREUM_USDT][self::SETTING_CONTRACT_ADDRESS])) {
-            throw new InvalidConfigException(self::SETTING_CONTRACT_ADDRESS . ' param is not configured.');
+        if (empty(Yii::$app->params[Blockchain::PARAM_BLOCKCHAIN][Blockchain::PARAM_ETHEREUM_USDT][Blockchain::PARAM_CONTRACT_ADDRESS])) {
+            throw new InvalidConfigException(Blockchain::PARAM_CONTRACT_ADDRESS . ' param is not configured.');
         }
-        return Yii::$app->params[self::SETTING_BLOCKCHAIN][self::SETTING_ETHEREUM_USDT][self::SETTING_CONTRACT_ADDRESS];
+        return Yii::$app->params[Blockchain::PARAM_BLOCKCHAIN][Blockchain::PARAM_ETHEREUM_USDT][Blockchain::PARAM_CONTRACT_ADDRESS];
     }
 
 }

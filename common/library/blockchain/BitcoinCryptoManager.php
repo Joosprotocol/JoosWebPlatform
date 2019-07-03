@@ -98,7 +98,7 @@ class BitcoinCryptoManager implements CryptoManagerInterface
      * @param string $addressTo
      * @param int $value
      * @param string $wif
-     * @return int
+     * @return string
      * @throws APICallException
      */
     public function sendAmount(string $addressFrom, string $addressTo, int $value, string $wif)
@@ -115,7 +115,7 @@ class BitcoinCryptoManager implements CryptoManagerInterface
      * @param string $addressFrom
      * @param string $addressTo
      * @param string $wif
-     * @return int
+     * @return string
      * @throws APICallException
      */
     public function sendAllAmount(string $addressFrom, string $addressTo, string $wif)

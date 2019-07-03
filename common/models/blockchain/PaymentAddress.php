@@ -15,6 +15,7 @@ use yii\db\ActiveRecord;
  * @property string $address
  * @property integer $currency_type
  * @property string $additional
+ * @property integer $state
  * @property integer $created_at
  * @property integer $updated_at
  *
@@ -24,6 +25,10 @@ use yii\db\ActiveRecord;
  */
 class PaymentAddress extends ActiveRecord
 {
+
+    const STATE_NO_FUNDS = 0;
+    const STATE_WITH_FUNDS = 1;
+
     /**
      * @inheritdoc
      */
@@ -49,8 +54,8 @@ class PaymentAddress extends ActiveRecord
     public function rules()
     {
         return [
-            [['address', 'currency_type'], 'required'],
-            [['currency_type', 'created_at', 'updated_at'], 'integer'],
+            [['address', 'currency_type', 'state'], 'required'],
+            [['currency_type', 'created_at', 'updated_at', 'state'], 'integer'],
             [['address'], 'string', 'max' => 255],
             [['additional'], 'string'],
         ];
@@ -66,6 +71,7 @@ class PaymentAddress extends ActiveRecord
             'address' => 'Address',
             'currency_type' => 'Currency Type',
             'additional' => 'Additional',
+            'state' => 'State',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
@@ -89,7 +95,7 @@ class PaymentAddress extends ActiveRecord
     }
 
     /**
-     * @return $this
+     * @return \yii\db\ActiveQuery
      */
     public function getPaymentOfCollateralLoan()
     {

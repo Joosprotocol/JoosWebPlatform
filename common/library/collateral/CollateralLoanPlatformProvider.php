@@ -2,6 +2,7 @@
 
 namespace common\library\collateral;
 
+use common\config\constant\Blockchain;
 use common\library\blockchain\EthereumUsdtCryptoManager;
 use common\library\cryptocurrency\CryptoCurrencyRateService;
 use common\library\cryptocurrency\CryptoCurrencyTypes;
@@ -21,11 +22,6 @@ class CollateralLoanPlatformProvider
 {
     const SETTING_COLLATERAL_LOAN_MAX_AMOUNT = 'collateral_loan_max_amount';
     const SETTING_COLLATERAL_LVR = 'collateral_loan_lvr';
-
-    const SETTING_ETHEREUM_USDT = 'ethereumUsdt';
-    const SETTING_BLOCKCHAIN = 'blockchain';
-    const SETTING_HUB_ADDRESS = 'hubAddress';
-    const SETTING_HUB_PRIVATE_KEY = 'hubPrivateKey';
 
     /** @var  CollateralLoan */
     private $collateralLoan;
@@ -153,15 +149,15 @@ class CollateralLoanPlatformProvider
      */
     public function setAccessParams()
     {
-        if (empty(Yii::$app->params[self::SETTING_BLOCKCHAIN][self::SETTING_ETHEREUM_USDT][self::SETTING_HUB_ADDRESS])) {
-            throw new InvalidConfigException(self::SETTING_HUB_ADDRESS . ' param is not configured.');
+        if (empty(Yii::$app->params[Blockchain::PARAM_BLOCKCHAIN][Blockchain::PARAM_ETHEREUM_USDT][Blockchain::PARAM_HUB_ADDRESS])) {
+            throw new InvalidConfigException(Blockchain::PARAM_HUB_ADDRESS . ' param is not configured.');
         }
-        $this->hubAddress = Yii::$app->params[self::SETTING_BLOCKCHAIN][self::SETTING_ETHEREUM_USDT][self::SETTING_HUB_ADDRESS];
+        $this->hubAddress = Yii::$app->params[Blockchain::PARAM_BLOCKCHAIN][Blockchain::PARAM_ETHEREUM_USDT][Blockchain::PARAM_HUB_ADDRESS];
 
-        if (empty(Yii::$app->params[self::SETTING_BLOCKCHAIN][self::SETTING_ETHEREUM_USDT][self::SETTING_HUB_PRIVATE_KEY])) {
-            throw new InvalidConfigException(self::SETTING_HUB_PRIVATE_KEY . ' param is not configured.');
+        if (empty(Yii::$app->params[Blockchain::PARAM_BLOCKCHAIN][Blockchain::PARAM_ETHEREUM_USDT][Blockchain::PARAM_HUB_PRIVATE_KEY])) {
+            throw new InvalidConfigException(Blockchain::PARAM_HUB_PRIVATE_KEY . ' param is not configured.');
         }
-        $this->hubPrivateKey = Yii::$app->params[self::SETTING_BLOCKCHAIN][self::SETTING_ETHEREUM_USDT][self::SETTING_HUB_PRIVATE_KEY];
+        $this->hubPrivateKey = Yii::$app->params[Blockchain::PARAM_BLOCKCHAIN][Blockchain::PARAM_ETHEREUM_USDT][Blockchain::PARAM_HUB_PRIVATE_KEY];
     }
 
     /**

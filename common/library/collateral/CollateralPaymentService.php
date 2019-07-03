@@ -92,7 +92,10 @@ class CollateralPaymentService extends Model
         if ($this->collateral->status === Collateral::STATUS_STARTED && $this->isPaid()) {
             $transaction = Yii::$app->db->beginTransaction();
             try {
-
+                $this->collateral->paymentAddress->state = PaymentAddress::STATE_WITH_FUNDS;
+                if (!$this->collateral->paymentAddress->save(false)) {
+                    throw new InvalidModelException($this->collateral->paymentAddress);
+                }
                 $this->collateral->status = Collateral::STATUS_POSTED;
                 if (!$this->collateral->save(false)) {
                     throw new InvalidModelException($this->collateral);
@@ -150,6 +153,7 @@ class CollateralPaymentService extends Model
         $paymentAddress->address = $this->cryptoManager->getPaymentAddress($addressInfo);
         $paymentAddress->additional = json_encode($addressInfo);
         $paymentAddress->currency_type = $this->collateral->currency_type;
+        $paymentAddress->state = PaymentAddress::STATE_NO_FUNDS;
         $paymentAddress->save();
 
         return $this->collateral->link('paymentAddress', $paymentAddress);

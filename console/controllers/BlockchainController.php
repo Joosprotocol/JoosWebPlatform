@@ -13,6 +13,10 @@ use yii\helpers\Console;
  */
 class BlockchainController extends Controller
 {
+    /**
+     * Action check status of expired loans from smart contracts.
+     * If loan status is overdue it will be changed (update status) in database.
+     */
     public function actionFetchOverdue()
     {
         $loanBlockchainExtractor = new SmartContractFetcher();

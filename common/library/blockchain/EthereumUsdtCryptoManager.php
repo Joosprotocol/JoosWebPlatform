@@ -94,7 +94,7 @@ class EthereumUsdtCryptoManager implements CryptoManagerInterface
      * @param string $addressTo
      * @param int $value
      * @param string $privateKey
-     * @return int
+     * @return string
      * @throws APICallException
      */
     public function sendAmount(string $addressFrom, string $addressTo, int $value, string $privateKey)
@@ -112,7 +112,7 @@ class EthereumUsdtCryptoManager implements CryptoManagerInterface
      * @param string $addressFrom
      * @param string $addressTo
      * @param string $privateKey
-     * @return int
+     * @return string
      * @throws APICallException
      */
     public function sendAllAmount(string $addressFrom, string $addressTo, string $privateKey)
@@ -122,9 +122,9 @@ class EthereumUsdtCryptoManager implements CryptoManagerInterface
     }
 
     /**
-     * @return EthereumUsdtCryptoAPI
+     * @return int
      */
-    public static function getTokenTransferFee(): EthereumUsdtCryptoAPI
+    public static function getTokenTransferFee(): int
     {
         return self::$ethereumApi::GAS_LIMIT_DEFAULT;
     }

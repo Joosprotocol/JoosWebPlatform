@@ -1,4 +1,7 @@
 <?php
+
+use common\config\constant\Blockchain;
+
 return [
     //'adminEmail' => 'admin@example.com',
     'supportEmail' => 'support@example.com',
@@ -8,19 +11,19 @@ return [
     'readOnlyMode' => false,
     'loan.feeManualPercent' => 15,
     'loan.feeJoosPercent' => 10,
-    'blockchain' => [
-        'bitcoin' => [
-            'hubAddress' => 'mx7ad8afsfBoYyB1TAdus6bv3Wz3e2SqCX',
-            'hubWif' => 'cSzR52mn3ZG4XnuyQwspGYEu14ZecYErYpF2kks4s8pSLEwq2MaV',
+    Blockchain::PARAM_BLOCKCHAIN => [
+        Blockchain::PARAM_BITCOIN => [
+            Blockchain::PARAM_HUB_ADDRESS => 'mx7ad8afsfBoYyB1TAdus6bv3Wz3e2SqCX',
+            Blockchain::PARAM_HUB_WIF => 'cSzR52mn3ZG4XnuyQwspGYEu14ZecYErYpF2kks4s8pSLEwq2MaV',
         ],
-        'ethereum' => [
-            'hubAddress' => '0x2ba6415b8e06bcbaace060318839285ad9352da6',
-            'hubPrivateKey' => 'ffdfd77b43d71d70e38722a3d15af48a0529561276a3025cf6a0ad320404bbb3',
+        Blockchain::PARAM_ETHEREUM => [
+            Blockchain::PARAM_HUB_ADDRESS => '0x2ba6415b8e06bcbaace060318839285ad9352da6',
+            Blockchain::PARAM_HUB_PRIVATE_KEY => 'ffdfd77b43d71d70e38722a3d15af48a0529561276a3025cf6a0ad320404bbb3',
         ],
-        'ethereumUsdt' => [
-            'contractAddress' => '0xc29d73460d4fc8fe79c6c45d63ced24f61848ea1',
-            'hubAddress' => '0xc3e954803e3c8504a55cc947afa8fc2e0509232e',
-            'hubPrivateKey' => '2fba5048ee1685c0663f5a17908452c6719b47f9e82107bec9d95caa8ac3a305',
+        Blockchain::PARAM_ETHEREUM_USDT => [
+            Blockchain::PARAM_CONTRACT_ADDRESS => '0xc29d73460d4fc8fe79c6c45d63ced24f61848ea1',
+            Blockchain::PARAM_HUB_ADDRESS => '0xc3e954803e3c8504a55cc947afa8fc2e0509232e',
+            Blockchain::PARAM_HUB_PRIVATE_KEY => '2fba5048ee1685c0663f5a17908452c6719b47f9e82107bec9d95caa8ac3a305',
         ]
     ],
     'adminMenuItems' => [

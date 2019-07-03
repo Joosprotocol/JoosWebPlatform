@@ -2,6 +2,7 @@
 
 namespace common\library\collateral;
 
+use common\config\constant\Blockchain;
 use common\library\blockchain\BlockchainCryptoFactory;
 use common\library\blockchain\CryptoManagerInterface;
 use common\library\cryptocurrency\CryptoCurrencyTypes;
@@ -28,14 +29,6 @@ use yii\web\UnauthorizedHttpException;
  */
 class CollateralLoanPaymentService
 {
-
-    const CONFIG_HUB_ADDRESS = 'hubAddress';
-    const CONFIG_HUB_PRIVATE_KEY = 'hubPrivateKey';
-    const CONFIG_HUB_WIF = 'hubWif';
-
-    const CONFIG_ETHEREUM_USDT = 'ethereumUsdt';
-    const CONFIG_ETHEREUM = 'ethereum';
-    const CONFIG_BITCOIN = 'bitcoin';
 
     /** @var CollateralLoan  */
     private $collateralLoan;
@@ -161,11 +154,11 @@ class CollateralLoanPaymentService
         $currencyType = $this->collateralLoan->collateral->currency_type;
 
         if ($currencyType === CryptoCurrencyTypes::CURRENCY_TYPE_BTC) {
-            $this->hubAddress = $params[self::CONFIG_BITCOIN][self::CONFIG_HUB_ADDRESS];
-            $this->hubSecretKey = $params[self::CONFIG_BITCOIN][self::CONFIG_HUB_WIF];
+            $this->hubAddress = $params[Blockchain::PARAM_BITCOIN][Blockchain::PARAM_HUB_ADDRESS];
+            $this->hubSecretKey = $params[Blockchain::PARAM_BITCOIN][Blockchain::PARAM_HUB_WIF];
         } elseif ($currencyType === CryptoCurrencyTypes::CURRENCY_TYPE_ETH || $currencyType === CryptoCurrencyTypes::CURRENCY_TYPE_ETH_USDT) {
-            $this->hubAddress = $params[self::CONFIG_ETHEREUM][self::CONFIG_HUB_ADDRESS];
-            $this->hubSecretKey = $params[self::CONFIG_ETHEREUM][self::CONFIG_HUB_PRIVATE_KEY];
+            $this->hubAddress = $params[Blockchain::PARAM_ETHEREUM][Blockchain::PARAM_HUB_ADDRESS];
+            $this->hubSecretKey = $params[Blockchain::PARAM_ETHEREUM][Blockchain::PARAM_HUB_PRIVATE_KEY];
         } else {
             throw new RequiredParamException('Unknown currency type.');
         }
@@ -237,7 +230,10 @@ class CollateralLoanPaymentService
         if (in_array($this->collateralLoan->status, [CollateralLoan::STATUS_SIGNED, CollateralLoan::STATUS_PARTIALLY_PAID]) && $this->isPaid()) {
             $transaction = Yii::$app->db->beginTransaction();
             try {
-
+                $this->paymentAddress->state = PaymentAddress::STATE_WITH_FUNDS;
+                if (!$this->paymentAddress->save(false)) {
+                    throw new InvalidModelException($this->paymentAddress);
+                }
                 if (!$this->collateralLoan->save(false)) {
                     throw new InvalidModelException($this->collateralLoan);
                 }
@@ -300,6 +296,7 @@ class CollateralLoanPaymentService
         $paymentAddress->address = $this->loanCryptoManager->getPaymentAddress($addressInfo);
         $paymentAddress->additional = json_encode($addressInfo);
         $paymentAddress->currency_type = $this->collateralLoan->currency_type;
+        $paymentAddress->state = PaymentAddress::STATE_NO_FUNDS;
         if (!$paymentAddress->save()) {
             throw new InvalidModelException($paymentAddress);
         }
