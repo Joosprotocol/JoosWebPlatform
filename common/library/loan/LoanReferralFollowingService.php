@@ -71,7 +71,7 @@ class LoanReferralFollowingService
             return false;
         }
 
-        if ($this->loanReferral->loan->borrower_id === $userId) {
+        if ($this->loanReferral->loan->borrower_id !== $userId) {
             return false;
         }
         return true;
