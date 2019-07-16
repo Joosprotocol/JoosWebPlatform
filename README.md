@@ -1,4 +1,4 @@
-IT-Master's Platform on Yii Framework 2
+Joos Platform on Yii Framework 2
 =======================================
 
 > **NOTICE**
