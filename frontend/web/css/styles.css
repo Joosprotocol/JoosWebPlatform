@@ -461,6 +461,10 @@ a, a:hover, a:focus {
     line-height: 18px;
 }
 
+.panel .panel-body img {
+    max-width: 100%;
+}
+
 .form-group  {
     position: relative;
 }
@@ -1053,6 +1057,7 @@ a, a:hover, a:focus {
 .field-userpersonal-issuedid .file-input,
 .field-user-avatar .file-input {
     left: calc(50% - 75px);
+    max-width: 150px;
 }
 
 .site-request-password-reset-inner {
