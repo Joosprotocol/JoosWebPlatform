@@ -13,6 +13,7 @@ use Yii;
 use yii\bootstrap\ActiveForm;
 use yii\filters\AccessControl;
 use yii\web\BadRequestHttpException;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 
@@ -41,6 +42,21 @@ class AuthController extends BaseAuthController
             ],
         ];
         return $behaviors;
+    }
+
+    /**
+     * @param $action
+     * @return mixed
+     *
+     * @throws NotFoundHttpException
+     * @throws \yii\web\BadRequestHttpException
+     */
+    public function beforeAction($action)
+    {
+        if (!Yii::$app->user->isGuest) {
+            return $this->redirect('/')->send();
+        }
+        return parent::beforeAction($action);
     }
 
     /**
